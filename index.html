@@ -1,1 +1,70 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/><meta name="theme-color" content="#f6fbf7"/><title>PromoRadar AI</title><link rel="manifest" href="manifest.json"/><link rel="stylesheet" href="style.css"/></head><body><div id="app"></div><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>PromoRadar AI</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#f7fbf8" />
+  <link rel="icon" href="icon.svg" />
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brandIcon" aria-hidden="true"><img src="icon.svg" alt=""></div>
+      <div class="brandText">
+        <h1>PromoRadar AI</h1>
+        <p>Акции топ-бирж в одном месте</p>
+      </div>
+      <button class="settings" id="settingsBtn" aria-label="Настройки">⚙︎</button>
+    </header>
+
+    <section class="filters" aria-label="Фильтры">
+      <div class="filterRow headRow">
+        <h2>Мой депозит</h2>
+        <button class="selectSmall" id="depositLabel">50 USDT⌄</button>
+      </div>
+      <div class="chips compact" id="depositChips"></div>
+
+      <div class="divider"></div>
+
+      <div class="filterRow headRow">
+        <h2>Биржи</h2>
+        <button class="selectSmall" id="exchangeCount">4 из 7⌄</button>
+      </div>
+      <div class="chips exchanges" id="exchangeChips"></div>
+
+      <div class="divider"></div>
+
+      <div class="filterRow headRow">
+        <h2>Тип акций</h2>
+        <button class="selectSmall" id="typeLabel">Все⌄</button>
+      </div>
+      <div class="chips types" id="typeChips"></div>
+    </section>
+
+    <section class="listHead">
+      <div>
+        <h2>Лучшие акции сейчас</h2>
+        <p><span id="offerCount">0</span> акций · по потенциалу</p>
+      </div>
+      <button class="sortBtn" id="sortBtn">↗ По потенциалу⌄</button>
+    </section>
+
+    <section class="best" id="bestBox"></section>
+    <section class="cards" id="cards"></section>
+  </main>
+
+  <div class="drawer" id="drawer" hidden>
+    <div class="sheet">
+      <div class="sheetHead"><b>Настройки</b><button id="closeSettings">×</button></div>
+      <label class="settingLine"><span>Показывать избранное</span><input type="checkbox" id="favOnly"></label>
+      <label class="settingLine"><span>Уведомления о новых акциях</span><input type="checkbox"></label>
+      <p class="note">Избранные акции отмечаются звёздочкой и сохраняются на этом телефоне.</p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
