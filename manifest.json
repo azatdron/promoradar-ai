@@ -1,9 +1,1 @@
-{
-  "name": "PromoRadar AI",
-  "short_name": "PromoRadar",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#f6fbf7",
-  "theme_color": "#f6fbf7",
-  "icons": [{"src":"icon.svg","sizes":"any","type":"image/svg+xml"}]
-}
+{"name":"PromoRadar AI","short_name":"PromoRadar","start_url":"/","display":"standalone","background_color":"#f3faf6","theme_color":"#24a455","icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml"}]}
