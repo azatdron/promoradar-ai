@@ -1,65 +1,35 @@
-const exchanges = ["Binance","Bybit","OKX","KuCoin","Coinbase","Gate","MEXC"];
-const types = ["Все","Launchpool","Launchpad","Jumpstart","Spotlight","Airdrop","Earn","Competition"];
-const deposits = [50,100,500,1000];
-let state = { deposit:100, exchanges:[...exchanges], type:"Все" };
-
-const promos = [
- {ex:"Binance", logo:"◆", type:"Launchpool", title:"Launchpool: Lista DAO", invest:"BNB / FDUSD", min:0.01, base:[12,32], roi:[12,32], days:3, score:95, url:"https://www.binance.com"},
- {ex:"Binance", logo:"◆", type:"Megadrop", title:"Megadrop: New Token", invest:"BNB + задания", min:10, base:[8,28], roi:[8,28], days:5, score:89, url:"https://www.binance.com"},
- {ex:"Bybit", logo:"B", type:"Launchpad", title:"Launchpad: MNT Pool", invest:"MNT / USDT", min:50, base:[15,45], roi:[15,45], days:2, score:92, url:"https://www.bybit.com"},
- {ex:"Bybit", logo:"B", type:"Launchpool", title:"Launchpool: New Listing", invest:"USDT / MNT", min:20, base:[7,22], roi:[7,22], days:4, score:86, url:"https://www.bybit.com"},
- {ex:"OKX", logo:"OKX", type:"Jumpstart", title:"Jumpstart: ZETA Event", invest:"OKB", min:30, base:[10,25], roi:[10,25], days:1, score:88, url:"https://www.okx.com"},
- {ex:"OKX", logo:"OKX", type:"Earn", title:"Earn Bonus: Flexible Event", invest:"USDT", min:100, base:[5,18], roi:[5,18], days:6, score:76, url:"https://www.okx.com"},
- {ex:"KuCoin", logo:"K", type:"Spotlight", title:"Spotlight: ALT Sale", invest:"KCS / USDT", min:25, base:[9,30], roi:[9,30], days:4, score:85, url:"https://www.kucoin.com"},
- {ex:"KuCoin", logo:"K", type:"Competition", title:"Trading Bonus Pool", invest:"Объём торгов", min:100, base:[4,20], roi:[4,20], days:7, score:70, url:"https://www.kucoin.com"},
- {ex:"Coinbase", logo:"C", type:"Airdrop", title:"Rewards: OP Learn", invest:"Задания", min:0, base:[2,8], roi:[2,8], days:5, score:66, url:"https://www.coinbase.com"},
- {ex:"Gate", logo:"G", type:"Launchpad", title:"Startup: XYZ Token", invest:"USDT", min:10, base:[6,26], roi:[6,26], days:2, score:82, url:"https://www.gate.io"},
- {ex:"Gate", logo:"G", type:"Airdrop", title:"Airdrop Carnival", invest:"Задания", min:0, base:[1,12], roi:[1,12], days:3, score:64, url:"https://www.gate.io"},
- {ex:"MEXC", logo:"M", type:"Kickstarter", title:"Kickstarter: Vote to List", invest:"MX", min:20, base:[5,19], roi:[5,19], days:1, score:78, url:"https://www.mexc.com"},
+const exchanges=[{id:'binance',name:'Binance',logo:'◆',color:'#f0b90b'},{id:'bybit',name:'Bybit',logo:'BY',color:'#111827'},{id:'okx',name:'OKX',logo:'OKX',color:'#000'},{id:'kucoin',name:'KuCoin',logo:'K',color:'#18b998'},{id:'coinbase',name:'Coinbase',logo:'C',color:'#2563eb'},{id:'gate',name:'Gate',logo:'G',color:'#1d4ed8'},{id:'mexc',name:'MEXC',logo:'M',color:'#10b981'}];
+const types=['Все','Launchpool','Launchpad','Jumpstart','Spotlight','Airdrop','Earn','Competition'];
+const deposits=[50,100,500,1000];
+const offers=[
+{id:1,ex:'kucoin',type:'Spotlight',title:'ALT Sale',stake:'KCS / USDT',roi:[12,35],base:[5,15],score:85,url:'https://www.kucoin.com/'},
+{id:2,ex:'bybit',type:'Launchpool',title:'MNT Pool',stake:'MNT / USDT',roi:[18,45],base:[15,45],score:82,url:'https://www.bybit.com/'},
+{id:3,ex:'binance',type:'Launchpool',title:'Lista DAO',stake:'BNB / FDUSD',roi:[20,50],base:[20,60],score:80,url:'https://www.binance.com/'},
+{id:4,ex:'okx',type:'Jumpstart',title:'ZETA Event',stake:'OKB / USDT',roi:[12,28],base:[10,25],score:78,url:'https://www.okx.com/'},
+{id:5,ex:'coinbase',type:'Earn',title:'OP Learn',stake:'Задания',roi:[5,12],base:[3,8],score:69,url:'https://www.coinbase.com/'},
+{id:6,ex:'gate',type:'Airdrop',title:'Startup XYZ',stake:'GT / USDT',roi:[8,22],base:[4,14],score:72,url:'https://www.gate.com/'},
+{id:7,ex:'mexc',type:'Competition',title:'Futures Bonus',stake:'USDT',roi:[6,18],base:[4,20],score:66,url:'https://www.mexc.com/'},
+{id:8,ex:'kucoin',type:'Earn',title:'GemPool KCS',stake:'KCS',roi:[10,26],base:[6,18],score:76,url:'https://www.kucoin.com/'},
+{id:9,ex:'bybit',type:'Launchpad',title:'New Token Sale',stake:'MNT / USDT',roi:[14,38],base:[10,35],score:79,url:'https://www.bybit.com/'}
 ];
-
-function profit(p){
- const scale = Math.max(0.35, state.deposit/100);
- return [Math.round(p.base[0]*scale), Math.round(p.base[1]*scale)];
-}
-function visible(){
- return promos.filter(p => state.exchanges.includes(p.ex) && (state.type==="Все" || p.type===state.type)).sort((a,b)=> b.score-a.score);
-}
-function chip(text, active, onClick){
- const b=document.createElement('button'); b.className='chip'+(active?' active':''); b.textContent=text; b.onclick=onClick; return b;
-}
-function renderChips(){
- const dc=document.getElementById('depositChips'); dc.innerHTML='';
- deposits.forEach(d=>dc.appendChild(chip(`${d} USDT`, state.deposit===d, ()=>{state.deposit=d; render();})));
- document.getElementById('depositLabel').textContent = `${state.deposit} USDT`;
- const ec=document.getElementById('exchangeChips'); ec.innerHTML='';
- exchanges.forEach(ex=>ec.appendChild(chip(ex, state.exchanges.includes(ex), ()=>{state.exchanges = state.exchanges.includes(ex) ? state.exchanges.filter(x=>x!==ex) : [...state.exchanges, ex]; render();})));
- document.getElementById('exchangeCount').textContent = `${state.exchanges.length}/${exchanges.length}`;
- const tc=document.getElementById('typeChips'); tc.innerHTML='';
- types.forEach(t=>tc.appendChild(chip(t, state.type===t, ()=>{state.type=t; render();})));
-}
-function renderList(){
- const list=document.getElementById('list'); const data=visible(); list.innerHTML='';
- document.getElementById('resultCount').textContent = `${data.length} акций`;
- if(!data.length){ list.innerHTML='<div class="empty">Нет акций по выбранным фильтрам</div>'; return; }
- const best=data[0], bp=profit(best);
- document.getElementById('bestTitle').textContent = `${best.ex} • ${best.title}`;
- document.getElementById('bestProfit').textContent = `$${bp[0]}–$${bp[1]}`;
- data.forEach(p=>{
-   const pr=profit(p);
-   const el=document.createElement('article'); el.className='card';
-   el.innerHTML=`<div class="exLogo">${p.logo}</div><div><div class="meta">${p.ex} • ${p.type}</div><h3>${p.title}</h3><p>Вложить: ${p.invest}</p><p class="profit">Потенциал $${pr[0]} – $${pr[1]}</p></div><div class="score">${p.score}<small>/100</small></div><div class="tags"><span class="tag">ROI ${p.roi[0]}%–${p.roi[1]}%</span><span class="tag">до конца ${p.days} дн.</span><span class="tag">мин. ${p.min} USDT</span></div><button class="openBtn">Подробнее / открыть биржу</button>`;
-   el.querySelector('.openBtn').onclick=()=>showDetails(p, pr);
-   el.onclick=(e)=>{ if(!e.target.classList.contains('openBtn')) showDetails(p, pr); };
-   list.appendChild(el);
- });
-}
-function showDetails(p, pr){
- const c=document.getElementById('detailsContent');
- c.innerHTML=`<span class="badge">${p.ex} • ${p.type}</span><h2>${p.title}</h2><p>Оценка выгодности: <b style="color:var(--green)">${p.score}/100</b></p><div class="detailGrid"><div><span>Что вложить</span><b>${p.invest}</b></div><div><span>Мой депозит</span><b>${state.deposit} USDT</b></div><div><span>Потенциал</span><b>$${pr[0]} – $${pr[1]}</b></div><div><span>ROI</span><b>${p.roi[0]}% – ${p.roi[1]}%</b></div><div><span>До конца</span><b>${p.days} дн.</b></div></div><button class="openBtn" onclick="window.open('${p.url}','_blank')">Открыть ${p.ex}</button>`;
- document.getElementById('details').classList.remove('hidden');
-}
-document.getElementById('closeDetails').onclick=()=>document.getElementById('details').classList.add('hidden');
-document.getElementById('settingsBtn').onclick=()=>alert('Настройки уже сверху: выбери депозит, биржи и тип акции. Отдельные страницы убраны.');
-function render(){ renderChips(); renderList(); }
-render();
+let state={deposit:50,selected:new Set(['binance','bybit','okx','kucoin']),type:'Все',sort:'score'};
+const $=s=>document.querySelector(s);const $$=s=>document.querySelectorAll(s);
+function scaled(o){const k=state.deposit/50;return [Math.round(o.base[0]*k),Math.round(o.base[1]*k)]}
+function filtered(){let list=offers.filter(o=>state.selected.has(o.ex)&&(state.type==='Все'||o.type===state.type));return list.sort((a,b)=>state.sort==='score'?b.score-a.score:scaled(b)[1]-scaled(a)[1])}
+function renderDeposits(){const box=$('#depositChips');box.innerHTML=deposits.map(d=>`<button class="chip ${state.deposit===d?'active darktext':''}" data-dep="${d}">${d}<br><small>USDT</small></button>`).join('')+`<button class="chip" id="ownDep">Свой</button>`;$('#depositLabel').textContent=state.deposit+' USDT';box.querySelectorAll('[data-dep]').forEach(b=>b.onclick=()=>{state.deposit=+b.dataset.dep;render()});$('#ownDep').onclick=()=>openDepositSheet()}
+function renderExchanges(){const box=$('#exchangeChips');box.innerHTML=exchanges.slice(0,4).map(e=>exChip(e)).join('')+`<button class="chip" id="moreEx">+${exchanges.length-4} ⌄</button>`;$('#exchangeCount').textContent=`${state.selected.size} из ${exchanges.length}`;box.querySelectorAll('[data-ex]').forEach(b=>b.onclick=()=>toggleExchange(b.dataset.ex));$('#moreEx').onclick=openExchangeSheet}
+function exChip(e){const active=state.selected.has(e.id);return `<button class="chip ${active?'active darktext':''}" data-ex="${e.id}"><span class="mini" style="background:${e.color}">${e.logo}</span>${e.name}${active?'<span class="check">✓</span>':''}</button>`}
+function toggleExchange(id){state.selected.has(id)?state.selected.delete(id):state.selected.add(id);if(state.selected.size===0)state.selected.add(id);render()}
+function renderTypes(){const box=$('#typeChips');box.innerHTML=types.slice(0,4).map(t=>`<button class="chip ${state.type===t?'active darktext':''}" data-type="${t}">${t}</button>`).join('')+`<button class="chip" id="moreTypes">Ещё ⌄</button>`;$('#typeLabel').textContent=state.type;box.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{state.type=b.dataset.type;render()});$('#moreTypes').onclick=openTypeSheet}
+function renderOffers(){const list=filtered();$('#bestCard').innerHTML=list[0]?bestHtml(list[0]):'<div class="empty">Нет акций по выбранным фильтрам</div>';$('#offers').innerHTML=list.map(offerHtml).join('');$$('.offer').forEach(el=>el.onclick=()=>openOfferSheet(offers.find(o=>o.id==el.dataset.id)));}
+function bestHtml(o){const ex=exchanges.find(e=>e.id===o.ex);const p=scaled(o);return `<div><small>Лучший вариант</small><h3>${ex.name} • ${o.title}</h3></div><div class="profit">$${p[0]}–$${p[1]}</div>`}
+function offerHtml(o){const ex=exchanges.find(e=>e.id===o.ex);const p=scaled(o);return `<article class="offer" data-id="${o.id}"><div class="ex-logo" style="background:${ex.color}">${ex.logo}</div><div><div class="meta"><span class="exchange">${ex.name}</span> · ${o.type}</div><h3>${o.title}</h3><span class="tag">${o.type}</span><div class="stats"><div class="stat"><b>Вложить</b>${o.stake}</div><div class="stat"><b>Потенциал</b><span>$${p[0]} – $${p[1]}</span></div><div class="stat"><b>ROI</b><span>${o.roi[0]}% – ${o.roi[1]}%</span></div></div></div><div class="score"><div>${o.score}<small>/100</small></div></div></article>`}
+function openSheet(title,body){$('#sheetTitle').textContent=title;$('#sheetBody').innerHTML=body;$('#sheet').classList.add('open');$('#sheet').setAttribute('aria-hidden','false')}
+function closeSheet(){$('#sheet').classList.remove('open');$('#sheet').setAttribute('aria-hidden','true')}
+function openExchangeSheet(){openSheet('Выбери биржи',`<div class="settings-grid">${exchanges.map(e=>`<div class="setting-line" data-ex-line="${e.id}"><b>${e.name}</b><span class="toggle ${state.selected.has(e.id)?'on':''}"></span></div>`).join('')}</div>`);$$('[data-ex-line]').forEach(x=>x.onclick=()=>{toggleExchange(x.dataset.exLine);openExchangeSheet()})}
+function openTypeSheet(){openSheet('Тип акции',`<div class="settings-grid">${types.map(t=>`<div class="setting-line" data-type-line="${t}"><b>${t}</b><span class="toggle ${state.type===t?'on':''}"></span></div>`).join('')}</div>`);$$('[data-type-line]').forEach(x=>x.onclick=()=>{state.type=x.dataset.typeLine;render();closeSheet()})}
+function openDepositSheet(){openSheet('Мой депозит',`<div class="settings-grid">${deposits.map(d=>`<div class="setting-line" data-dep-line="${d}"><b>${d} USDT</b><span class="toggle ${state.deposit===d?'on':''}"></span></div>`).join('')}<div class="setting-line" id="depCustom"><b>Свой депозит</b><span>✎</span></div></div>`);$$('[data-dep-line]').forEach(x=>x.onclick=()=>{state.deposit=+x.dataset.depLine;render();closeSheet()});$('#depCustom').onclick=()=>{const v=prompt('Введите депозит USDT',state.deposit);if(v&&Number(v)>0){state.deposit=Math.round(Number(v));render();closeSheet()}}}
+function openOfferSheet(o){const ex=exchanges.find(e=>e.id===o.ex);const p=scaled(o);openSheet(o.title,`<div class="settings-grid"><div class="setting-line"><b>Биржа</b><span>${ex.name}</span></div><div class="setting-line"><b>Тип</b><span>${o.type}</span></div><div class="setting-line"><b>Вложить</b><span>${o.stake}</span></div><div class="setting-line"><b>Потенциал</b><span>$${p[0]} – $${p[1]}</span></div><div class="setting-line"><b>ROI</b><span>${o.roi[0]}% – ${o.roi[1]}%</span></div><div class="setting-line"><b>AI Score</b><span>${o.score}/100</span></div><button class="close-btn" onclick="location.href='${o.url}'">Открыть ${ex.name}</button></div>`)}
+function openSettings(){openSheet('Настройки',`<div class="settings-grid"><div class="setting-line"><b>Показывать только выбранные биржи</b><span class="toggle on"></span></div><div class="setting-line"><b>Сортировка по потенциалу</b><span class="toggle on"></span></div><div class="setting-line"><b>Уведомления о новых акциях</b><span class="toggle"></span></div><div class="setting-line"><b>Версия</b><span>v3 light</span></div></div>`)}
+function render(){renderDeposits();renderExchanges();renderTypes();renderOffers()}
+$('#settingsBtn').onclick=openSettings;$('#exchangeMore').onclick=openExchangeSheet;$('#typeMore').onclick=openTypeSheet;$('#customDepositBtn').onclick=openDepositSheet;$('#closeSheet').onclick=closeSheet;$('.sheet-backdrop').onclick=closeSheet;$('#sortBtn').onclick=()=>{state.sort=state.sort==='score'?'potential':'score';$('#sortBtn').textContent=state.sort==='score'?'↗ По потенциалу ⌄':'★ По score ⌄';renderOffers()};['favNav','notifNav','statsNav'].forEach(id=>$('#'+id).onclick=()=>openSheet(id==='favNav'?'Избранное':id==='notifNav'?'Уведомления':'Статистика',`<div class="empty">Будет добавлено в следующей версии. Сейчас главный фокус — одна страница с акциями.</div>`));render();

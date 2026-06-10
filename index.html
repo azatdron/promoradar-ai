@@ -3,71 +3,75 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f7faf7" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="PromoRadar AI" />
   <title>PromoRadar AI</title>
-  <meta name="theme-color" content="#06140f" />
   <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon.svg" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="app">
-    <header class="top">
-      <div>
-        <h1>PromoRadar AI</h1>
-        <p>Акции топ-бирж в одном месте</p>
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"><span></span></div>
+        <div>
+          <h1>PromoRadar AI</h1>
+          <p>Акции топ-бирж в одном месте</p>
+        </div>
       </div>
-      <button id="settingsBtn" class="iconBtn">⚙️</button>
+      <button class="icon-btn" id="settingsBtn" aria-label="Настройки">⚙️</button>
     </header>
 
-    <section class="panel hero">
-      <div>
-        <span class="badge">⚡ AI Profit Score</span>
-        <h2>Лучшие акции сейчас</h2>
-        <p>Выбери депозит и биржи — приложение покажет потенциальный заработок.</p>
+    <section class="filters card">
+      <div class="row-title">
+        <h2>Мой депозит</h2>
+        <button class="value-btn" id="customDepositBtn"><span id="depositLabel">50 USDT</span>⌄</button>
       </div>
-      <div class="logo">◎</div>
+      <div class="chips deposit-chips" id="depositChips"></div>
+      <div class="divider"></div>
+
+      <div class="row-title">
+        <h2>Биржи</h2>
+        <button class="value-btn" id="exchangeMore"><span id="exchangeCount">4 из 7</span>⌄</button>
+      </div>
+      <div class="chips exchange-chips" id="exchangeChips"></div>
+      <div class="divider"></div>
+
+      <div class="row-title">
+        <h2>Тип акций</h2>
+        <button class="value-btn" id="typeMore"><span id="typeLabel">Все</span>⌄</button>
+      </div>
+      <div class="chips type-chips" id="typeChips"></div>
     </section>
 
-    <section class="block">
-      <div class="rowTitle">
-        <h3>Мой депозит</h3>
-        <span id="depositLabel">100 USDT</span>
-      </div>
-      <div class="chips" id="depositChips"></div>
+    <section class="section-head">
+      <h2>Лучшие акции сейчас</h2>
+      <button class="sort-btn" id="sortBtn">↗ По потенциалу ⌄</button>
     </section>
 
-    <section class="block">
-      <div class="rowTitle">
-        <h3>Биржи</h3>
-        <span id="exchangeCount"></span>
-      </div>
-      <div class="chips wrap" id="exchangeChips"></div>
-    </section>
-
-    <section class="block stickyFilters">
-      <div class="rowTitle">
-        <h3>Тип акции</h3>
-        <span id="resultCount"></span>
-      </div>
-      <div class="chips scroll" id="typeChips"></div>
-    </section>
-
-    <section class="summary panel">
-      <div>
-        <p>Лучший вариант</p>
-        <h3 id="bestTitle">—</h3>
-      </div>
-      <strong id="bestProfit">—</strong>
-    </section>
-
-    <section id="list" class="list"></section>
+    <section id="bestCard" class="best card"></section>
+    <section id="offers" class="offers"></section>
   </main>
 
-  <div id="details" class="sheet hidden">
-    <div class="sheetCard">
-      <button id="closeDetails" class="close">×</button>
-      <div id="detailsContent"></div>
+  <div class="sheet" id="sheet" aria-hidden="true">
+    <div class="sheet-backdrop"></div>
+    <div class="sheet-panel">
+      <div class="sheet-handle"></div>
+      <h3 id="sheetTitle">Настройки</h3>
+      <div id="sheetBody"></div>
+      <button class="close-btn" id="closeSheet">Готово</button>
     </div>
   </div>
+
+  <nav class="bottom-nav">
+    <button class="active">◎<span>Главная</span></button>
+    <button id="favNav">☆<span>Избранное</span></button>
+    <button id="notifNav">🔔<span>Уведомления</span></button>
+    <button id="statsNav">▥<span>Статистика</span></button>
+  </nav>
 
   <script src="app.js"></script>
 </body>
