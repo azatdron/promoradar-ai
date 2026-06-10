@@ -2,63 +2,77 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>PromoRadar AI</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="style.css" />
-  <meta name="theme-color" content="#f7faf8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f6fbf7" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="PromoRadar AI" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="stylesheet" href="style.css" />
+  <title>PromoRadar AI</title>
 </head>
 <body>
-  <main class="app">
+  <div class="app">
     <header class="topbar">
-      <div class="brand">
-        <div class="logo"><span></span></div>
-        <div>
-          <h1>PromoRadar AI</h1>
-          <p>Акции топ-бирж в одном месте</p>
-        </div>
+      <div class="brandMark" aria-hidden="true">
+        <span class="ring r1"></span><span class="ring r2"></span><span class="dot"></span>
       </div>
-      <button class="settings" id="settingsBtn">⚙️</button>
+      <div class="brandText">
+        <h1>PromoRadar AI</h1>
+        <p>Акции топ-бирж в одном месте</p>
+      </div>
+      <button class="settingsBtn" id="settingsBtn" aria-label="Настройки">⚙️</button>
     </header>
 
-    <section class="filters-card">
-      <div class="filter-head">
-        <h2>Мой депозит</h2>
-        <button class="mini-select" id="depositLabel">50 USDT⌄</button>
-      </div>
-      <div class="chips deposit" id="depositChips"></div>
-      <div class="line"></div>
-      <div class="filter-head">
-        <h2>Биржи</h2>
-        <button class="mini-select" id="exchangeCount">4 из 7⌄</button>
-      </div>
-      <div class="chips exchanges" id="exchangeChips"></div>
-      <div class="line"></div>
-      <div class="filter-head">
-        <h2>Тип акций</h2>
-        <button class="mini-select" id="typeLabel">Все⌄</button>
-      </div>
-      <div class="chips types" id="typeChips"></div>
-    </section>
+    <main>
+      <section class="controlPanel">
+        <div class="filterBlock compact">
+          <div class="rowTitle"><b>Депозит</b><span id="depositLabel">100 USDT</span></div>
+          <div class="chipRow" id="depositChips"></div>
+        </div>
 
-    <section class="section-title">
-      <h2>Лучшие акции сейчас</h2>
-      <button class="sort">↗ По потенциалу⌄</button>
-    </section>
+        <div class="filterBlock compact">
+          <div class="rowTitle"><b>Биржи</b><span id="exchangeCount">7 из 7</span></div>
+          <div class="chipRow exchangeRow" id="exchangeChips"></div>
+        </div>
 
-    <section class="best-card" id="bestCard"></section>
-    <section class="offers" id="offers"></section>
-  </main>
+        <div class="filterBlock compact last">
+          <div class="rowTitle"><b>Тип</b><span id="typeLabel">Все</span></div>
+          <div class="chipRow typeRow" id="typeChips"></div>
+        </div>
+      </section>
 
-  <nav class="bottom-nav">
-    <button class="active">◎<span>Главная</span></button>
-    <button>☆<span>Избранное</span></button>
-    <button>🔔<span>Уведомления</span></button>
-    <button>▥<span>Статистика</span></button>
-  </nav>
+      <section class="summaryLine">
+        <div>
+          <h2>Лучшие акции сейчас</h2>
+          <p id="resultMeta">Сортировка по потенциалу</p>
+        </div>
+        <button class="sortBtn" id="sortBtn">↗ По выгоде</button>
+      </section>
+
+      <section class="bestCard" id="bestCard"></section>
+      <section class="offers" id="offers"></section>
+    </main>
+  </div>
+
+  <dialog class="settingsPanel" id="settingsPanel">
+    <div class="sheetHead">
+      <strong>Настройки</strong>
+      <button id="closeSettings">×</button>
+    </div>
+    <div class="settingItem">
+      <span>Уведомления</span>
+      <label class="switch"><input type="checkbox" checked><i></i></label>
+    </div>
+    <div class="settingItem">
+      <span>Показывать только доступные</span>
+      <label class="switch"><input type="checkbox" id="availableOnly"><i></i></label>
+    </div>
+    <div class="settingNote">
+      v5 compact • одна страница • данные пока локальные. Следующий шаг — реальные API/парсинг акций бирж.
+    </div>
+  </dialog>
 
   <script src="app.js"></script>
 </body>
