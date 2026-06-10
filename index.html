@@ -2,17 +2,73 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#07110d" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="PromoRadar AI" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>PromoRadar AI</title>
+  <meta name="theme-color" content="#06140f" />
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="style.css" />
-  <title>PromoRadar AI</title>
 </head>
 <body>
-  <div id="app"></div>
+  <main class="app">
+    <header class="top">
+      <div>
+        <h1>PromoRadar AI</h1>
+        <p>Акции топ-бирж в одном месте</p>
+      </div>
+      <button id="settingsBtn" class="iconBtn">⚙️</button>
+    </header>
+
+    <section class="panel hero">
+      <div>
+        <span class="badge">⚡ AI Profit Score</span>
+        <h2>Лучшие акции сейчас</h2>
+        <p>Выбери депозит и биржи — приложение покажет потенциальный заработок.</p>
+      </div>
+      <div class="logo">◎</div>
+    </section>
+
+    <section class="block">
+      <div class="rowTitle">
+        <h3>Мой депозит</h3>
+        <span id="depositLabel">100 USDT</span>
+      </div>
+      <div class="chips" id="depositChips"></div>
+    </section>
+
+    <section class="block">
+      <div class="rowTitle">
+        <h3>Биржи</h3>
+        <span id="exchangeCount"></span>
+      </div>
+      <div class="chips wrap" id="exchangeChips"></div>
+    </section>
+
+    <section class="block stickyFilters">
+      <div class="rowTitle">
+        <h3>Тип акции</h3>
+        <span id="resultCount"></span>
+      </div>
+      <div class="chips scroll" id="typeChips"></div>
+    </section>
+
+    <section class="summary panel">
+      <div>
+        <p>Лучший вариант</p>
+        <h3 id="bestTitle">—</h3>
+      </div>
+      <strong id="bestProfit">—</strong>
+    </section>
+
+    <section id="list" class="list"></section>
+  </main>
+
+  <div id="details" class="sheet hidden">
+    <div class="sheetCard">
+      <button id="closeDetails" class="close">×</button>
+      <div id="detailsContent"></div>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>
