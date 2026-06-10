@@ -1,15 +1,78 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>PromoRadar AI</title>
-  <meta name="theme-color" content="#f4faf6" />
+  <meta name="theme-color" content="#eef8f1" />
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="app"></div>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand-icon" aria-label="PromoRadar AI logo">
+        <svg viewBox="0 0 64 64" role="img">
+          <rect width="64" height="64" rx="16" fill="#07140e"/>
+          <circle cx="32" cy="32" r="18" fill="none" stroke="#21a957" stroke-width="4"/>
+          <circle cx="32" cy="32" r="8" fill="none" stroke="#21a957" stroke-width="4"/>
+          <path d="M32 8v10M32 46v10M8 32h10M46 32h10" stroke="#21a957" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="18" cy="38" r="6" fill="#a6f3c0" stroke="#21a957" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="brand-copy">
+        <h1>PromoRadar AI</h1>
+        <p>Акции топ-бирж в одном месте</p>
+      </div>
+      <button class="icon-btn" id="settingsBtn" aria-label="Настройки">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Z" stroke="currentColor" stroke-width="2"/>
+          <path d="M19.4 13.5c.1-.5.1-1 .1-1.5s0-1-.1-1.5l2-1.5-2-3.4-2.4 1a8 8 0 0 0-2.6-1.5L14 2.5h-4l-.4 2.6A8 8 0 0 0 7 6.6l-2.4-1-2 3.4 2 1.5c-.1.5-.1 1-.1 1.5s0 1 .1 1.5l-2 1.5 2 3.4 2.4-1a8 8 0 0 0 2.6 1.5l.4 2.6h4l.4-2.6a8 8 0 0 0 2.6-1.5l2.4 1 2-3.4-2-1.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </header>
+
+    <section class="filter-card">
+      <div class="filter-row">
+        <div class="row-head"><b>Мой депозит</b><span id="depositLabel">1000 USDT</span></div>
+        <div class="chips deposit" id="depositChips"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="filter-row">
+        <div class="row-head"><b>Биржи</b><button id="exchangeToggle" class="head-btn">4 из 7⌄</button></div>
+        <div class="chips exchanges" id="exchangeChips"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="filter-row">
+        <div class="row-head"><b>Тип акций</b><span id="typeLabel">Все⌄</span></div>
+        <div class="chips types" id="typeChips"></div>
+      </div>
+    </section>
+
+    <section class="list-head">
+      <div>
+        <h2>Лучшие акции сейчас</h2>
+        <p id="countLabel">0 акций • по потенциалу</p>
+      </div>
+      <button class="sort-btn" id="sortBtn">↗ По потенциалу⌄</button>
+    </section>
+
+    <section class="best-card" id="bestCard" hidden></section>
+    <section class="cards" id="cards"></section>
+    <section class="empty" id="emptyState" hidden>
+      <b>Проверенных активных акций не найдено</b>
+      <span>Приложение не будет показывать старые или сомнительные предложения.</span>
+    </section>
+  </main>
+
+  <div class="sheet-backdrop" id="sheetBackdrop" hidden></div>
+  <aside class="sheet" id="settingsSheet" aria-hidden="true">
+    <div class="sheet-head"><h3>Настройки</h3><button id="closeSettings" aria-label="Закрыть">×</button></div>
+    <label class="setting-line"><span>Показывать только проверенные активные акции</span><input id="verifiedOnly" type="checkbox" checked /></label>
+    <label class="setting-line"><span>Скрывать завершённые акции</span><input id="hideEnded" type="checkbox" checked /></label>
+    <p class="hint">Ссылки открывают раздел биржи. Прямой переход в приложение возможен только если сама биржа поддерживает стабильный deep-link.</p>
+  </aside>
+
   <script src="app.js"></script>
 </body>
 </html>
