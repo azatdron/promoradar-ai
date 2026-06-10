@@ -3,74 +3,61 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#f7faf7" />
+  <title>PromoRadar AI</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#f7faf8" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="PromoRadar AI" />
-  <title>PromoRadar AI</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icon.svg" />
-  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="app">
     <header class="topbar">
       <div class="brand">
-        <div class="logo" aria-hidden="true"><span></span></div>
+        <div class="logo"><span></span></div>
         <div>
           <h1>PromoRadar AI</h1>
           <p>Акции топ-бирж в одном месте</p>
         </div>
       </div>
-      <button class="icon-btn" id="settingsBtn" aria-label="Настройки">⚙️</button>
+      <button class="settings" id="settingsBtn">⚙️</button>
     </header>
 
-    <section class="filters card">
-      <div class="row-title">
+    <section class="filters-card">
+      <div class="filter-head">
         <h2>Мой депозит</h2>
-        <button class="value-btn" id="customDepositBtn"><span id="depositLabel">50 USDT</span>⌄</button>
+        <button class="mini-select" id="depositLabel">50 USDT⌄</button>
       </div>
-      <div class="chips deposit-chips" id="depositChips"></div>
-      <div class="divider"></div>
-
-      <div class="row-title">
+      <div class="chips deposit" id="depositChips"></div>
+      <div class="line"></div>
+      <div class="filter-head">
         <h2>Биржи</h2>
-        <button class="value-btn" id="exchangeMore"><span id="exchangeCount">4 из 7</span>⌄</button>
+        <button class="mini-select" id="exchangeCount">4 из 7⌄</button>
       </div>
-      <div class="chips exchange-chips" id="exchangeChips"></div>
-      <div class="divider"></div>
-
-      <div class="row-title">
+      <div class="chips exchanges" id="exchangeChips"></div>
+      <div class="line"></div>
+      <div class="filter-head">
         <h2>Тип акций</h2>
-        <button class="value-btn" id="typeMore"><span id="typeLabel">Все</span>⌄</button>
+        <button class="mini-select" id="typeLabel">Все⌄</button>
       </div>
-      <div class="chips type-chips" id="typeChips"></div>
+      <div class="chips types" id="typeChips"></div>
     </section>
 
-    <section class="section-head">
+    <section class="section-title">
       <h2>Лучшие акции сейчас</h2>
-      <button class="sort-btn" id="sortBtn">↗ По потенциалу ⌄</button>
+      <button class="sort">↗ По потенциалу⌄</button>
     </section>
 
-    <section id="bestCard" class="best card"></section>
-    <section id="offers" class="offers"></section>
+    <section class="best-card" id="bestCard"></section>
+    <section class="offers" id="offers"></section>
   </main>
-
-  <div class="sheet" id="sheet" aria-hidden="true">
-    <div class="sheet-backdrop"></div>
-    <div class="sheet-panel">
-      <div class="sheet-handle"></div>
-      <h3 id="sheetTitle">Настройки</h3>
-      <div id="sheetBody"></div>
-      <button class="close-btn" id="closeSheet">Готово</button>
-    </div>
-  </div>
 
   <nav class="bottom-nav">
     <button class="active">◎<span>Главная</span></button>
-    <button id="favNav">☆<span>Избранное</span></button>
-    <button id="notifNav">🔔<span>Уведомления</span></button>
-    <button id="statsNav">▥<span>Статистика</span></button>
+    <button>☆<span>Избранное</span></button>
+    <button>🔔<span>Уведомления</span></button>
+    <button>▥<span>Статистика</span></button>
   </nav>
 
   <script src="app.js"></script>
