@@ -28,7 +28,7 @@ let offers=[
 ];
 const app=document.getElementById('app');
 const exOrder=['Binance','Bybit','OKX','KuCoin','Gate','MEXC','Bitget','BingX'];
-const sortModes=[['today','🔥 Сегодня'],['potential','💰 Потенциал'],['roi','📈 ROI'],['end','⏳ Скоро закончится'],['exchange','🏦 Биржа']];
+const sortModes=[['today','🔥 Сегодня'],['potential','💰 Потенциал'],['roi','📈 ROI'],['end','⏳ Осталось'],['exchange','🏦 Биржа']];
 let deposit=localStorage.prDeposit||'50';
 let stored;try{stored=JSON.parse(localStorage.prExchanges||'null')}catch(e){}
 let exchanges=Array.isArray(stored)?stored.filter(x=>exOrder.includes(x)):['Binance','Bybit','OKX','KuCoin'];
@@ -71,7 +71,7 @@ function profitFor(o){
 function maxProfit(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums.at(-1)||0}
 function roiMax(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums.at(-1)||0}
 function sortLabel(){return sortModes.find(x=>x[0]===sort)?.[1]||'По потенциалу'}
-function sorted(list){return [...list].sort((a,b)=>{if(sort==='today') return a.end-b.end; if(sort==='roi')return roiMax(b.roi)-roiMax(a.roi);if(sort==='end')return a.end-b.end;if(sort==='exchange')return a.ex.localeCompare(b.ex,'ru');return maxProfit(profitFor(b))-maxProfit(profitFor(a));})}
+function sorted(list){return [...list].sort((a,b)=>{if(sort==='today') return (b.score||0)-(a.score||0); if(sort==='roi')return roiMax(b.roi)-roiMax(a.roi);if(sort==='end')return (b.end||0)-(a.end||0);if(sort==='exchange')return exOrder.indexOf(a.ex)-exOrder.indexOf(b.ex);return maxProfit(profitFor(b))-maxProfit(profitFor(a));})}
 function logoImg(ex){
  const custom={
   OKX:'<svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#050505"/><rect x="10" y="10" width="10" height="10" fill="#fff"/><rect x="28" y="10" width="10" height="10" fill="#fff"/><rect x="19" y="19" width="10" height="10" fill="#fff"/><rect x="10" y="28" width="10" height="10" fill="#fff"/><rect x="28" y="28" width="10" height="10" fill="#fff"/></svg>',
@@ -96,8 +96,7 @@ function render(){const now=Date.now();const filtered=sorted(offers.filter(o=>ex
 </section>
 <div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} акций · ${sortLabel().toLowerCase()}</span></div><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div>
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
-<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам</div>'}</section><div class="sourceNote"><b>Данные обновляются свайпом вниз</b><span>${liveStatus==='static'?'Если live-источник недоступен, остаётся последняя локальная проверка.':'Live-данные обновлены через Vercel API.'}</span></div>
-</main>${settingsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
+<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам</div>'}</section></main>${settingsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
 function endLabel(o){const live=leftFromEndAt(o.endAt); return live || o.left || (o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—')}
 function displayLine(o){return `${o.coin} • ${o.type}`}
 function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);return `<article class="offer v19card" data-card="${id}">
