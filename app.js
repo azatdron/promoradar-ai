@@ -45,7 +45,12 @@ function save(){localStorage.prDeposit=deposit;localStorage.prExchanges=JSON.str
 
 let liveStatus='static';
 function parseMoneyRange(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums.length>=2?nums:[0,0]}
-function fmtMoney(n){if(!isFinite(n)||n<=0)return '$0'; if(n<1)return '<$1'; return '$'+Math.round(n).toLocaleString('en-US')}
+function fmtMoney(n){
+ if(!isFinite(n)||n<=0)return '$0.00';
+ if(n<1)return '$'+n.toFixed(2);
+ if(n<10)return '$'+n.toFixed(2).replace(/\.00$/,'');
+ return '$'+Math.round(n).toLocaleString('en-US')
+}
 function leftFromEndAt(endAt){
  if(!endAt)return null; const diff=new Date(endAt).getTime()-Date.now(); if(diff<=0)return 'завершено';
  const d=Math.floor(diff/86400000); const h=Math.floor((diff%86400000)/3600000); return `${d} д. ${h} ч.`;
@@ -106,9 +111,11 @@ function profitFor(o){
 }
 function calcLine(o){
  const c=rewardCalc(o); if(!c) return '';
- if(c.kind==='pool'){return `<div class="calcMini"><span>Доля: ${(c.share*100).toFixed(5)}%</span><span>Награда: ≈${fmtMoney(c.est)}</span></div>`}
- if(c.kind==='apr'){return `<div class="calcMini"><span>APR: ${Math.round(c.apr)}%</span><span>Награда: ≈${fmtMoney(c.est)}</span></div>`}
- return `<div class="calcMini soft"><span>Оценка</span><span>Награда: ≈${fmtMoney(c.est)}</span></div>`
+ const dep=`Депозит: $${Number(deposit).toLocaleString('en-US')}`;
+ const reward=`Награда: ≈${fmtMoney(c.est)}`;
+ if(c.kind==='pool'){return `<div class="calcMini"><span>${dep}</span><span>Доля: ${(c.share*100).toFixed(5)}%</span><span>${reward}</span></div>`}
+ if(c.kind==='apr'){return `<div class="calcMini"><span>${dep}</span><span>${reward}</span><span>APR скрыт в расчёте</span></div>`}
+ return `<div class="calcMini soft"><span>${dep}</span><span>${reward}</span><span>Оценка</span></div>`
 }
 function maxProfit(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums.at(-1)||0}
 function roiMax(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums.at(-1)||0}
@@ -138,7 +145,7 @@ function render(){const now=Date.now();const filtered=sorted(offers.filter(o=>ex
 </section>
 <div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} акций · ${sortLabel().toLowerCase()}</span></div><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div>
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
-<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам</div>'}</section><div class="liveNote"><b>Live API v26 · Reward Calc</b><span>Свайп вниз обновляет страницы/API бирж. Потенциал считается от APR/TVL/пула, если источник отдаёт эти данные; иначе карточка помечается как оценка.</span></div></main><div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
+<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам</div>'}</section><div class="liveNote"><b>Live API v27 · Reward Details</b><span>Свайп вниз обновляет страницы/API бирж. Потенциал показывает ожидаемую награду от вашего депозита. APR скрыт в деталях расчёта, чтобы не путать с ROI.</span></div></main><div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
 function endLabel(o){const live=leftFromEndAt(o.endAt); return live || o.left || (o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—')}
 function displayLine(o){return `${o.coin} • ${o.type}`}
 function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);return `<article class="offer v19card" data-card="${id}">

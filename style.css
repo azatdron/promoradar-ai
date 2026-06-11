@@ -184,5 +184,12 @@
 .calcMini span{flex:0 0 auto;background:#f2faf5;border:1px solid #d8f0e1;color:#167d42;border-radius:999px;padding:4px 8px;font-size:10.2px;font-weight:850;white-space:nowrap}
 .calcMini.soft span{background:#f7f8f8;border-color:#e7ece9;color:#6c7a88}
 .v19card .metricGrid{margin-top:9px!important}
-.liveNote b::after{content:' · v26'}
+.liveNote b::after{content:' · v27'}
 @media(max-width:390px){.calcMini span{font-size:9.5px;padding:4px 7px}.v19card .metricGrid b{font-size:9.8px!important}}
+
+/* v27 reward display fix */
+.calcMini{flex-wrap:wrap;gap:5px!important;margin-top:7px!important}
+.calcMini span{font-size:9.8px!important;padding:3px 7px!important}
+.v19card .metricGrid .green{font-weight:900!important}
+.v19card .metricGrid b{overflow:visible!important;text-overflow:clip!important}
+@media(max-width:390px){.calcMini span{font-size:9px!important;padding:3px 6px!important}}
