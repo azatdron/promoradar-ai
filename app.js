@@ -80,16 +80,24 @@ function render(){const filtered=sorted(offers.filter(o=>exchanges.includes(o.ex
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
 <section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет акций по выбранным фильтрам</div>'}</section>
 </main>${settingsModal()}<div id="toast" class="toast"></div>`;bind()}
+function endLabel(o){return o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—'}
 function displayLine(o){return `${o.coin} • ${o.type}`}
-function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);return `<article class="offer" data-card="${id}">
- <div class="brandLogo ${o.ex.toLowerCase()}">${logoImg(o.ex)}</div>
- <div class="info">
-   <div class="brandLine"><span class="brand" style="color:${brandColor[o.ex]||'#17994c'}">${o.ex}</span><button class="fav ${is?'on':''}" data-fav="${id}" title="В избранное">☆</button></div>
-   <h3>${displayLine(o)}</h3>
-   <div class="grid"><div><small>Вложить</small><b>${o.stake}</b></div><div><small>Потенциал</small><b class="green">${profitFor(o)}</b></div><div><small>ROI</small><b>${o.roi}</b></div></div>
-   <div class="actionRow">${o.actions.map(a=>`<button class="action" data-open="${o.ex}|${a}">${a}</button>`).join('')}</div>
+function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);return `<article class="offer v19card" data-card="${id}">
+ <div class="cardTop">
+   <div class="brandLogo ${o.ex.toLowerCase()}">${logoImg(o.ex)}</div>
+   <div class="cardTitle">
+     <div class="brandLine"><span class="brand" style="color:${brandColor[o.ex]||'#17994c'}">${o.ex}</span><button class="fav ${is?'on':''}" data-fav="${id}" title="В избранное">☆</button></div>
+     <h3>${displayLine(o)}</h3>
+   </div>
+   <div class="score"><b>${o.score}</b><small>/100</small></div>
  </div>
- <div class="score"><b>${o.score}</b><small>/100</small></div>
+ <div class="metricGrid">
+   <div><small>Вложить</small><b>${o.stake}</b></div>
+   <div><small>Потенциал</small><b class="green">${profitFor(o)}</b></div>
+   <div><small>ROI</small><b>${o.roi}</b></div>
+   <div><small>Осталось</small><b>${endLabel(o)}</b></div>
+ </div>
+ <div class="actionRow">${o.actions.map(a=>`<button class="action" data-open="${o.ex}|${a}">${a}</button>`).join('')}</div>
  </article>`}
 function settingsModal(){return `<div class="modal" id="settings"><div class="sheet"><div class="sheetHead"><h2>Настройки</h2><button data-close class="close">×</button></div><div class="sheetTitle">Показывать биржи</div><div class="sheetGrid">${exOrder.map(ex=>`<button class="sheetChip ${exchanges.includes(ex)?'on':''}" data-toggle-ex="${ex}"><span class="miniLogo ${ex.toLowerCase()}">${logoImg(ex)}</span>${ex}</button>`).join('')}</div><div class="setting">Избранные акции <span>В карточках ☆</span></div><div class="setting">Ссылки <span>Разделы бирж</span></div></div></div>`}
 function gearIcon(){return `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06A2 2 0 1 1 7.03 3.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15.4 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.2.36.5.68.9.9.34.2.72.3 1.1.3H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51.8Z"/></svg>`}

@@ -81,3 +81,60 @@
  .exRow.expanded{gap:6px!important}.chip.ex.logoOnly{width:29px!important;min-width:29px!important;max-width:29px!important;height:29px!important}.chip.ex.logoOnly .miniLogo{width:22px!important;height:22px!important;flex-basis:22px!important}
  .typeRow .chip{padding:0 10px!important;font-size:10px!important}
 }
+
+/* v19 card layout: logo + two title lines, metrics start under logo on full width */
+.offer.v19card{
+  display:block !important;
+  min-height:0 !important;
+  padding:12px 14px 11px !important;
+  overflow:hidden !important;
+}
+.v19card .cardTop{
+  display:grid;
+  grid-template-columns:54px minmax(0,1fr) 48px;
+  gap:10px;
+  align-items:center;
+}
+.v19card .brandLogo{
+  grid-column:1;
+  width:50px !important;
+  height:50px !important;
+  border-radius:14px !important;
+  align-self:start;
+}
+.v19card .brandLogo svg{width:50px!important;height:50px!important}
+.v19card .brandLogo img{max-width:43px!important;max-height:43px!important;border-radius:12px!important}
+.v19card .cardTitle{min-width:0;grid-column:2;align-self:center;padding-top:1px}
+.v19card .brandLine{margin:0 0 4px!important;display:flex;align-items:center;gap:8px}
+.v19card .brandLine .brand{font-size:19px!important;line-height:1!important;font-weight:900!important;letter-spacing:-.35px!important}
+.v19card .fav{width:24px!important;height:24px!important;font-size:17px!important;position:relative;top:0}
+.v19card h3{font-size:15.5px!important;line-height:1.08!important;margin:0!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.25px}
+.v19card .score{grid-column:3;justify-self:end;width:47px!important;height:47px!important;margin:0!important}
+.v19card .score b{font-size:17px!important}.v19card .score small{font-size:10px!important}
+.v19card .metricGrid{
+  margin-top:9px;
+  display:grid;
+  grid-template-columns:1.05fr 1.05fr .88fr .98fr;
+  gap:0;
+  width:100%;
+  padding-left:0;
+}
+.v19card .metricGrid>div{min-width:0;padding:0 8px;border-left:1px solid #dfeae4}
+.v19card .metricGrid>div:first-child{border-left:0;padding-left:0}
+.v19card .metricGrid small{display:block;font-size:9.8px;line-height:1.05;color:#748196;font-weight:800;margin-bottom:3px;white-space:nowrap}
+.v19card .metricGrid b{display:block;font-size:10.8px;line-height:1.08;font-weight:900;color:#0d1627;white-space:nowrap;overflow:visible;text-overflow:clip}
+.v19card .metricGrid .green{color:#17994c!important}
+.v19card .actionRow{margin-top:8px!important;display:flex!important;gap:7px!important;overflow-x:auto!important;flex-wrap:nowrap!important;scrollbar-width:none!important;padding-bottom:1px}
+.v19card .actionRow::-webkit-scrollbar{display:none}
+.v19card .action{flex:0 0 auto!important;height:25px!important;padding:0 12px!important;font-size:10.2px!important;border-radius:13px!important;white-space:nowrap!important}
+@media(max-width:390px){
+  .offer.v19card{padding:11px 12px 10px!important}
+  .v19card .cardTop{grid-template-columns:49px minmax(0,1fr) 43px;gap:8px}
+  .v19card .brandLogo{width:46px!important;height:46px!important}.v19card .brandLogo svg{width:46px!important;height:46px!important}.v19card .brandLogo img{max-width:39px!important;max-height:39px!important}
+  .v19card .brandLine .brand{font-size:18px!important}.v19card h3{font-size:14.6px!important}
+  .v19card .score{width:42px!important;height:42px!important}.v19card .score b{font-size:15.5px!important}.v19card .score small{font-size:9px!important}
+  .v19card .metricGrid{grid-template-columns:1.02fr 1fr .82fr .88fr;margin-top:8px}
+  .v19card .metricGrid>div{padding:0 5px}.v19card .metricGrid>div:first-child{padding-left:0}
+  .v19card .metricGrid small{font-size:8.8px}.v19card .metricGrid b{font-size:9.7px;letter-spacing:-.12px}
+  .v19card .action{padding:0 9px!important;font-size:9.6px!important;height:24px!important}
+}
