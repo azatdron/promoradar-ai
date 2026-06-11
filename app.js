@@ -3,7 +3,7 @@ const logos={
   Bybit:'https://assets.coingecko.com/markets/images/698/small/bybit_spot.png',
   Coinbase:'https://assets.coingecko.com/markets/images/23/small/Coinbase_Coin_Primary.png'
 };
-const brandColor={Binance:'#e2a700',Bybit:'#7357d8',OKX:'#111827',KuCoin:'#20a984',Coinbase:'#1f6bff',Gate:'#2675ff',MEXC:'#18a987',Bitget:'#00a6b8',BingX:'#2563eb'};
+const brandColor={Binance:'#e2a700',Bybit:'#7357d8',OKX:'#111827',KuCoin:'#20a984',#1f6bff',Gate:'#2675ff',MEXC:'#18a987',Bitget:'#00a6b8',BingX:'#2563eb'};
 const links={
   Binance:{Launchpool:'https://www.binance.com/en/launchpool',Megadrop:'https://www.binance.com/en/megadrop'},
   Bybit:{Launchpad:'https://www.bybit.com/en/trade/spot/launchpad',Launchpool:'https://www.bybit.com/en/trade/spot/launchpool'},
@@ -221,3 +221,5 @@ function initPullRefresh(){
 
 render();
 loadLive();
+
+/* v30 Real Pool Data placeholder update: ready for TVL/participants/source blocks */
