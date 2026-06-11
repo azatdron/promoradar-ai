@@ -1,4 +1,4 @@
-// PromoRadar AI live validation layer — v28 Real Validation
+// PromoRadar AI live validation layer — v29 Live Links + Validation
 // Goal: never show stale launch cards. An offer is active only if it is confirmed
 // on an official exchange page or in the curated validator below.
 
@@ -135,7 +135,7 @@ async function validateEndedOrActive({ id, ex, url, must = [], patch = {} }) {
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate=300');
   const out = {
-    source: 'multi-exchange-live-v28-real-validation',
+    source: 'multi-exchange-live-v29-live-links-validation',
     updatedAt: new Date().toISOString(),
     validationRule: 'Only official-page-confirmed active offers are shown. Stale demo offers are hidden.',
     offers: [],
