@@ -93,6 +93,9 @@ if(!Array.isArray(selectedTypes)||!selectedTypes.length) selectedTypes=['Все'
 let fav=JSON.parse(localStorage.prFav||'[]');
 let favoritesOnly=localStorage.prFavoritesOnly==='1';
 let isPro=localStorage.prPro==='1';
+let alerts=(()=>{try{return JSON.parse(localStorage.prAlerts||'null')||{}}catch(e){return {}}})();
+alerts={newOffers:true,ending24:true,ending6:false,highRoi:true,favoritesOnly:true,roiThreshold:15,...alerts};
+let notified=(()=>{try{return JSON.parse(localStorage.prNotified||'{}')}catch(e){return {}}})();
 const tg=window.Telegram?.WebApp||null;
 const tgUser=tg?.initDataUnsafe?.user||null;
 if(tg){try{tg.ready();tg.expand();}catch(e){}}
@@ -100,7 +103,7 @@ const freeExchange='KuCoin';
 let expanded=localStorage.prExpanded||'';
 let showAllEx=true;
 let sort=localStorage.prSort||'today';
-function save(){localStorage.prDeposit=deposit;localStorage.prExchanges=JSON.stringify(exchanges);localStorage.prTypes=JSON.stringify(selectedTypes);localStorage.prFav=JSON.stringify(fav);localStorage.prFavoritesOnly=favoritesOnly?'1':'0';localStorage.prPro=isPro?'1':'0';localStorage.prSort=sort;localStorage.prExpanded=expanded}
+function save(){localStorage.prDeposit=deposit;localStorage.prExchanges=JSON.stringify(exchanges);localStorage.prTypes=JSON.stringify(selectedTypes);localStorage.prFav=JSON.stringify(fav);localStorage.prFavoritesOnly=favoritesOnly?'1':'0';localStorage.prPro=isPro?'1':'0';localStorage.prSort=sort;localStorage.prExpanded=expanded;localStorage.prAlerts=JSON.stringify(alerts);localStorage.prNotified=JSON.stringify(notified)}
 
 
 let liveStatus='static';
@@ -225,7 +228,7 @@ function matchesType(o){if(selectedTypes.includes('Все'))return true;return s
  return o.type===t||(o.actions||[]).includes(t);
 })}
 function render(){const now=Date.now();let filtered=visibleOffers(now);const best=filtered.find(o=>!isLocked(o))||filtered[0];const lockedCount=filtered.filter(isLocked).length;app.innerHTML=`<main class="page"><header class="top"><img class="logo" src="icon.svg"><div class="title"><h1>PromoRadar AI</h1><p>Акции топ-бирж в одном месте</p></div><button class="proTop ${isPro?'active':''}" data-pro>${isPro?'PRO':'FREE'}</button></header>
-${!isPro?`<section class="proMini"><b>Free режим: доступна ${freeExchange}</b><span>Остальные биржи откроются в PRO через Telegram Stars.</span><button data-pro>Открыть PRO</button></section>`:`<section class="proMini proOn"><b>PRO активен</b><span>Все биржи, избранное и подготовка к уведомлениям включены.</span>${tgBadge()}</section>`}
+${!isPro?`<section class="proMini"><b>Free режим: доступна ${freeExchange}</b><span>Остальные биржи откроются в PRO через Telegram Stars.</span><button data-pro>Открыть PRO</button></section>`:`<section class="proMini proOn"><b>PRO активен</b><span>Все биржи, избранное и уведомления включены.</span><button data-alerts>Уведомления</button></section>`}
 <section class="filters">
  <div class="fBlock"><div class="fHead"><h2>Мой депозит</h2><b>${deposit} USDT⌄</b></div><div class="depositRow custom">${['50','100','500','1000'].map(d=>`<button class="dep ${d===deposit?'active':''}" data-deposit="${d}"><b>${d}</b><small>USDT</small></button>`).join('')}<button class="dep customBtn ${!['50','100','500','1000'].includes(String(deposit))?'active':''}" data-custom><b>Своя</b><small>сумма</small></button></div></div>
  <div class="fBlock"><div class="fHead clean"><h2>Биржи</h2></div><div class="chipRow exRow expanded">${exchangeRow()}</div></div>
@@ -233,7 +236,7 @@ ${!isPro?`<section class="proMini"><b>Free режим: доступна ${freeEx
 </section>
 <div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} акций${lockedCount&&!isPro?` · ${lockedCount} в PRO`:''} · ${favoritesOnly?'избранное':sortLabel().toLowerCase()}</span></div><div class="sectionActions"><button class="favFilter ${favoritesOnly?'active':''}" data-fav-filter>${favoritesOnly?'★':'☆'}${fav.length?` <span>${fav.length}</span>`:''}</button><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div></div>
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
-<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам. Свайпните вниз для live-проверки бирж.</div>'}</section><div class="liveNote"><b>Live API v41 · Telegram Stars UI</b><span>Free показывает одну биржу. PRO-экран и тарифы Stars готовы для подключения к Telegram Mini App.</span></div></main>${proModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
+<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам. Свайпните вниз для live-проверки бирж.</div>'}</section><div class="liveNote"><b>Live API v42 · Alerts Prep</b><span>Уведомления по новым акциям, окончанию, ROI и избранному подготовлены для Telegram-бота.</span></div></main>${proModal()}${alertsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
 function endLabel(o){const live=leftFromEndAt(o.endAt); return live || o.left || (o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—')}
 function displayLine(o){return `${o.coin} • ${o.type}`}
 function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);const locked=isLocked(o);return `<article class="offer v19card ${locked?'locked':''}" data-card="${id}">
@@ -271,14 +274,25 @@ function detailsPanel(o){
 }
 function settingsModal(){return `<div class="modal" id="settings"><div class="sheet"><div class="sheetHead"><h2>Настройки</h2><button data-close class="close">×</button></div><div class="sheetTitle">Показывать биржи</div><div class="sheetGrid">${exOrder.map(ex=>`<button class="sheetChip ${exchanges.includes(ex)?'on':''}" data-toggle-ex="${ex}"><span class="miniLogo ${ex.toLowerCase()}">${logoImg(ex)}</span>${ex}</button>`).join('')}</div><div class="setting">Избранные акции <span>В карточках ☆</span></div><div class="setting">Ссылки <span>Разделы бирж</span></div></div></div>`}
 
+
+function alertsModal(){return `<div class="modal" id="alertsModal"><div class="sheet alertsSheet"><div class="sheetHead"><h2>Уведомления</h2><button data-alerts-close class="close">×</button></div><p class="proLead">Подготовка для Telegram-бота: сейчас настройки сохраняются на телефоне, дальше бот будет отправлять такие уведомления.</p><div class="alertList">
+ <label><span><b>Новые акции</b><small>Когда появилась новая подтверждённая акция</small></span><input type="checkbox" data-alert-key="newOffers" ${alerts.newOffers?'checked':''}></label>
+ <label><span><b>Осталось 24 часа</b><small>Напомнить по активным предложениям</small></span><input type="checkbox" data-alert-key="ending24" ${alerts.ending24?'checked':''}></label>
+ <label><span><b>Осталось 6 часов</b><small>Финальное напоминание</small></span><input type="checkbox" data-alert-key="ending6" ${alerts.ending6?'checked':''}></label>
+ <label><span><b>ROI выше порога</b><small>Сейчас: ${alerts.roiThreshold}% и выше</small></span><input type="checkbox" data-alert-key="highRoi" ${alerts.highRoi?'checked':''}></label>
+ <label><span><b>Только избранные</b><small>Уведомлять только по звёздочкам</small></span><input type="checkbox" data-alert-key="favoritesOnly" ${alerts.favoritesOnly?'checked':''}></label>
+</div><div class="threshold"><span>Порог ROI</span><input type="number" data-roi-threshold value="${alerts.roiThreshold}" min="1" max="500"><b>%</b></div><button class="tgHint" data-test-alert>Показать тестовое уведомление</button><div class="proFoot">В Telegram Mini App эти правила будут связаны с Telegram ID и ботом.</div></div></div>`}
+
 function proModal(){return `<div class="modal" id="proModal"><div class="sheet proSheet"><div class="sheetHead"><h2>PromoRadar PRO</h2><button data-pro-close class="close">×</button></div><p class="proLead">Free показывает одну биржу. PRO открывает все биржи, все типы заработка, избранное и будущие уведомления.</p><div class="plans"><button class="plan" data-plan="day"><b>1 день</b><span>5 ⭐</span><small>быстрая проверка</small></button><button class="plan bestPlan" data-plan="month"><b>1 месяц</b><span>30 ⭐</span><small>лучший старт</small></button><button class="plan" data-plan="half"><b>6 месяцев</b><span>120 ⭐</span><small>экономия 33%</small></button><button class="plan" data-plan="year"><b>1 год</b><span>180 ⭐</span><small>самый выгодный</small></button></div><button class="tgHint" data-demo-pro>Включить PRO демо</button><div class="proFoot">В Telegram Mini App кнопки будут вызывать invoice Stars через бота. Сейчас это безопасный демо-экран.</div></div></div>`}
 function gearIcon(){return `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06A2 2 0 1 1 7.03 3.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15.4 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.2.36.5.68.9.9.34.2.72.3 1.1.3H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51.8Z"/></svg>`}
-function bind(){document.querySelectorAll('[data-pro]').forEach(b=>b.onclick=openPro);document.querySelectorAll('[data-pro-close]').forEach(b=>b.onclick=closePro);document.querySelectorAll('[data-demo-pro]').forEach(b=>b.onclick=()=>{isPro=true;save();closePro();render();showToast('PRO демо включён')});document.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>{const plan=b.dataset.plan; if(tg){try{tg.HapticFeedback?.impactOccurred('medium')}catch(e){}} showToast(`Stars: тариф ${plan} готов к подключению`)});document.querySelectorAll('[data-fav-filter]').forEach(b=>b.onclick=()=>{favoritesOnly=!favoritesOnly;save();render()});document.querySelectorAll('[data-deposit]').forEach(b=>b.onclick=()=>{deposit=b.dataset.deposit;save();render()});document.querySelectorAll('[data-custom]').forEach(b=>b.onclick=()=>{const v=prompt('Введите свою сумму в USDT', deposit); if(v===null)return; const n=Math.max(1, Math.round(Number(String(v).replace(',','.'))||0)); if(n){deposit=String(n);save();render()}});document.querySelectorAll('[data-toggle-ex]').forEach(b=>b.onclick=e=>{e.stopPropagation();const ex=b.dataset.toggleEx;exchanges=exchanges.includes(ex)?exchanges.filter(x=>x!==ex):[...exchanges,ex];if(!exchanges.length)exchanges=[ex];save();render();
-loadLive();if(document.getElementById('settings')?.classList.contains('show'))setTimeout(openSettings,0)});document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{const t=b.dataset.type;if(t==='Все'){selectedTypes=['Все']}else{selectedTypes=selectedTypes.filter(x=>x!=='Все');selectedTypes=selectedTypes.includes(t)?selectedTypes.filter(x=>x!==t):[...selectedTypes,t];if(!selectedTypes.length)selectedTypes=['Все']}save();render()});document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{let i=sortModes.findIndex(x=>x[0]===sort);sort=sortModes[(i+1)%sortModes.length][0];save();render()});document.querySelectorAll('[data-card]').forEach(el=>el.onclick=e=>{if(e.target.closest('[data-fav],[data-open]'))return;expanded=expanded===el.dataset.card?'':el.dataset.card;save();render()});document.querySelectorAll('[data-fav]').forEach(b=>b.onclick=e=>{e.stopPropagation();const id=b.dataset.fav;fav=fav.includes(id)?fav.filter(x=>x!==id):[...fav,id];save();render()});document.querySelectorAll('[data-open]').forEach(b=>b.onclick=e=>{e.stopPropagation(); if(b.dataset.locked==='1'){openPro();return;} const [id,ex,act]=b.dataset.open.split('|');openLink(id,ex,act)});document.querySelectorAll('[data-source]').forEach(b=>b.onclick=e=>{e.stopPropagation();window.location.href=b.dataset.source});document.querySelectorAll('[data-settings]').forEach(b=>b.onclick=openSettings);document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSettings);const st=document.getElementById('settings');if(st)st.onclick=e=>{if(e.target.id==='settings')closeSettings()};const pm=document.getElementById('proModal');if(pm)pm.onclick=e=>{if(e.target.id==='proModal')closePro()}}
+function bind(){document.querySelectorAll('[data-alerts]').forEach(b=>b.onclick=openAlerts);document.querySelectorAll('[data-alerts-close]').forEach(b=>b.onclick=closeAlerts);document.querySelectorAll('[data-alert-key]').forEach(i=>i.onchange=()=>{alerts[i.dataset.alertKey]=i.checked;save();runAlertScan(false)});document.querySelectorAll('[data-roi-threshold]').forEach(i=>i.oninput=()=>{alerts.roiThreshold=Math.max(1,Number(i.value)||15);save()});document.querySelectorAll('[data-test-alert]').forEach(b=>b.onclick=()=>sendAlert('PromoRadar: тестовое уведомление','Уведомления готовы. В Telegram их будет отправлять бот.'));document.querySelectorAll('[data-pro]').forEach(b=>b.onclick=openPro);document.querySelectorAll('[data-pro-close]').forEach(b=>b.onclick=closePro);document.querySelectorAll('[data-demo-pro]').forEach(b=>b.onclick=()=>{isPro=true;save();closePro();render();showToast('PRO демо включён')});document.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>{const plan=b.dataset.plan; if(tg){try{tg.HapticFeedback?.impactOccurred('medium')}catch(e){}} showToast(`Stars: тариф ${plan} готов к подключению`)});document.querySelectorAll('[data-fav-filter]').forEach(b=>b.onclick=()=>{favoritesOnly=!favoritesOnly;save();render()});document.querySelectorAll('[data-deposit]').forEach(b=>b.onclick=()=>{deposit=b.dataset.deposit;save();render()});document.querySelectorAll('[data-custom]').forEach(b=>b.onclick=()=>{const v=prompt('Введите свою сумму в USDT', deposit); if(v===null)return; const n=Math.max(1, Math.round(Number(String(v).replace(',','.'))||0)); if(n){deposit=String(n);save();render()}});document.querySelectorAll('[data-toggle-ex]').forEach(b=>b.onclick=e=>{e.stopPropagation();const ex=b.dataset.toggleEx;exchanges=exchanges.includes(ex)?exchanges.filter(x=>x!==ex):[...exchanges,ex];if(!exchanges.length)exchanges=[ex];save();render();
+loadLive().then(()=>runAlertScan(true));if(document.getElementById('settings')?.classList.contains('show'))setTimeout(openSettings,0)});document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{const t=b.dataset.type;if(t==='Все'){selectedTypes=['Все']}else{selectedTypes=selectedTypes.filter(x=>x!=='Все');selectedTypes=selectedTypes.includes(t)?selectedTypes.filter(x=>x!==t):[...selectedTypes,t];if(!selectedTypes.length)selectedTypes=['Все']}save();render()});document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{let i=sortModes.findIndex(x=>x[0]===sort);sort=sortModes[(i+1)%sortModes.length][0];save();render()});document.querySelectorAll('[data-card]').forEach(el=>el.onclick=e=>{if(e.target.closest('[data-fav],[data-open]'))return;expanded=expanded===el.dataset.card?'':el.dataset.card;save();render()});document.querySelectorAll('[data-fav]').forEach(b=>b.onclick=e=>{e.stopPropagation();const id=b.dataset.fav;fav=fav.includes(id)?fav.filter(x=>x!==id):[...fav,id];save();render()});document.querySelectorAll('[data-open]').forEach(b=>b.onclick=e=>{e.stopPropagation(); if(b.dataset.locked==='1'){openPro();return;} const [id,ex,act]=b.dataset.open.split('|');openLink(id,ex,act)});document.querySelectorAll('[data-source]').forEach(b=>b.onclick=e=>{e.stopPropagation();window.location.href=b.dataset.source});document.querySelectorAll('[data-settings]').forEach(b=>b.onclick=openSettings);document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSettings);const st=document.getElementById('settings');if(st)st.onclick=e=>{if(e.target.id==='settings')closeSettings()};const pm=document.getElementById('proModal');if(pm)pm.onclick=e=>{if(e.target.id==='proModal')closePro()};const am=document.getElementById('alertsModal');if(am)am.onclick=e=>{if(e.target.id==='alertsModal')closeAlerts()}}
 function openSettings(){document.getElementById('settings')?.classList.add('show')}
 function closeSettings(){document.getElementById('settings')?.classList.remove('show')}
 function openPro(){document.getElementById('proModal')?.classList.add('show')}
 function closePro(){document.getElementById('proModal')?.classList.remove('show')}
+function openAlerts(){document.getElementById('alertsModal')?.classList.add('show')}
+function closeAlerts(){document.getElementById('alertsModal')?.classList.remove('show')}
 function showToast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1600)}
 async function checkUrl(url){
  try{
@@ -299,6 +313,37 @@ async function openLink(id,ex,act){
  }else{
    showToast(`Ссылка неактуальна (${v.status||'ошибка'})`);
  }
+}
+
+
+function shouldWatch(o){if(!alerts.favoritesOnly)return true;return fav.includes(o.ex+'-'+o.name)}
+function sendAlert(title,body){
+ showToast(title);
+ try{
+   if('Notification' in window){
+     if(Notification.permission==='granted') new Notification(title,{body});
+     else if(Notification.permission!=='denied') Notification.requestPermission().then(p=>{if(p==='granted')new Notification(title,{body})});
+   }
+ }catch(e){}
+}
+function alertKey(type,o){return `${type}:${o.id||o.ex+'-'+o.name}`}
+function runAlertScan(silent=true){
+ const now=Date.now();
+ const active=offers.filter(o=>o.active!==false&&o.verified!==false&&(!o.endAt||new Date(o.endAt).getTime()>now)&&shouldWatch(o));
+ if(alerts.newOffers){
+   const known=notified.knownOffers||[]; const fresh=active.filter(o=>!known.includes(o.id||o.ex+'-'+o.name));
+   if(known.length && fresh.length && !silent){sendAlert(`Новые акции: ${fresh.length}`, fresh.map(o=>`${o.ex} ${o.name}`).join(', '))}
+   notified.knownOffers=active.map(o=>o.id||o.ex+'-'+o.name);
+ }
+ for(const o of active){
+   if(o.endAt){
+     const hours=(new Date(o.endAt).getTime()-now)/3600000;
+     if(alerts.ending24 && hours>0 && hours<=24 && !notified[alertKey('24h',o)]){notified[alertKey('24h',o)]=Date.now(); if(!silent)sendAlert(`${o.ex}: осталось меньше 24 часов`, `${o.name} • ${o.type}`)}
+     if(alerts.ending6 && hours>0 && hours<=6 && !notified[alertKey('6h',o)]){notified[alertKey('6h',o)]=Date.now(); if(!silent)sendAlert(`${o.ex}: осталось меньше 6 часов`, `${o.name} • ${o.type}`)}
+   }
+   if(alerts.highRoi && roiMax(o.roi)>=Number(alerts.roiThreshold) && !notified[alertKey('roi',o)]){notified[alertKey('roi',o)]=Date.now(); if(!silent)sendAlert(`ROI выше ${alerts.roiThreshold}%`, `${o.ex} ${o.name}: ${o.roi}`)}
+ }
+ save();
 }
 
 let pullInit=false;
