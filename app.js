@@ -34,16 +34,26 @@ let stored;try{stored=JSON.parse(localStorage.prExchanges||'null')}catch(e){}
 let exchanges=Array.isArray(stored)?stored.filter(x=>exOrder.includes(x)):['Binance','Bybit','OKX','KuCoin'];
 if(exchanges.length===7 && !exchanges.includes('BingX')) exchanges.push('BingX');
 if(!exchanges.length) exchanges=['Binance','Bybit','OKX','KuCoin'];
-let type=localStorage.prType||'Все';
+let selectedTypes=JSON.parse(localStorage.prTypes||'["Все"]');
+if(!Array.isArray(selectedTypes)||!selectedTypes.length) selectedTypes=['Все'];
 let fav=JSON.parse(localStorage.prFav||'[]');
 let expanded=localStorage.prExpanded||'';
-let showAllEx=false;
+let showAllEx=true;
 let sort=localStorage.prSort||'potential';
-function save(){localStorage.prDeposit=deposit;localStorage.prExchanges=JSON.stringify(exchanges);localStorage.prType=type;localStorage.prFav=JSON.stringify(fav);localStorage.prSort=sort;localStorage.prExpanded=expanded}
+function save(){localStorage.prDeposit=deposit;localStorage.prExchanges=JSON.stringify(exchanges);localStorage.prTypes=JSON.stringify(selectedTypes);localStorage.prFav=JSON.stringify(fav);localStorage.prSort=sort;localStorage.prExpanded=expanded}
+
+function profitFor(o){
+ const exact=o.profit[deposit]; if(exact) return exact;
+ const base=o.profit['100']||o.profit['50']||'$0–$0';
+ const nums=(base.match(/\d+/g)||[]).map(Number); if(nums.length<2) return base;
+ const baseAmount=o.profit['100']?'100':'50'; const k=Number(deposit)/Number(baseAmount);
+ const lo=Math.max(1,Math.round(nums[0]*k)); const hi=Math.max(lo,Math.round(nums[1]*k));
+ return `$${lo}–$${hi}`;
+}
 function maxProfit(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums.at(-1)||0}
 function roiMax(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums.at(-1)||0}
 function sortLabel(){return sortModes.find(x=>x[0]===sort)?.[1]||'По потенциалу'}
-function sorted(list){return [...list].sort((a,b)=>{if(sort==='roi')return roiMax(b.roi)-roiMax(a.roi);if(sort==='score')return b.score-a.score;if(sort==='end')return a.end-b.end;if(sort==='exchange')return a.ex.localeCompare(b.ex,'ru');return maxProfit(b.profit[deposit])-maxProfit(a.profit[deposit]);})}
+function sorted(list){return [...list].sort((a,b)=>{if(sort==='roi')return roiMax(b.roi)-roiMax(a.roi);if(sort==='score')return b.score-a.score;if(sort==='end')return a.end-b.end;if(sort==='exchange')return a.ex.localeCompare(b.ex,'ru');return maxProfit(profitFor(b))-maxProfit(profitFor(a));})}
 function logoImg(ex){
  const custom={
   OKX:'<svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#050505"/><rect x="10" y="10" width="10" height="10" fill="#fff"/><rect x="28" y="10" width="10" height="10" fill="#fff"/><rect x="19" y="19" width="10" height="10" fill="#fff"/><rect x="10" y="28" width="10" height="10" fill="#fff"/><rect x="28" y="28" width="10" height="10" fill="#fff"/></svg>',
@@ -56,18 +66,18 @@ function logoImg(ex){
  if(custom[ex]) return custom[ex];
  return `<img src="${logos[ex]}" onerror="this.replaceWith(document.createTextNode('${ex.slice(0,2).toUpperCase()}'))">`
 }
-function exChip(ex){const on=exchanges.includes(ex);const compact=showAllEx;return `<button class="chip ex ${on?'active':''} ${compact?'logoOnly':''}" data-toggle-ex="${ex}" title="${ex}"><span class="miniLogo ${ex.toLowerCase()}">${logoImg(ex)}</span>${compact?'':`<span class="exName">${ex}</span>${on?'<span class="tick">✓</span>':''}`}</button>`}
-function exchangeRow(){const list=showAllEx?exOrder:exOrder.slice(0,4);const more=exOrder.length-4;return list.map(exChip).join('')+(showAllEx?`<button class="chip more hideBtn active" data-more>Скрыть</button>`:`<button class="chip more" data-more>+${more}⌄</button>`)}
-function typeRow(){return ['Все','Launchpool','Launchpad','GemPool','Jumpstart','Spotlight','Earn','Kickstarter'].map(t=>`<button class="chip type ${t===type?'active':''}" data-type="${t}">${t}</button>`).join('')}
-function matchesType(o){if(type==='Все')return true;if(type==='Launchpool')return o.actions.includes('Launchpool')||o.type==='Launchpool';if(type==='Launchpad')return o.actions.includes('Launchpad');return o.type===type||o.actions.includes(type)}
+function exChip(ex){const on=exchanges.includes(ex);return `<button class="chip ex ${on?'active':''} logoOnly" data-toggle-ex="${ex}" title="${ex}"><span class="miniLogo ${ex.toLowerCase()}">${logoImg(ex)}</span></button>`}
+function exchangeRow(){return exOrder.map(exChip).join('')}
+function typeRow(){return ['Все','Launchpool','Launchpad','GemPool','Jumpstart','Spotlight','Earn','Kickstarter','CandyDrop'].map(t=>`<button class="chip type ${selectedTypes.includes(t)?'active':''}" data-type="${t}">${t}</button>`).join('')}
+function matchesType(o){if(selectedTypes.includes('Все'))return true;return selectedTypes.some(t=>{if(t==='Launchpool')return o.actions.includes('Launchpool')||o.type==='Launchpool';if(t==='Launchpad')return o.actions.includes('Launchpad');return o.type===t||o.actions.includes(t)})}
 function render(){const filtered=sorted(offers.filter(o=>exchanges.includes(o.ex)&&matchesType(o)));const best=filtered[0];app.innerHTML=`<main class="page"><header class="top"><img class="logo" src="icon.svg"><div class="title"><h1>PromoRadar AI</h1><p>Акции топ-бирж в одном месте</p></div><button class="gear" data-settings aria-label="Настройки">${gearIcon()}</button></header>
 <section class="filters">
- <div class="fBlock"><div class="fHead"><h2>Мой депозит</h2><b>${deposit} USDT⌄</b></div><div class="depositRow">${['50','100','500','1000'].map(d=>`<button class="dep ${d===deposit?'active':''}" data-deposit="${d}"><b>${d}</b><small>USDT</small></button>`).join('')}</div></div>
- <div class="fBlock"><div class="fHead"><h2>Биржи</h2><b>${exchanges.length} из ${exOrder.length}⌄</b></div><div class="chipRow exRow ${showAllEx?'expanded':''}">${exchangeRow()}</div></div>
- <div class="fBlock"><div class="fHead"><h2>Тип акций</h2><b>${type}⌄</b></div><div class="chipRow typeRow">${typeRow()}</div></div>
+ <div class="fBlock"><div class="fHead"><h2>Мой депозит</h2><b>${deposit} USDT⌄</b></div><div class="depositRow custom">${['50','100','500','1000'].map(d=>`<button class="dep ${d===deposit?'active':''}" data-deposit="${d}"><b>${d}</b><small>USDT</small></button>`).join('')}<button class="dep customBtn ${!['50','100','500','1000'].includes(String(deposit))?'active':''}" data-custom><b>Своя</b><small>сумма</small></button></div></div>
+ <div class="fBlock"><div class="fHead clean"><h2>Биржи</h2></div><div class="chipRow exRow expanded">${exchangeRow()}</div></div>
+ <div class="fBlock"><div class="fHead clean"><h2>Тип акций</h2></div><div class="chipRow typeRow">${typeRow()}</div></div>
 </section>
 <div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} акций · ${sortLabel().toLowerCase()}</span></div><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div>
-${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${best.profit[deposit]}</strong></div>`:''}
+${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
 <section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет акций по выбранным фильтрам</div>'}</section>
 </main>${settingsModal()}<div id="toast" class="toast"></div>`;bind()}
 function displayLine(o){return `${o.coin} • ${o.type}`}
@@ -76,14 +86,14 @@ function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);return `<art
  <div class="info">
    <div class="brandLine"><span class="brand" style="color:${brandColor[o.ex]||'#17994c'}">${o.ex}</span><button class="fav ${is?'on':''}" data-fav="${id}" title="В избранное">☆</button></div>
    <h3>${displayLine(o)}</h3>
-   <div class="grid"><div><small>Вложить</small><b>${o.stake}</b></div><div><small>Потенциал</small><b class="green">${o.profit[deposit]}</b></div><div><small>ROI</small><b>${o.roi}</b></div></div>
+   <div class="grid"><div><small>Вложить</small><b>${o.stake}</b></div><div><small>Потенциал</small><b class="green">${profitFor(o)}</b></div><div><small>ROI</small><b>${o.roi}</b></div></div>
    <div class="actionRow">${o.actions.map(a=>`<button class="action" data-open="${o.ex}|${a}">${a}</button>`).join('')}</div>
  </div>
  <div class="score"><b>${o.score}</b><small>/100</small></div>
  </article>`}
 function settingsModal(){return `<div class="modal" id="settings"><div class="sheet"><div class="sheetHead"><h2>Настройки</h2><button data-close class="close">×</button></div><div class="sheetTitle">Показывать биржи</div><div class="sheetGrid">${exOrder.map(ex=>`<button class="sheetChip ${exchanges.includes(ex)?'on':''}" data-toggle-ex="${ex}"><span class="miniLogo ${ex.toLowerCase()}">${logoImg(ex)}</span>${ex}</button>`).join('')}</div><div class="setting">Избранные акции <span>В карточках ☆</span></div><div class="setting">Ссылки <span>Разделы бирж</span></div></div></div>`}
 function gearIcon(){return `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06A2 2 0 1 1 7.03 3.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15.4 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.2.36.5.68.9.9.34.2.72.3 1.1.3H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51.8Z"/></svg>`}
-function bind(){document.querySelectorAll('[data-deposit]').forEach(b=>b.onclick=()=>{deposit=b.dataset.deposit;save();render()});document.querySelectorAll('[data-toggle-ex]').forEach(b=>b.onclick=e=>{e.stopPropagation();const ex=b.dataset.toggleEx;exchanges=exchanges.includes(ex)?exchanges.filter(x=>x!==ex):[...exchanges,ex];if(!exchanges.length)exchanges=[ex];save();render();if(document.getElementById('settings')?.classList.contains('show'))setTimeout(openSettings,0)});document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{showAllEx=!showAllEx;render()});document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{type=b.dataset.type;save();render()});document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{let i=sortModes.findIndex(x=>x[0]===sort);sort=sortModes[(i+1)%sortModes.length][0];save();render()});document.querySelectorAll('[data-card]').forEach(el=>el.onclick=e=>{if(e.target.closest('[data-fav],[data-open]'))return;expanded=expanded===el.dataset.card?'':el.dataset.card;save();render()});document.querySelectorAll('[data-fav]').forEach(b=>b.onclick=e=>{e.stopPropagation();const id=b.dataset.fav;fav=fav.includes(id)?fav.filter(x=>x!==id):[...fav,id];save();render()});document.querySelectorAll('[data-open]').forEach(b=>b.onclick=e=>{e.stopPropagation();const [ex,act]=b.dataset.open.split('|');openLink(ex,act)});document.querySelectorAll('[data-settings]').forEach(b=>b.onclick=openSettings);document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSettings);document.getElementById('settings').onclick=e=>{if(e.target.id==='settings')closeSettings()}}
+function bind(){document.querySelectorAll('[data-deposit]').forEach(b=>b.onclick=()=>{deposit=b.dataset.deposit;save();render()});document.querySelectorAll('[data-custom]').forEach(b=>b.onclick=()=>{const v=prompt('Введите свою сумму в USDT', deposit); if(v===null)return; const n=Math.max(1, Math.round(Number(String(v).replace(',','.'))||0)); if(n){deposit=String(n);save();render()}});document.querySelectorAll('[data-toggle-ex]').forEach(b=>b.onclick=e=>{e.stopPropagation();const ex=b.dataset.toggleEx;exchanges=exchanges.includes(ex)?exchanges.filter(x=>x!==ex):[...exchanges,ex];if(!exchanges.length)exchanges=[ex];save();render();if(document.getElementById('settings')?.classList.contains('show'))setTimeout(openSettings,0)});document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{const t=b.dataset.type;if(t==='Все'){selectedTypes=['Все']}else{selectedTypes=selectedTypes.filter(x=>x!=='Все');selectedTypes=selectedTypes.includes(t)?selectedTypes.filter(x=>x!==t):[...selectedTypes,t];if(!selectedTypes.length)selectedTypes=['Все']}save();render()});document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{let i=sortModes.findIndex(x=>x[0]===sort);sort=sortModes[(i+1)%sortModes.length][0];save();render()});document.querySelectorAll('[data-card]').forEach(el=>el.onclick=e=>{if(e.target.closest('[data-fav],[data-open]'))return;expanded=expanded===el.dataset.card?'':el.dataset.card;save();render()});document.querySelectorAll('[data-fav]').forEach(b=>b.onclick=e=>{e.stopPropagation();const id=b.dataset.fav;fav=fav.includes(id)?fav.filter(x=>x!==id):[...fav,id];save();render()});document.querySelectorAll('[data-open]').forEach(b=>b.onclick=e=>{e.stopPropagation();const [ex,act]=b.dataset.open.split('|');openLink(ex,act)});document.querySelectorAll('[data-settings]').forEach(b=>b.onclick=openSettings);document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSettings);document.getElementById('settings').onclick=e=>{if(e.target.id==='settings')closeSettings()}}
 function openSettings(){document.getElementById('settings').classList.add('show')}
 function closeSettings(){document.getElementById('settings').classList.remove('show')}
 function showToast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1600)}
