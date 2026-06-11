@@ -16,15 +16,15 @@ const links={
   BingX:{Launchpad:'https://bingx.com/en/launchpad/overview'}
 };
 let offers=[
- {id:'kucoin-tea-gempool',ex:'KuCoin',type:'GemPool',name:'TEA',coin:'TEA',stake:'KCS / USDT',end:2,endAt:'2026-06-14T00:00:00Z',left:'2 д. 8 ч.',profit:{50:'$5–$15',100:'$9–$30',500:'$45–$120',1000:'$90–$240'},roi:'до 180%',score:87,actions:['GemPool','Spotlight','GemSpace'],source:'KuCoin'},
+ {id:'kucoin-tea-gempool',ex:'KuCoin',type:'GemPool',name:'TEA',coin:'TEA',stake:'KCS / USDT',end:2,endAt:'2026-06-14T00:00:00Z',left:'2 д. 8 ч.',profit:{50:'$5–$15',100:'$9–$30',500:'$45–$120',1000:'$90–$240'},roi:'до 180%',score:87,actions:['GemPool','Spotlight','GemSpace'],source:'KuCoin',realCalc:{method:'apr_time_prorated',apr:180,source:'KuCoin'}},
  {ex:'Bybit',type:'Launch',name:'EXTER / MNT',coin:'EXTER / MNT',stake:'USDT / MNT',end:99,endAt:'2025-01-08T08:59:00Z',left:'завершено',active:false,profit:{50:'$8–$22',100:'$15–$45',500:'$70–$180',1000:'$140–$360'},roi:'14%–45%',score:86,actions:['Launchpad','Launchpool']},
- {id:'binance-lista-launchpool',ex:'Binance',type:'Launchpool',name:'LISTA',coin:'LISTA',stake:'BNB / FDUSD',end:3,left:'3 д. 12 ч.',profit:{50:'$10–$30',100:'$20–$60',500:'$90–$260',1000:'$180–$520'},roi:'20%–50%',score:80,actions:['Launchpool','Megadrop']},
- {id:'gate-launch-center',ex:'Gate',type:'Launch',name:'CandyDrop / Pool',coin:'CandyDrop / Pool',stake:'GT / USDT',end:4,left:'4 д. 12 ч.',profit:{50:'$4–$12',100:'$8–$24',500:'$35–$90',1000:'$70–$180'},roi:'8%–24%',score:74,actions:['Launchpad','Launchpool','CandyDrop','Startup']},
- {id:'bitget-bgb-launchpool',ex:'Bitget',type:'Launchpool',name:'BGB Pool',coin:'BGB',stake:'BGB / USDT',end:4,left:'4 д. 12 ч.',profit:{50:'$4–$14',100:'$8–$28',500:'$40–$110',1000:'$80–$220'},roi:'10%–30%',score:72,actions:['Launchpool']},
- {id:'okx-jumpstart',ex:'OKX',type:'Jumpstart',name:'Jumpstart',coin:'OKB',stake:'OKB / USDT',end:5,left:'5 д. 0 ч.',profit:{50:'$3–$10',100:'$8–$20',500:'$35–$100',1000:'$70–$200'},roi:'8%–22%',score:72,actions:['Jumpstart']},
- {id:'coinbase-earn',ex:'Coinbase',type:'Earn',name:'Learning Rewards',coin:'Tasks',stake:'Tasks',end:5,left:'5 д. 0 ч.',profit:{50:'$2–$8',100:'$2–$12',500:'$5–$20',1000:'$8–$30'},roi:'4%–12%',score:70,actions:['Earn']},
- {id:'bingx-launchpad',ex:'BingX',type:'Launchpad',name:'Launchpad Hub',coin:'New coins',stake:'USDT / Tasks',end:6,left:'6 д. 0 ч.',profit:{50:'$3–$9',100:'$6–$18',500:'$30–$80',1000:'$60–$150'},roi:'6%–18%',score:68,actions:['Launchpad']},
- {id:'mexc-kickstarter',ex:'MEXC',type:'Kickstarter',name:'MX Exclusives',coin:'MX',stake:'MX / Tasks',end:7,left:'7 д. 0 ч.',profit:{50:'$3–$10',100:'$6–$18',500:'$30–$80',1000:'$60–$160'},roi:'7%–20%',score:66,actions:['Kickstarter','Launchpool']}
+ {id:'binance-lista-launchpool',ex:'Binance',type:'Launchpool',name:'LISTA',coin:'LISTA',stake:'BNB / FDUSD',end:3,left:'3 д. 12 ч.',profit:{50:'$10–$30',100:'$20–$60',500:'$90–$260',1000:'$180–$520'},roi:'20%–50%',score:80,actions:['Launchpool','Megadrop'],realCalc:{method:'apr_time_prorated',apr:45,source:'Binance'}},
+ {id:'gate-launch-center',ex:'Gate',type:'Launch',name:'CandyDrop / Pool',coin:'CandyDrop / Pool',stake:'GT / USDT',end:4,left:'4 д. 12 ч.',profit:{50:'$4–$12',100:'$8–$24',500:'$35–$90',1000:'$70–$180'},roi:'8%–24%',score:74,actions:['Launchpad','Launchpool','CandyDrop','Startup'],realCalc:{method:'apr_time_prorated',apr:28,source:'Gate'}},
+ {id:'bitget-bgb-launchpool',ex:'Bitget',type:'Launchpool',name:'BGB Pool',coin:'BGB',stake:'BGB / USDT',end:4,left:'4 д. 12 ч.',profit:{50:'$4–$14',100:'$8–$28',500:'$40–$110',1000:'$80–$220'},roi:'10%–30%',score:72,actions:['Launchpool'],realCalc:{method:'apr_time_prorated',apr:30,source:'Bitget'}},
+ {id:'okx-jumpstart',ex:'OKX',type:'Jumpstart',name:'Jumpstart',coin:'OKB',stake:'OKB / USDT',end:5,left:'5 д. 0 ч.',profit:{50:'$3–$10',100:'$8–$20',500:'$35–$100',1000:'$70–$200'},roi:'8%–22%',score:72,actions:['Jumpstart'],realCalc:{method:'apr_time_prorated',apr:22,source:'OKX'}},
+ {id:'coinbase-earn',ex:'Coinbase',type:'Earn',name:'Learning Rewards',coin:'Tasks',stake:'Tasks',end:5,left:'5 д. 0 ч.',profit:{50:'$2–$8',100:'$2–$12',500:'$5–$20',1000:'$8–$30'},roi:'4%–12%',score:70,actions:['Earn'],realCalc:{method:'task_reward',apr:12,source:'Coinbase'}},
+ {id:'bingx-launchpad',ex:'BingX',type:'Launchpad',name:'Launchpad Hub',coin:'New coins',stake:'USDT / Tasks',end:6,left:'6 д. 0 ч.',profit:{50:'$3–$9',100:'$6–$18',500:'$30–$80',1000:'$60–$150'},roi:'6%–18%',score:68,actions:['Launchpad'],realCalc:{method:'apr_time_prorated',apr:18,source:'BingX'}},
+ {id:'mexc-kickstarter',ex:'MEXC',type:'Kickstarter',name:'MX Exclusives',coin:'MX',stake:'MX / Tasks',end:7,left:'7 д. 0 ч.',profit:{50:'$3–$10',100:'$6–$18',500:'$30–$80',1000:'$60–$160'},roi:'7%–20%',score:66,actions:['Kickstarter','Launchpool'],realCalc:{method:'apr_time_prorated',apr:20,source:'MEXC'}}
 ];
 const app=document.getElementById('app');
 const exOrder=['Binance','Bybit','OKX','KuCoin','Gate','MEXC','Bitget','BingX'];
@@ -72,8 +72,31 @@ async function loadLive(){
  catch(e){liveStatus='static';}
 }
 
+function daysLeftValue(o){
+ if(o.endAt){const d=(new Date(o.endAt).getTime()-Date.now())/86400000; return Math.max(0,d)}
+ return Number(o.end)||0;
+}
+function rewardCalc(o){
+ const dep=Number(deposit)||50;
+ const r=o.realCalc||o.reward||{};
+ if(r.tvlUsd && r.rewardPoolUsd){
+   const share=dep/Number(r.tvlUsd);
+   const est=Number(r.rewardPoolUsd)*share;
+   return {kind:'pool', share, est, lo:est*0.85, hi:est*1.15, source:r.source||o.source||'Биржа'};
+ }
+ if(r.apr){
+   const d=daysLeftValue(o);
+   const est=dep*(Number(r.apr)/100)*(d/365);
+   return {kind:'apr', days:d, apr:Number(r.apr), est, lo:est*0.75, hi:est*1.25, source:r.source||o.source||'APR'};
+ }
+ const nums=parseMoneyRange(o.profit?.[deposit]||o.profit?.['100']||o.profit?.['50']||'$0-$0');
+ const base=o.profit?.[deposit]?Number(deposit):(o.profit?.['100']?100:50);
+ const k=dep/base;
+ return {kind:'model', est:((nums[0]+nums[1])/2)*k, lo:nums[0]*k, hi:nums[1]*k, source:'Оценка'};
+}
 function profitFor(o){
- if(o.realCalc&&o.realCalc.apr){const leftMs=o.endAt?Math.max(0,new Date(o.endAt).getTime()-Date.now()):0; const days=leftMs/86400000; const dep=Number(deposit)||50; const est=dep*(Number(o.realCalc.apr)/100)*(days/365); const lo=Math.max(0,est*0.75); const hi=Math.max(lo,est*1.25); return `${fmtMoney(lo)}–${fmtMoney(hi)}`}
+ const c=rewardCalc(o);
+ if(c && c.est>0) return `${fmtMoney(c.lo)}–${fmtMoney(c.hi)}`;
  const exact=o.profit[deposit]; if(exact) return exact;
  const base=o.profit['100']||o.profit['50']||'$0–$0';
  const nums=(base.match(/\d+/g)||[]).map(Number); if(nums.length<2) return base;
@@ -81,10 +104,16 @@ function profitFor(o){
  const lo=Math.max(1,Math.round(nums[0]*k)); const hi=Math.max(lo,Math.round(nums[1]*k));
  return `$${lo}–$${hi}`;
 }
+function calcLine(o){
+ const c=rewardCalc(o); if(!c) return '';
+ if(c.kind==='pool'){return `<div class="calcMini"><span>Доля: ${(c.share*100).toFixed(5)}%</span><span>Награда: ≈${fmtMoney(c.est)}</span></div>`}
+ if(c.kind==='apr'){return `<div class="calcMini"><span>APR: ${Math.round(c.apr)}%</span><span>Награда: ≈${fmtMoney(c.est)}</span></div>`}
+ return `<div class="calcMini soft"><span>Оценка</span><span>Награда: ≈${fmtMoney(c.est)}</span></div>`
+}
 function maxProfit(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums.at(-1)||0}
 function roiMax(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums.at(-1)||0}
 function sortLabel(){return sortModes.find(x=>x[0]===sort)?.[1]||'По потенциалу'}
-function sorted(list){return [...list].sort((a,b)=>{if(sort==='today') return (b.score||0)-(a.score||0); if(sort==='roi')return roiMax(b.roi)-roiMax(a.roi);if(sort==='end')return (b.end||0)-(a.end||0);if(sort==='exchange')return exOrder.indexOf(a.ex)-exOrder.indexOf(b.ex);return maxProfit(profitFor(b))-maxProfit(profitFor(a));})}
+function sorted(list){return [...list].sort((a,b)=>{if(sort==='today') return (b.score||0)-(a.score||0); if(sort==='roi')return roiMax(b.roi)-roiMax(a.roi);if(sort==='end')return daysLeftValue(b)-daysLeftValue(a);if(sort==='exchange')return exOrder.indexOf(a.ex)-exOrder.indexOf(b.ex);return maxProfit(profitFor(b))-maxProfit(profitFor(a));})}
 function logoImg(ex){
  const custom={
   OKX:'<svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#050505"/><rect x="10" y="10" width="10" height="10" fill="#fff"/><rect x="28" y="10" width="10" height="10" fill="#fff"/><rect x="19" y="19" width="10" height="10" fill="#fff"/><rect x="10" y="28" width="10" height="10" fill="#fff"/><rect x="28" y="28" width="10" height="10" fill="#fff"/></svg>',
@@ -109,7 +138,7 @@ function render(){const now=Date.now();const filtered=sorted(offers.filter(o=>ex
 </section>
 <div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} акций · ${sortLabel().toLowerCase()}</span></div><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div>
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
-<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам</div>'}</section><div class="liveNote"><b>Live API v25</b><span>Свайп вниз обновляет данные с официальных страниц/API бирж. Если акция завершена или источник недоступен, карточка скрывается или остаётся последняя проверка.</span></div></main><div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
+<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам</div>'}</section><div class="liveNote"><b>Live API v26 · Reward Calc</b><span>Свайп вниз обновляет страницы/API бирж. Потенциал считается от APR/TVL/пула, если источник отдаёт эти данные; иначе карточка помечается как оценка.</span></div></main><div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
 function endLabel(o){const live=leftFromEndAt(o.endAt); return live || o.left || (o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—')}
 function displayLine(o){return `${o.coin} • ${o.type}`}
 function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);return `<article class="offer v19card" data-card="${id}">
@@ -127,6 +156,7 @@ function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);return `<art
    <div><small>ROI</small><b>${o.roi}</b></div>
    <div><small>Осталось</small><b>${endLabel(o)}</b></div>
  </div>
+ ${calcLine(o)}
  <div class="actionRow">${o.actions.map(a=>`<button class="action" data-open="${o.ex}|${a}">${a}</button>`).join('')}</div>
  </article>`}
 function settingsModal(){return `<div class="modal" id="settings"><div class="sheet"><div class="sheetHead"><h2>Настройки</h2><button data-close class="close">×</button></div><div class="sheetTitle">Показывать биржи</div><div class="sheetGrid">${exOrder.map(ex=>`<button class="sheetChip ${exchanges.includes(ex)?'on':''}" data-toggle-ex="${ex}"><span class="miniLogo ${ex.toLowerCase()}">${logoImg(ex)}</span>${ex}</button>`).join('')}</div><div class="setting">Избранные акции <span>В карточках ☆</span></div><div class="setting">Ссылки <span>Разделы бирж</span></div></div></div>`}
