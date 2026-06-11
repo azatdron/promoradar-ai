@@ -10,11 +10,57 @@ const links={
   OKX:{Jumpstart:'https://www.okx.com/jumpstart',Earn:'https://www.okx.com/earn',Staking:'https://www.okx.com/earn'},
   KuCoin:{GemPool:'https://www.kucoin.com/gempool',Spotlight:'https://www.kucoin.com/spotlight-center',GemSpace:'https://www.kucoin.com/gemspace/ongoing',Earn:'https://www.kucoin.com/earn',Staking:'https://www.kucoin.com/earn'},
   Coinbase:{Earn:'https://www.coinbase.com/learning-rewards'},
-  Gate:{Launchpad:'https://www.gate.com/launchpad',Launchpool:'https://www.gate.com/launchpool',CandyDrop:'https://www.gate.com/candy-drop',Startup:'https://www.gate.com/startup',Earn:'https://www.gate.com/earn',Staking:'https://www.gate.com/earn'},
+  Gate:{Launchpad:'https://www.gate.com/startup',Launchpool:'https://www.gate.com/launchpool',CandyDrop:'https://www.gate.com/startup',Startup:'https://www.gate.com/startup',Earn:'https://www.gate.com/simple-earn',Staking:'https://www.gate.com/simple-earn'},
   MEXC:{Kickstarter:'https://www.mexc.com/announcements/mx-exclusives',Launchpool:'https://www.mexc.com/earn',Earn:'https://www.mexc.com/earn',Staking:'https://www.mexc.com/earn'},
   Bitget:{Launchpool:'https://www.bitget.com/events/launchpool',Earn:'https://www.bitget.com/earn',Staking:'https://www.bitget.com/earn'},
   BingX:{Launchpad:'https://bingx.com/en/launchpad/overview',Earn:'https://bingx.com/en/wealth/',Staking:'https://bingx.com/en/wealth/'}
 };
+
+const offerUrls={
+  'kucoin-tea-gempool':{
+    source:'https://www.kucoin.com/gempool/TEA',
+    actions:{GemPool:'https://www.kucoin.com/gempool/TEA',Spotlight:'https://www.kucoin.com/spotlight-center',GemSpace:'https://www.kucoin.com/gemspace/ongoing'}
+  },
+  'kucoin-kcs-staking':{
+    source:'https://www.kucoin.com/earn',
+    actions:{Staking:'https://www.kucoin.com/earn',Earn:'https://www.kucoin.com/earn'}
+  },
+  'binance-bnb-earn':{
+    source:'https://www.binance.com/en/earn',
+    actions:{Earn:'https://www.binance.com/en/earn',Staking:'https://www.binance.com/en/earn'}
+  },
+  'bybit-flexible-earn':{
+    source:'https://www.bybit.com/en/earn',
+    actions:{Earn:'https://www.bybit.com/en/earn',Staking:'https://www.bybit.com/en/earn'}
+  },
+  'gate-gt-earn':{
+    source:'https://www.gate.com/simple-earn',
+    actions:{Staking:'https://www.gate.com/simple-earn',Earn:'https://www.gate.com/simple-earn'}
+  },
+  'bitget-bgb-staking':{
+    source:'https://www.bitget.com/earn',
+    actions:{Staking:'https://www.bitget.com/earn',Earn:'https://www.bitget.com/earn'}
+  },
+  'okx-simple-earn':{
+    source:'https://www.okx.com/earn',
+    actions:{Earn:'https://www.okx.com/earn'}
+  },
+  'mexc-mx-staking':{
+    source:'https://www.mexc.com/earn',
+    actions:{Staking:'https://www.mexc.com/earn',Earn:'https://www.mexc.com/earn'}
+  },
+  'bingx-wealth':{
+    source:'https://bingx.com/en/wealth/',
+    actions:{Earn:'https://bingx.com/en/wealth/'}
+  }
+};
+function validatedUrl(o,action){
+  const byId=offerUrls[o?.id];
+  if(byId?.actions?.[action]) return byId.actions[action];
+  if(byId?.source && (!action || action==='Источник')) return byId.source;
+  return (links[o?.ex]&&links[o.ex][action])||Object.values(links[o?.ex]||{})[0]||'#';
+}
+
 let offers=[
  {id:'kucoin-tea-gempool',active:true,verified:true,category:'Launch',ex:'KuCoin',type:'GemPool',name:'TEA',coin:'TEA',stake:'KCS / USDT',end:2,endAt:'2026-06-14T00:00:00Z',left:null,profit:{50:'$5–$15',100:'$9–$30',500:'$45–$120',1000:'$90–$240'},roi:'до 180%',score:87,actions:['GemPool','Spotlight','GemSpace'],source:'KuCoin',realCalc:{method:'apr_time_prorated',apr:180,source:'KuCoin'}},
  {id:'kucoin-kcs-staking',active:true,verified:true,category:'Staking',ex:'KuCoin',type:'Staking',name:'KCS',coin:'KCS',stake:'KCS',left:'гибко',durationDays:30,profit:{50:'$0.20–$0.70',100:'$0.40–$1.40',500:'$2–$7',1000:'$4–$14'},roi:'5%–18% год',score:76,actions:['Staking','Earn'],source:'KuCoin Earn',realCalc:{method:'apr_time_prorated',apr:12,durationDays:30,source:'KuCoin Earn'}},
@@ -130,8 +176,8 @@ function calcLine(o){
 }
 function sourceLine(o){
  const verified=o.verified!==false;
- const url=o.sourceUrl||'';
- return `<div class="sourceRow clean"><span class="verified ${verified?'ok':'warn'}">${verified?'✓ Проверено':'⚠ Требует проверки'}</span>${url?`<button class="sourceBtn" data-source="${url}">Открыть источник</button>`:''}</div>`;
+ const url=o.sourceUrl||offerUrls[o.id]?.source||'';
+ return `<div class="sourceRow clean"><span class="verified ${verified?'ok':'warn'}">${verified?'✓ Проверено':'⚠ Требует проверки'}</span>${url?`<button class="sourceBtn" data-source="${url}">Источник</button>`:''}</div>`;
 }
 function maxProfit(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums.at(-1)||0}
 function roiMax(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums.at(-1)||0}
@@ -168,7 +214,7 @@ function render(){const now=Date.now();const filtered=sorted(offers.filter(o=>ex
 </section>
 <div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} акций · ${sortLabel().toLowerCase()}</span></div><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div>
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
-<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам. Свайпните вниз для live-проверки бирж.</div>'}</section><div class="liveNote"><b>Live API v36 · Compact Cleanup</b><span>Метрики в компактной строке. Депозит / награда / APR теперь одной линией, источник рядом с «Проверено» убран.</span></div></main><div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
+<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам. Свайпните вниз для live-проверки бирж.</div>'}</section><div class="liveNote"><b>Live API v38 · Link Validator</b><span>Перед открытием приложение проверяет ссылку. 404 и неактуальные страницы не открываются.</span></div></main><div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
 function endLabel(o){const live=leftFromEndAt(o.endAt); return live || o.left || (o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—')}
 function displayLine(o){return `${o.coin} • ${o.type}`}
 function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);return `<article class="offer v19card" data-card="${id}">
@@ -189,7 +235,7 @@ function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);return `<art
  ${calcLine(o)}
  ${sourceLine(o)}
  ${expanded===id?detailsPanel(o):''}
- <div class="actionRow">${o.actions.map(a=>`<button class="action" data-open="${o.ex}|${a}">${a}</button>`).join('')}</div>
+ <div class="actionRow">${o.actions.map(a=>`<button class="action" data-open="${o.id}|${o.ex}|${a}">${a}</button>`).join('')}</div>
  </article>`}
 function detailsPanel(o){
  const c=rewardCalc(o)||{}; const rc=o.realCalc||{};
@@ -206,11 +252,30 @@ function detailsPanel(o){
 function settingsModal(){return `<div class="modal" id="settings"><div class="sheet"><div class="sheetHead"><h2>Настройки</h2><button data-close class="close">×</button></div><div class="sheetTitle">Показывать биржи</div><div class="sheetGrid">${exOrder.map(ex=>`<button class="sheetChip ${exchanges.includes(ex)?'on':''}" data-toggle-ex="${ex}"><span class="miniLogo ${ex.toLowerCase()}">${logoImg(ex)}</span>${ex}</button>`).join('')}</div><div class="setting">Избранные акции <span>В карточках ☆</span></div><div class="setting">Ссылки <span>Разделы бирж</span></div></div></div>`}
 function gearIcon(){return `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06A2 2 0 1 1 7.03 3.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15.4 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.2.36.5.68.9.9.34.2.72.3 1.1.3H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51.8Z"/></svg>`}
 function bind(){document.querySelectorAll('[data-deposit]').forEach(b=>b.onclick=()=>{deposit=b.dataset.deposit;save();render()});document.querySelectorAll('[data-custom]').forEach(b=>b.onclick=()=>{const v=prompt('Введите свою сумму в USDT', deposit); if(v===null)return; const n=Math.max(1, Math.round(Number(String(v).replace(',','.'))||0)); if(n){deposit=String(n);save();render()}});document.querySelectorAll('[data-toggle-ex]').forEach(b=>b.onclick=e=>{e.stopPropagation();const ex=b.dataset.toggleEx;exchanges=exchanges.includes(ex)?exchanges.filter(x=>x!==ex):[...exchanges,ex];if(!exchanges.length)exchanges=[ex];save();render();
-loadLive();if(document.getElementById('settings')?.classList.contains('show'))setTimeout(openSettings,0)});document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{const t=b.dataset.type;if(t==='Все'){selectedTypes=['Все']}else{selectedTypes=selectedTypes.filter(x=>x!=='Все');selectedTypes=selectedTypes.includes(t)?selectedTypes.filter(x=>x!==t):[...selectedTypes,t];if(!selectedTypes.length)selectedTypes=['Все']}save();render()});document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{let i=sortModes.findIndex(x=>x[0]===sort);sort=sortModes[(i+1)%sortModes.length][0];save();render()});document.querySelectorAll('[data-card]').forEach(el=>el.onclick=e=>{if(e.target.closest('[data-fav],[data-open]'))return;expanded=expanded===el.dataset.card?'':el.dataset.card;save();render()});document.querySelectorAll('[data-fav]').forEach(b=>b.onclick=e=>{e.stopPropagation();const id=b.dataset.fav;fav=fav.includes(id)?fav.filter(x=>x!==id):[...fav,id];save();render()});document.querySelectorAll('[data-open]').forEach(b=>b.onclick=e=>{e.stopPropagation();const [ex,act]=b.dataset.open.split('|');openLink(ex,act)});document.querySelectorAll('[data-source]').forEach(b=>b.onclick=e=>{e.stopPropagation();window.location.href=b.dataset.source});document.querySelectorAll('[data-settings]').forEach(b=>b.onclick=openSettings);document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSettings);const st=document.getElementById('settings');if(st)st.onclick=e=>{if(e.target.id==='settings')closeSettings()}}
+loadLive();if(document.getElementById('settings')?.classList.contains('show'))setTimeout(openSettings,0)});document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{const t=b.dataset.type;if(t==='Все'){selectedTypes=['Все']}else{selectedTypes=selectedTypes.filter(x=>x!=='Все');selectedTypes=selectedTypes.includes(t)?selectedTypes.filter(x=>x!==t):[...selectedTypes,t];if(!selectedTypes.length)selectedTypes=['Все']}save();render()});document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{let i=sortModes.findIndex(x=>x[0]===sort);sort=sortModes[(i+1)%sortModes.length][0];save();render()});document.querySelectorAll('[data-card]').forEach(el=>el.onclick=e=>{if(e.target.closest('[data-fav],[data-open]'))return;expanded=expanded===el.dataset.card?'':el.dataset.card;save();render()});document.querySelectorAll('[data-fav]').forEach(b=>b.onclick=e=>{e.stopPropagation();const id=b.dataset.fav;fav=fav.includes(id)?fav.filter(x=>x!==id):[...fav,id];save();render()});document.querySelectorAll('[data-open]').forEach(b=>b.onclick=e=>{e.stopPropagation();const [id,ex,act]=b.dataset.open.split('|');openLink(id,ex,act)});document.querySelectorAll('[data-source]').forEach(b=>b.onclick=e=>{e.stopPropagation();window.location.href=b.dataset.source});document.querySelectorAll('[data-settings]').forEach(b=>b.onclick=openSettings);document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSettings);const st=document.getElementById('settings');if(st)st.onclick=e=>{if(e.target.id==='settings')closeSettings()}}
 function openSettings(){document.getElementById('settings')?.classList.add('show')}
 function closeSettings(){document.getElementById('settings')?.classList.remove('show')}
 function showToast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1600)}
-function openLink(ex,act){const url=(links[ex]&&links[ex][act])||Object.values(links[ex]||{})[0]||'#';showToast(`Открываю ${ex} • ${act}`);setTimeout(()=>{window.location.href=url},120)}
+async function checkUrl(url){
+ try{
+   const r=await fetch('/api/link-check?url='+encodeURIComponent(url),{cache:'no-store'});
+   if(!r.ok) return {ok:true,status:0,reason:'validator-unavailable'};
+   return await r.json();
+ }catch(e){return {ok:true,status:0,reason:'validator-unavailable'}}
+}
+async function openLink(id,ex,act){
+ const offer=offers.find(o=>o.id===id)||{ex};
+ const url=validatedUrl(offer,act);
+ if(!url||url==='#'){showToast('Ссылка не настроена');return;}
+ showToast(`Проверяю ${ex} • ${act}`);
+ const v=await checkUrl(url);
+ if(v.ok){
+   showToast(`Открываю ${ex} • ${act}`);
+   setTimeout(()=>{window.location.href=url},120);
+ }else{
+   showToast(`Ссылка неактуальна (${v.status||'ошибка'})`);
+ }
+}
 
 let pullInit=false;
 let pullStart=0;
