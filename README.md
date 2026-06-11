@@ -1,13 +1,15 @@
-# PromoRadar AI v42 Alerts Prep
+# PromoRadar AI v43 — Telegram Bot Bridge
 
-База: v41 Telegram Stars UI.
+База: v42 Alerts Prep.
 
 Добавлено:
-- экран настроек уведомлений для PRO;
-- правила: новые акции, 24 часа, 6 часов, высокий ROI, только избранные;
-- сохранение настроек в localStorage;
-- подготовка под Telegram-бота и Telegram ID;
-- тестовое уведомление через Web Notification API, если браузер разрешает;
-- live-проверка и pull-to-refresh сохранены.
+- Telegram WebApp SDK в index.html.
+- Telegram Bridge в app.js: определение запуска внутри Telegram, user ID, sync-заготовка.
+- API-заготовки для Vercel:
+  - /api/telegram-user
+  - /api/subscription
+  - /api/alerts
+  - /api/stars-webhook
+- Кнопки тарифов Stars обращаются к mock endpoint, готовому к подключению Bot API.
 
-Важно: это подготовка интерфейса и локальной логики уведомлений. Реальные Telegram push-уведомления подключаются на следующем этапе через бота и backend.
+Следующий этап: подключить реального Telegram-бота, базу подписок и оплату Stars через Bot API.
