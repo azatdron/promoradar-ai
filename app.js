@@ -16,10 +16,10 @@ const links={
   BingX:{Launchpad:'https://bingx.com/en/launchpad/overview'}
 };
 const offers=[
- {ex:'KuCoin',type:'GemPool',name:'TEA GemPool',coin:'TEA',stake:'KCS / USDT',end:3,profit:{50:'$5–$15',100:'$9–$30',500:'$45–$120',1000:'$90–$240'},roi:'до 180%',score:87,actions:['GemPool','Spotlight','GemSpace']},
- {ex:'Bybit',type:'Launch',name:'EXTER / MNT',coin:'EXTER, MNT',stake:'USDT / MNT',end:2,profit:{50:'$8–$22',100:'$15–$45',500:'$70–$180',1000:'$140–$360'},roi:'14%–45%',score:86,actions:['Launchpad','Launchpool']},
- {ex:'Binance',type:'Launchpool',name:'Lista DAO',coin:'LISTA',stake:'BNB / FDUSD',end:3,profit:{50:'$10–$30',100:'$20–$60',500:'$90–$260',1000:'$180–$520'},roi:'20%–50%',score:80,actions:['Launchpool','Megadrop']},
- {ex:'Gate',type:'Launch',name:'Launch Center',coin:'CandyDrop / Pool',stake:'GT / USDT',end:4,profit:{50:'$4–$12',100:'$8–$24',500:'$35–$90',1000:'$70–$180'},roi:'8%–24%',score:74,actions:['Launchpad','Launchpool','CandyDrop','Startup']},
+ {ex:'KuCoin',type:'GemPool',name:'TEA',coin:'TEA',stake:'KCS / USDT',end:3,profit:{50:'$5–$15',100:'$9–$30',500:'$45–$120',1000:'$90–$240'},roi:'до 180%',score:87,actions:['GemPool','Spotlight','GemSpace']},
+ {ex:'Bybit',type:'Launch',name:'EXTER / MNT',coin:'EXTER / MNT',stake:'USDT / MNT',end:2,profit:{50:'$8–$22',100:'$15–$45',500:'$70–$180',1000:'$140–$360'},roi:'14%–45%',score:86,actions:['Launchpad','Launchpool']},
+ {ex:'Binance',type:'Launchpool',name:'LISTA',coin:'LISTA',stake:'BNB / FDUSD',end:3,profit:{50:'$10–$30',100:'$20–$60',500:'$90–$260',1000:'$180–$520'},roi:'20%–50%',score:80,actions:['Launchpool','Megadrop']},
+ {ex:'Gate',type:'Launch',name:'CandyDrop / Pool',coin:'CandyDrop / Pool',stake:'GT / USDT',end:4,profit:{50:'$4–$12',100:'$8–$24',500:'$35–$90',1000:'$70–$180'},roi:'8%–24%',score:74,actions:['Launchpad','Launchpool','CandyDrop','Startup']},
  {ex:'Bitget',type:'Launchpool',name:'BGB Pool',coin:'BGB',stake:'BGB / USDT',end:4,profit:{50:'$4–$14',100:'$8–$28',500:'$40–$110',1000:'$80–$220'},roi:'10%–30%',score:72,actions:['Launchpool']},
  {ex:'OKX',type:'Jumpstart',name:'Jumpstart',coin:'OKB',stake:'OKB / USDT',end:5,profit:{50:'$3–$10',100:'$8–$20',500:'$35–$100',1000:'$70–$200'},roi:'8%–22%',score:72,actions:['Jumpstart']},
  {ex:'Coinbase',type:'Earn',name:'Learning Rewards',coin:'Tasks',stake:'Tasks',end:5,profit:{50:'$2–$8',100:'$2–$12',500:'$5–$20',1000:'$8–$30'},roi:'4%–12%',score:70,actions:['Earn']},
@@ -57,7 +57,7 @@ function logoImg(ex){
  return `<img src="${logos[ex]}" onerror="this.replaceWith(document.createTextNode('${ex.slice(0,2).toUpperCase()}'))">`
 }
 function exChip(ex){const on=exchanges.includes(ex);const compact=showAllEx;return `<button class="chip ex ${on?'active':''} ${compact?'logoOnly':''}" data-toggle-ex="${ex}" title="${ex}"><span class="miniLogo ${ex.toLowerCase()}">${logoImg(ex)}</span>${compact?'':`<span class="exName">${ex}</span>${on?'<span class="tick">✓</span>':''}`}</button>`}
-function exchangeRow(){const list=showAllEx?exOrder:exOrder.slice(0,4);const more=exOrder.length-4;return list.map(exChip).join('')+(showAllEx?`<button class="chip more active" data-more>Скрыть</button>`:`<button class="chip more" data-more>+${more}⌄</button>`)}
+function exchangeRow(){const list=showAllEx?exOrder:exOrder.slice(0,4);const more=exOrder.length-4;return list.map(exChip).join('')+(showAllEx?`<button class="chip more hideBtn active" data-more>Скрыть</button>`:`<button class="chip more" data-more>+${more}⌄</button>`)}
 function typeRow(){return ['Все','Launchpool','Launchpad','GemPool','Jumpstart','Spotlight','Earn','Kickstarter'].map(t=>`<button class="chip type ${t===type?'active':''}" data-type="${t}">${t}</button>`).join('')}
 function matchesType(o){if(type==='Все')return true;if(type==='Launchpool')return o.actions.includes('Launchpool')||o.type==='Launchpool';if(type==='Launchpad')return o.actions.includes('Launchpad');return o.type===type||o.actions.includes(type)}
 function render(){const filtered=sorted(offers.filter(o=>exchanges.includes(o.ex)&&matchesType(o)));const best=filtered[0];app.innerHTML=`<main class="page"><header class="top"><img class="logo" src="icon.svg"><div class="title"><h1>PromoRadar AI</h1><p>Акции топ-бирж в одном месте</p></div><button class="gear" data-settings aria-label="Настройки">${gearIcon()}</button></header>
@@ -70,13 +70,14 @@ function render(){const filtered=sorted(offers.filter(o=>exchanges.includes(o.ex
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${best.profit[deposit]}</strong></div>`:''}
 <section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет акций по выбранным фильтрам</div>'}</section>
 </main>${settingsModal()}<div id="toast" class="toast"></div>`;bind()}
-function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);const open=expanded===id;return `<article class="offer ${open?'openCard':''}" data-card="${id}">
+function displayLine(o){return `${o.coin} • ${o.type}`}
+function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);return `<article class="offer" data-card="${id}">
  <div class="brandLogo ${o.ex.toLowerCase()}">${logoImg(o.ex)}</div>
  <div class="info">
-   <div><span class="brand" style="color:${brandColor[o.ex]||'#17994c'}">${o.ex}</span><span class="tag">${o.type}</span></div>
-   <h3>${o.name}</h3><span class="coin">Монета: ${o.coin}</span>
+   <div class="brandLine"><span class="brand" style="color:${brandColor[o.ex]||'#17994c'}">${o.ex}</span><button class="fav ${is?'on':''}" data-fav="${id}" title="В избранное">☆</button></div>
+   <h3>${displayLine(o)}</h3>
    <div class="grid"><div><small>Вложить</small><b>${o.stake}</b></div><div><small>Потенциал</small><b class="green">${o.profit[deposit]}</b></div><div><small>ROI</small><b>${o.roi}</b></div></div>
-   ${open?`<div class="actionRow"><button class="fav ${is?'on':''}" data-fav="${id}">☆</button>${o.actions.map(a=>`<button class="action" data-open="${o.ex}|${a}">${a}</button>`).join('')}</div>`:''}
+   <div class="actionRow">${o.actions.map(a=>`<button class="action" data-open="${o.ex}|${a}">${a}</button>`).join('')}</div>
  </div>
  <div class="score"><b>${o.score}</b><small>/100</small></div>
  </article>`}
