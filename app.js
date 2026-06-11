@@ -222,4 +222,6 @@ function initPullRefresh(){
 render();
 loadLive();
 
-/* v30 Real Pool Data placeholder update: ready for TVL/participants/source blocks */
+
+// v31 Telegram Ready placeholder
+const telegramPlans={day:5,month:30,sixMonths:120,year:180};
