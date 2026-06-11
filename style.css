@@ -547,3 +547,20 @@
   .v19card .fav,.fav{width:28px!important;height:28px!important;font-size:18px!important}
   .favFilter{min-width:38px!important;height:34px!important;padding:0 10px!important}
 }
+
+/* v41 Telegram Stars UI + Free/PRO access */
+.proTop.active{background:#0b3f24;color:#fff}
+.proMini.proOn{border-color:#bdebd0;background:#f4fbf6;grid-template-columns:1fr}
+.proMini.proOn span,.tgUser{display:inline-block;color:#5f6d7d;font-size:10.5px;font-weight:750}
+.offer.locked{position:relative;overflow:hidden}
+.offer.locked .metricGrid,
+.offer.locked .calcMini,
+.offer.locked .sourceRow,
+.offer.locked .actionRow,
+.offer.locked .score{filter:blur(1.3px);opacity:.52;pointer-events:none}
+.offer.locked:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.50));pointer-events:none;border-radius:inherit}
+.lockOverlay{position:absolute;right:12px;bottom:12px;z-index:5;height:34px;border-radius:999px;background:#0b3f24;color:#fff;border:0;padding:0 12px;display:inline-flex;align-items:center;gap:7px;box-shadow:0 10px 22px rgba(11,63,36,.22)}
+.lockOverlay b{font-size:10px;letter-spacing:.4px}.lockOverlay span{font-size:10.5px;font-weight:900;white-space:nowrap}
+.plan[data-plan="year"]{border-color:#83ddb0;background:#effbf4}.plan[data-plan="year"] span{color:#0b7d3b}
+.proFoot{max-width:320px;margin-left:auto;margin-right:auto}
+@media(max-width:390px){.lockOverlay{height:31px;right:10px;bottom:10px;padding:0 10px}.lockOverlay span{font-size:9.6px}.proMini.proOn span,.tgUser{font-size:9.8px}}
