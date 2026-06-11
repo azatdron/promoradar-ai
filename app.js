@@ -17,7 +17,7 @@ const links={
 };
 let offers=[
  {id:'kucoin-tea-gempool',ex:'KuCoin',type:'GemPool',name:'TEA',coin:'TEA',stake:'KCS / USDT',end:2,endAt:'2026-06-14T00:00:00Z',left:'2 д. 8 ч.',profit:{50:'$5–$15',100:'$9–$30',500:'$45–$120',1000:'$90–$240'},roi:'до 180%',score:87,actions:['GemPool','Spotlight','GemSpace'],source:'KuCoin'},
- {ex:'Bybit',type:'Launch',name:'EXTER / MNT',coin:'EXTER / MNT',stake:'USDT / MNT',end:2,left:'2 д. 12 ч.',profit:{50:'$8–$22',100:'$15–$45',500:'$70–$180',1000:'$140–$360'},roi:'14%–45%',score:86,actions:['Launchpad','Launchpool']},
+ {ex:'Bybit',type:'Launch',name:'EXTER / MNT',coin:'EXTER / MNT',stake:'USDT / MNT',end:99,endAt:'2025-01-08T08:59:00Z',left:'завершено',active:false,profit:{50:'$8–$22',100:'$15–$45',500:'$70–$180',1000:'$140–$360'},roi:'14%–45%',score:86,actions:['Launchpad','Launchpool']},
  {ex:'Binance',type:'Launchpool',name:'LISTA',coin:'LISTA',stake:'BNB / FDUSD',end:3,left:'3 д. 12 ч.',profit:{50:'$10–$30',100:'$20–$60',500:'$90–$260',1000:'$180–$520'},roi:'20%–50%',score:80,actions:['Launchpool','Megadrop']},
  {ex:'Gate',type:'Launch',name:'CandyDrop / Pool',coin:'CandyDrop / Pool',stake:'GT / USDT',end:4,left:'4 д. 12 ч.',profit:{50:'$4–$12',100:'$8–$24',500:'$35–$90',1000:'$70–$180'},roi:'8%–24%',score:74,actions:['Launchpad','Launchpool','CandyDrop','Startup']},
  {ex:'Bitget',type:'Launchpool',name:'BGB Pool',coin:'BGB',stake:'BGB / USDT',end:4,left:'4 д. 12 ч.',profit:{50:'$4–$14',100:'$8–$28',500:'$40–$110',1000:'$80–$220'},roi:'10%–30%',score:72,actions:['Launchpool']},
@@ -55,8 +55,7 @@ function mergeLive(payload){
  offers=offers.map(o=>{const upd=payload.offers.find(x=>x.id===o.id); if(!upd)return o; return {...o,...upd, profit:{...o.profit,...(upd.profit||{})}}});
 }
 async function loadLive(){
- try{const r=await fetch('/api/live',{cache:'no-store'}); if(!r.ok)throw new Error('no live'); const j=await r.json(); mergeLive(j); save(); render();
-loadLive();}
+ try{const r=await fetch('/api/live',{cache:'no-store'}); if(!r.ok)throw new Error('no live'); const j=await r.json(); mergeLive(j); save(); render();}
  catch(e){liveStatus='static';}
 }
 
@@ -76,7 +75,7 @@ function sorted(list){return [...list].sort((a,b)=>{if(sort==='today') return a.
 function logoImg(ex){
  const custom={
   OKX:'<svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#050505"/><rect x="10" y="10" width="10" height="10" fill="#fff"/><rect x="28" y="10" width="10" height="10" fill="#fff"/><rect x="19" y="19" width="10" height="10" fill="#fff"/><rect x="10" y="28" width="10" height="10" fill="#fff"/><rect x="28" y="28" width="10" height="10" fill="#fff"/></svg>',
-  KuCoin:'<svg viewBox="0 0 48 48" aria-label="KuCoin"><path d="M8 9v30" fill="none" stroke="#22c58f" stroke-width="6" stroke-linecap="round"/><path d="M12 24 29 9" fill="none" stroke="#22c58f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 24 29 39" fill="none" stroke="#22c58f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M29 15 40 24 29 33" fill="none" stroke="#22c58f" stroke-width="5.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="29" cy="24" r="4.3" fill="#22c58f"/></svg>',
+  KuCoin:'<svg viewBox="0 0 48 48" aria-label="KuCoin"><defs><linearGradient id="kg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#16c98d"/><stop offset="1" stop-color="#0aa66f"/></linearGradient></defs><rect width="48" height="48" rx="13" fill="url(#kg)"/><path d="M13 12v24" fill="none" stroke="#fff" stroke-width="5.4" stroke-linecap="round"/><path d="M16 24 29 12" fill="none" stroke="#fff" stroke-width="5.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 24 29 36" fill="none" stroke="#fff" stroke-width="5.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M29 17 39 24 29 31" fill="none" stroke="#fff" stroke-width="4.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="29" cy="24" r="3.9" fill="#fff"/></svg>',
   Gate:'<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="15" fill="none" stroke="#2962ff" stroke-width="7"/><rect x="24" y="10" width="13" height="13" rx="2" fill="#49d391"/><path d="M31 24a7 7 0 1 1-7-7" stroke="#2962ff" stroke-width="7" fill="none" stroke-linecap="round"/></svg>',
   MEXC:'<svg viewBox="0 0 48 48"><path d="M6 32 16 16c2-3 6-3 8 0l4 7 4-7c2-3 6-3 8 0l8 16H37l-5-9-4 7h-8l-4-7-5 9H6Z" fill="#3f6df6"/><path d="M20 30h8l-4-7-4 7Z" fill="#23d6a2"/></svg>',
   Bitget:'<svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#6be7ee"/><path d="M18 13 9 24l9 11h8L17 24l9-11h-8Z" fill="#08111f"/><path d="M30 13 21 24l9 11h8L29 24l9-11h-8Z" fill="#08111f" opacity=".82"/></svg>',
@@ -89,7 +88,7 @@ function exChip(ex){const on=exchanges.includes(ex);return `<button class="chip 
 function exchangeRow(){return exOrder.map(exChip).join('')}
 function typeRow(){return ['Все','Launchpool','Launchpad','GemPool','Jumpstart','Spotlight','Earn','Kickstarter','CandyDrop'].map(t=>`<button class="chip type ${selectedTypes.includes(t)?'active':''}" data-type="${t}">${t}</button>`).join('')}
 function matchesType(o){if(selectedTypes.includes('Все'))return true;return selectedTypes.some(t=>{if(t==='Launchpool')return o.actions.includes('Launchpool')||o.type==='Launchpool';if(t==='Launchpad')return o.actions.includes('Launchpad');return o.type===t||o.actions.includes(t)})}
-function render(){const filtered=sorted(offers.filter(o=>exchanges.includes(o.ex)&&matchesType(o)));const best=filtered[0];app.innerHTML=`<main class="page"><header class="top"><img class="logo" src="icon.svg"><div class="title"><h1>PromoRadar AI</h1><p>Акции топ-бирж в одном месте</p></div><button class="gear" data-settings aria-label="Настройки">${gearIcon()}</button></header>
+function render(){const now=Date.now();const filtered=sorted(offers.filter(o=>exchanges.includes(o.ex)&&matchesType(o)&&o.active!==false&&(!o.endAt||new Date(o.endAt).getTime()>now)));const best=filtered[0];app.innerHTML=`<main class="page"><header class="top"><img class="logo" src="icon.svg"><div class="title"><h1>PromoRadar AI</h1><p>Акции топ-бирж в одном месте</p></div><button class="gear" data-settings aria-label="Настройки">${gearIcon()}</button></header>
 <section class="filters">
  <div class="fBlock"><div class="fHead"><h2>Мой депозит</h2><b>${deposit} USDT⌄</b></div><div class="depositRow custom">${['50','100','500','1000'].map(d=>`<button class="dep ${d===deposit?'active':''}" data-deposit="${d}"><b>${d}</b><small>USDT</small></button>`).join('')}<button class="dep customBtn ${!['50','100','500','1000'].includes(String(deposit))?'active':''}" data-custom><b>Своя</b><small>сумма</small></button></div></div>
  <div class="fBlock"><div class="fHead clean"><h2>Биржи</h2></div><div class="chipRow exRow expanded">${exchangeRow()}</div></div>
@@ -97,8 +96,8 @@ function render(){const filtered=sorted(offers.filter(o=>exchanges.includes(o.ex
 </section>
 <div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} акций · ${sortLabel().toLowerCase()}</span></div><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div>
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
-<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет акций по выбранным фильтрам</div>'}</section><div class="sourceNote"><b>Реальные данные с бирж</b><span>${liveStatus==='static'?'Если API биржи недоступен, показывается последняя локальная проверка.':'Обновлено через live-источник.'}</span></div>
-</main>${settingsModal()}<div id="toast" class="toast"></div>`;bind()}
+<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам</div>'}</section><div class="sourceNote"><b>Данные обновляются свайпом вниз</b><span>${liveStatus==='static'?'Если live-источник недоступен, остаётся последняя локальная проверка.':'Live-данные обновлены через Vercel API.'}</span></div>
+</main>${settingsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
 function endLabel(o){const live=leftFromEndAt(o.endAt); return live || o.left || (o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—')}
 function displayLine(o){return `${o.coin} • ${o.type}`}
 function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);return `<article class="offer v19card" data-card="${id}">
@@ -126,5 +125,27 @@ function openSettings(){document.getElementById('settings').classList.add('show'
 function closeSettings(){document.getElementById('settings').classList.remove('show')}
 function showToast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1600)}
 function openLink(ex,act){const url=(links[ex]&&links[ex][act])||Object.values(links[ex]||{})[0]||'#';showToast(`Открываю ${ex} • ${act}`);setTimeout(()=>{window.location.href=url},120)}
+
+let pullInit=false;
+let pullStart=0;
+let pulling=false;
+let refreshing=false;
+async function refreshLive(){
+ if(refreshing)return;
+ refreshing=true;
+ const pr=document.getElementById('pullRefresh');
+ if(pr){pr.textContent='⟳ Обновляю данные…';pr.classList.add('show','loading')}
+ await loadLive();
+ if(pr){pr.textContent='✓ Обновлено';setTimeout(()=>{pr.classList.remove('show','loading');pr.textContent='↻ Обновить'},700)}
+ showToast('Данные обновлены');
+ refreshing=false;
+}
+function initPullRefresh(){
+ if(pullInit)return; pullInit=true;
+ window.addEventListener('touchstart',e=>{if(window.scrollY<=2){pullStart=e.touches[0].clientY;pulling=true}}, {passive:true});
+ window.addEventListener('touchmove',e=>{if(!pulling)return; const dy=e.touches[0].clientY-pullStart; const pr=document.getElementById('pullRefresh'); if(dy>35&&pr){pr.classList.add('show');pr.textContent=dy>85?'↻ Отпустите для обновления':'↻ Потяните для обновления'}}, {passive:true});
+ window.addEventListener('touchend',()=>{if(!pulling)return; const pr=document.getElementById('pullRefresh'); const active=pr&&pr.classList.contains('show')&&pr.textContent.includes('Отпустите'); pulling=false; if(active) refreshLive(); else if(pr) pr.classList.remove('show')});
+}
+
 render();
 loadLive();
