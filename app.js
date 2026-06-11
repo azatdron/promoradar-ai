@@ -28,7 +28,7 @@ const offers=[
 ];
 const app=document.getElementById('app');
 const exOrder=['Binance','Bybit','OKX','KuCoin','Gate','MEXC','Bitget','BingX'];
-const sortModes=[['potential','По потенциалу'],['roi','По ROI'],['score','По рейтингу'],['end','По сроку'],['exchange','По бирже']];
+const sortModes=[['today','🔥 Сегодня'],['potential','💰 Потенциал'],['roi','📈 ROI'],['end','⏳ Скоро закончится'],['exchange','🏦 Биржа']];
 let deposit=localStorage.prDeposit||'50';
 let stored;try{stored=JSON.parse(localStorage.prExchanges||'null')}catch(e){}
 let exchanges=Array.isArray(stored)?stored.filter(x=>exOrder.includes(x)):['Binance','Bybit','OKX','KuCoin'];
@@ -39,7 +39,7 @@ if(!Array.isArray(selectedTypes)||!selectedTypes.length) selectedTypes=['Все'
 let fav=JSON.parse(localStorage.prFav||'[]');
 let expanded=localStorage.prExpanded||'';
 let showAllEx=true;
-let sort=localStorage.prSort||'potential';
+let sort=localStorage.prSort||'today';
 function save(){localStorage.prDeposit=deposit;localStorage.prExchanges=JSON.stringify(exchanges);localStorage.prTypes=JSON.stringify(selectedTypes);localStorage.prFav=JSON.stringify(fav);localStorage.prSort=sort;localStorage.prExpanded=expanded}
 
 function profitFor(o){
@@ -53,7 +53,7 @@ function profitFor(o){
 function maxProfit(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums.at(-1)||0}
 function roiMax(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums.at(-1)||0}
 function sortLabel(){return sortModes.find(x=>x[0]===sort)?.[1]||'По потенциалу'}
-function sorted(list){return [...list].sort((a,b)=>{if(sort==='roi')return roiMax(b.roi)-roiMax(a.roi);if(sort==='score')return b.score-a.score;if(sort==='end')return a.end-b.end;if(sort==='exchange')return a.ex.localeCompare(b.ex,'ru');return maxProfit(profitFor(b))-maxProfit(profitFor(a));})}
+function sorted(list){return [...list].sort((a,b)=>{if(sort==='today') return a.end-b.end; if(sort==='roi')return roiMax(b.roi)-roiMax(a.roi);if(sort==='end')return a.end-b.end;if(sort==='exchange')return a.ex.localeCompare(b.ex,'ru');return maxProfit(profitFor(b))-maxProfit(profitFor(a));})}
 function logoImg(ex){
  const custom={
   OKX:'<svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#050505"/><rect x="10" y="10" width="10" height="10" fill="#fff"/><rect x="28" y="10" width="10" height="10" fill="#fff"/><rect x="19" y="19" width="10" height="10" fill="#fff"/><rect x="10" y="28" width="10" height="10" fill="#fff"/><rect x="28" y="28" width="10" height="10" fill="#fff"/></svg>',
