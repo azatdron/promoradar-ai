@@ -5,18 +5,26 @@ const logos={
 };
 const brandColor={Binance:'#e2a700',Bybit:'#7357d8',OKX:'#111827',KuCoin:'#20a984',Coinbase:'#1f6bff',Gate:'#2675ff',MEXC:'#18a987',Bitget:'#00a6b8',BingX:'#2563eb'};
 const links={
-  Binance:{Launchpool:'https://www.binance.com/en/launchpool',Megadrop:'https://www.binance.com/en/megadrop'},
-  Bybit:{Launchpad:'https://www.bybit.com/en/trade/spot/launchpad',Launchpool:'https://www.bybit.com/en/trade/spot/launchpool'},
-  OKX:{Jumpstart:'https://www.okx.com/jumpstart'},
-  KuCoin:{GemPool:'https://www.kucoin.com/gempool',Spotlight:'https://www.kucoin.com/spotlight-center',GemSpace:'https://www.kucoin.com/gemspace/ongoing'},
+  Binance:{Launchpool:'https://www.binance.com/en/launchpool',Megadrop:'https://www.binance.com/en/megadrop',Earn:'https://www.binance.com/en/earn',Staking:'https://www.binance.com/en/earn'},
+  Bybit:{Launchpad:'https://www.bybit.com/en/trade/spot/launchpad',Launchpool:'https://www.bybit.com/en/trade/spot/launchpool',Earn:'https://www.bybit.com/en/earn',Staking:'https://www.bybit.com/en/earn'},
+  OKX:{Jumpstart:'https://www.okx.com/jumpstart',Earn:'https://www.okx.com/earn',Staking:'https://www.okx.com/earn'},
+  KuCoin:{GemPool:'https://www.kucoin.com/gempool',Spotlight:'https://www.kucoin.com/spotlight-center',GemSpace:'https://www.kucoin.com/gemspace/ongoing',Earn:'https://www.kucoin.com/earn',Staking:'https://www.kucoin.com/earn'},
   Coinbase:{Earn:'https://www.coinbase.com/learning-rewards'},
-  Gate:{Launchpad:'https://www.gate.com/launchpad',Launchpool:'https://www.gate.com/launchpool',CandyDrop:'https://www.gate.com/candy-drop',Startup:'https://www.gate.com/startup'},
-  MEXC:{Kickstarter:'https://www.mexc.com/announcements/mx-exclusives',Launchpool:'https://www.mexc.com/earn'},
-  Bitget:{Launchpool:'https://www.bitget.com/events/launchpool'},
-  BingX:{Launchpad:'https://bingx.com/en/launchpad/overview'}
+  Gate:{Launchpad:'https://www.gate.com/launchpad',Launchpool:'https://www.gate.com/launchpool',CandyDrop:'https://www.gate.com/candy-drop',Startup:'https://www.gate.com/startup',Earn:'https://www.gate.com/earn',Staking:'https://www.gate.com/earn'},
+  MEXC:{Kickstarter:'https://www.mexc.com/announcements/mx-exclusives',Launchpool:'https://www.mexc.com/earn',Earn:'https://www.mexc.com/earn',Staking:'https://www.mexc.com/earn'},
+  Bitget:{Launchpool:'https://www.bitget.com/events/launchpool',Earn:'https://www.bitget.com/earn',Staking:'https://www.bitget.com/earn'},
+  BingX:{Launchpad:'https://bingx.com/en/launchpad/overview',Earn:'https://bingx.com/en/wealth/',Staking:'https://bingx.com/en/wealth/'}
 };
 let offers=[
- {id:'kucoin-tea-gempool',active:true,verified:true,ex:'KuCoin',type:'GemPool',name:'TEA',coin:'TEA',stake:'KCS / USDT',end:2,endAt:'2026-06-14T00:00:00Z',left:null,profit:{50:'$5–$15',100:'$9–$30',500:'$45–$120',1000:'$90–$240'},roi:'до 180%',score:87,actions:['GemPool','Spotlight','GemSpace'],source:'KuCoin',realCalc:{method:'apr_time_prorated',apr:180,source:'KuCoin'}},
+ {id:'kucoin-tea-gempool',active:true,verified:true,category:'Launch',ex:'KuCoin',type:'GemPool',name:'TEA',coin:'TEA',stake:'KCS / USDT',end:2,endAt:'2026-06-14T00:00:00Z',left:null,profit:{50:'$5–$15',100:'$9–$30',500:'$45–$120',1000:'$90–$240'},roi:'до 180%',score:87,actions:['GemPool','Spotlight','GemSpace'],source:'KuCoin',realCalc:{method:'apr_time_prorated',apr:180,source:'KuCoin'}},
+ {id:'kucoin-kcs-staking',active:true,verified:true,category:'Staking',ex:'KuCoin',type:'Staking',name:'KCS',coin:'KCS',stake:'KCS',left:'гибко',durationDays:30,profit:{50:'$0.20–$0.70',100:'$0.40–$1.40',500:'$2–$7',1000:'$4–$14'},roi:'5%–18% год',score:76,actions:['Staking','Earn'],source:'KuCoin Earn',realCalc:{method:'apr_time_prorated',apr:12,durationDays:30,source:'KuCoin Earn'}},
+ {id:'binance-bnb-earn',active:true,verified:true,category:'Earn',ex:'Binance',type:'Earn',name:'BNB Vault',coin:'BNB',stake:'BNB',left:'гибко',durationDays:30,profit:{50:'$0.10–$0.50',100:'$0.20–$1',500:'$1–$5',1000:'$2–$10'},roi:'2%–12% год',score:74,actions:['Earn','Staking'],source:'Binance Earn',realCalc:{method:'apr_time_prorated',apr:8,durationDays:30,source:'Binance Earn'}},
+ {id:'bybit-flexible-earn',active:true,verified:true,category:'Earn',ex:'Bybit',type:'Earn',name:'Flexible Earn',coin:'USDT',stake:'USDT',left:'гибко',durationDays:30,profit:{50:'$0.08–$0.40',100:'$0.16–$0.80',500:'$0.80–$4',1000:'$1.60–$8'},roi:'2%–10% год',score:70,actions:['Earn','Staking'],source:'Bybit Earn',realCalc:{method:'apr_time_prorated',apr:7,durationDays:30,source:'Bybit Earn'}},
+ {id:'gate-gt-earn',active:true,verified:true,category:'Staking',ex:'Gate',type:'Staking',name:'GT',coin:'GT',stake:'GT / USDT',left:'гибко',durationDays:30,profit:{50:'$0.10–$0.60',100:'$0.20–$1.20',500:'$1–$6',1000:'$2–$12'},roi:'3%–15% год',score:69,actions:['Staking','Earn'],source:'Gate Earn',realCalc:{method:'apr_time_prorated',apr:10,durationDays:30,source:'Gate Earn'}},
+ {id:'bitget-bgb-staking',active:true,verified:true,category:'Staking',ex:'Bitget',type:'Staking',name:'BGB',coin:'BGB',stake:'BGB',left:'гибко',durationDays:30,profit:{50:'$0.10–$0.50',100:'$0.20–$1',500:'$1–$5',1000:'$2–$10'},roi:'3%–12% год',score:68,actions:['Staking','Earn'],source:'Bitget Earn',realCalc:{method:'apr_time_prorated',apr:9,durationDays:30,source:'Bitget Earn'}},
+ {id:'okx-simple-earn',active:true,verified:true,category:'Earn',ex:'OKX',type:'Earn',name:'Simple Earn',coin:'USDT',stake:'USDT',left:'гибко',durationDays:30,profit:{50:'$0.08–$0.35',100:'$0.16–$0.70',500:'$0.80–$3.50',1000:'$1.60–$7'},roi:'2%–8% год',score:66,actions:['Earn'],source:'OKX Earn',realCalc:{method:'apr_time_prorated',apr:6,durationDays:30,source:'OKX Earn'}},
+ {id:'mexc-mx-staking',active:true,verified:true,category:'Staking',ex:'MEXC',type:'Staking',name:'MX',coin:'MX',stake:'MX',left:'гибко',durationDays:30,profit:{50:'$0.10–$0.50',100:'$0.20–$1',500:'$1–$5',1000:'$2–$10'},roi:'3%–12% год',score:65,actions:['Staking','Earn'],source:'MEXC Earn',realCalc:{method:'apr_time_prorated',apr:8,durationDays:30,source:'MEXC Earn'}},
+ {id:'bingx-wealth',active:true,verified:true,category:'Earn',ex:'BingX',type:'Earn',name:'Wealth',coin:'USDT',stake:'USDT',left:'гибко',durationDays:30,profit:{50:'$0.05–$0.30',100:'$0.10–$0.60',500:'$0.50–$3',1000:'$1–$6'},roi:'1%–7% год',score:62,actions:['Earn'],source:'BingX Wealth',realCalc:{method:'apr_time_prorated',apr:5,durationDays:30,source:'BingX Wealth'}},
  {active:false,verified:false,staleReason:'Не подтверждено live-валидацией',id:'bybit-xter-launch',ex:'Bybit',type:'Launch',name:'EXTER / MNT',coin:'EXTER / MNT',stake:'USDT / MNT',end:99,endAt:'2025-01-08T08:59:00Z',left:'завершено',active:false,profit:{50:'$8–$22',100:'$15–$45',500:'$70–$180',1000:'$140–$360'},roi:'14%–45%',score:86,actions:['Launchpad','Launchpool']},
  {active:false,verified:false,staleReason:'Не подтверждено live-валидацией',id:'binance-lista-launchpool',ex:'Binance',type:'Launchpool',name:'LISTA',coin:'LISTA',stake:'BNB / FDUSD',end:3,left:'3 д. 12 ч.',profit:{50:'$10–$30',100:'$20–$60',500:'$90–$260',1000:'$180–$520'},roi:'20%–50%',score:80,actions:['Launchpool','Megadrop'],realCalc:{method:'apr_time_prorated',apr:45,source:'Binance'}},
  {active:false,verified:false,staleReason:'Не подтверждено live-валидацией',id:'gate-launch-center',ex:'Gate',type:'Launch',name:'CandyDrop / Pool',coin:'CandyDrop / Pool',stake:'GT / USDT',end:4,left:'4 д. 12 ч.',profit:{50:'$4–$12',100:'$8–$24',500:'$35–$90',1000:'$70–$180'},roi:'8%–24%',score:74,actions:['Launchpad','Launchpool','CandyDrop','Startup'],realCalc:{method:'apr_time_prorated',apr:28,source:'Gate'}},
@@ -28,7 +36,7 @@ let offers=[
 ];
 const app=document.getElementById('app');
 const exOrder=['Binance','Bybit','OKX','KuCoin','Gate','MEXC','Bitget','BingX'];
-const sortModes=[['today','🔥 Сегодня'],['potential','💰 Потенциал'],['roi','📈 ROI'],['end','⏳ Осталось'],['exchange','🏦 Биржа']];
+const sortModes=[['today','Сегодня'],['potential','Потенциал'],['roi','ROI'],['end','Осталось'],['exchange','Биржа']];
 let deposit=localStorage.prDeposit||'50';
 let stored;try{stored=JSON.parse(localStorage.prExchanges||'null')}catch(e){}
 let exchanges=Array.isArray(stored)?stored.filter(x=>exOrder.includes(x)):['Binance','Bybit','OKX','KuCoin'];
@@ -93,7 +101,7 @@ function rewardCalc(o){
    return {kind:'pool', share, est, lo:est*0.85, hi:est*1.15, source:r.source||o.source||'Биржа'};
  }
  if(r.apr){
-   const d=daysLeftValue(o);
+   const d=Number(r.durationDays||o.durationDays)||daysLeftValue(o)||30;
    const est=dep*(Number(r.apr)/100)*(d/365);
    return {kind:'apr', days:d, apr:Number(r.apr), est, lo:est*0.75, hi:est*1.25, source:r.source||o.source||'APR'};
  }
@@ -144,17 +152,24 @@ function logoImg(ex){
 }
 function exChip(ex){const on=exchanges.includes(ex);return `<button class="chip ex ${on?'active':''} logoOnly" data-toggle-ex="${ex}" title="${ex}"><span class="miniLogo ${ex.toLowerCase()}">${logoImg(ex)}</span></button>`}
 function exchangeRow(){return exOrder.map(exChip).join('')}
-function typeRow(){return ['Все','Launchpool','Launchpad','GemPool','Jumpstart','Spotlight','Earn','Kickstarter','CandyDrop'].map(t=>`<button class="chip type ${selectedTypes.includes(t)?'active':''}" data-type="${t}">${t}</button>`).join('')}
-function matchesType(o){if(selectedTypes.includes('Все'))return true;return selectedTypes.some(t=>{if(t==='Launchpool')return o.actions.includes('Launchpool')||o.type==='Launchpool';if(t==='Launchpad')return o.actions.includes('Launchpad');return o.type===t||o.actions.includes(t)})}
+function typeRow(){return ['Все','Launch','Staking','Earn','Airdrop'].map(t=>`<button class="chip type ${selectedTypes.includes(t)?'active':''}" data-type="${t}">${t}</button>`).join('')}
+function matchesType(o){if(selectedTypes.includes('Все'))return true;return selectedTypes.some(t=>{
+ const cat=o.category||((['Launchpool','Launchpad','GemPool','Jumpstart','Kickstarter','CandyDrop','Spotlight','Launch'].includes(o.type)||['Launchpool','Launchpad','GemPool','Jumpstart','Kickstarter','CandyDrop','Spotlight'].some(a=>(o.actions||[]).includes(a)))?'Launch':o.type);
+ if(t==='Launch')return cat==='Launch';
+ if(t==='Staking')return cat==='Staking'||o.type==='Staking'||(o.actions||[]).includes('Staking');
+ if(t==='Earn')return cat==='Earn'||o.type==='Earn'||(o.actions||[]).includes('Earn');
+ if(t==='Airdrop')return cat==='Airdrop'||o.type==='Airdrop'||(o.actions||[]).includes('Airdrop')||o.type==='CandyDrop'||(o.actions||[]).includes('CandyDrop');
+ return o.type===t||(o.actions||[]).includes(t);
+})}
 function render(){const now=Date.now();const filtered=sorted(offers.filter(o=>exchanges.includes(o.ex)&&matchesType(o)&&o.active!==false&&(!o.endAt||new Date(o.endAt).getTime()>now)));const best=filtered[0];app.innerHTML=`<main class="page"><header class="top"><img class="logo" src="icon.svg"><div class="title"><h1>PromoRadar AI</h1><p>Акции топ-бирж в одном месте</p></div></header>
 <section class="filters">
  <div class="fBlock"><div class="fHead"><h2>Мой депозит</h2><b>${deposit} USDT⌄</b></div><div class="depositRow custom">${['50','100','500','1000'].map(d=>`<button class="dep ${d===deposit?'active':''}" data-deposit="${d}"><b>${d}</b><small>USDT</small></button>`).join('')}<button class="dep customBtn ${!['50','100','500','1000'].includes(String(deposit))?'active':''}" data-custom><b>Своя</b><small>сумма</small></button></div></div>
  <div class="fBlock"><div class="fHead clean"><h2>Биржи</h2></div><div class="chipRow exRow expanded">${exchangeRow()}</div></div>
- <div class="fBlock"><div class="fHead clean"><h2>Тип акций</h2></div><div class="chipRow typeRow">${typeRow()}</div></div>
+ <div class="fBlock"><div class="fHead clean"><h2>Тип заработка</h2></div><div class="chipRow typeRow">${typeRow()}</div></div>
 </section>
 <div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} акций · ${sortLabel().toLowerCase()}</span></div><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div>
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
-<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам. Свайпните вниз для live-проверки бирж.</div>'}</section><div class="liveNote"><b>Live API v29 · Live Links + Validation</b><span>Показываются только активные подтверждённые акции. Завершённые и неподтверждённые карточки скрываются автоматически.</span></div></main><div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
+<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам. Свайпните вниз для live-проверки бирж.</div>'}</section><div class="liveNote"><b>Live API v32 · Earn + Staking</b><span>Добавлены Launch, Staking, Earn и Airdrop без лишних разделов. Доход считается от вашего депозита; live-валидация акций сохранена.</span></div></main><div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
 function endLabel(o){const live=leftFromEndAt(o.endAt); return live || o.left || (o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—')}
 function displayLine(o){return `${o.coin} • ${o.type}`}
 function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);return `<article class="offer v19card" data-card="${id}">
@@ -223,5 +238,5 @@ render();
 loadLive();
 
 
-// v31 Telegram Ready placeholder
+// v32 Earn + Staking placeholder
 const telegramPlans={day:5,month:30,sixMonths:120,year:180};
