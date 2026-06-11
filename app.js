@@ -130,9 +130,8 @@ function calcLine(o){
 }
 function sourceLine(o){
  const verified=o.verified!==false;
- const src=o.source||'official';
  const url=o.sourceUrl||'';
- return `<div class="sourceRow"><span class="verified ${verified?'ok':'warn'}">${verified?'✓ Проверено':'⚠ Требует проверки'}</span><span class="src">${src}</span>${url?`<button class="sourceBtn" data-source="${url}">Открыть источник</button>`:''}</div>`;
+ return `<div class="sourceRow clean"><span class="verified ${verified?'ok':'warn'}">${verified?'✓ Проверено':'⚠ Требует проверки'}</span>${url?`<button class="sourceBtn" data-source="${url}">Открыть источник</button>`:''}</div>`;
 }
 function maxProfit(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums.at(-1)||0}
 function roiMax(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums.at(-1)||0}
@@ -169,7 +168,7 @@ function render(){const now=Date.now();const filtered=sorted(offers.filter(o=>ex
 </section>
 <div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} акций · ${sortLabel().toLowerCase()}</span></div><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div>
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
-<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам. Свайпните вниз для live-проверки бирж.</div>'}</section><div class="liveNote"><b>Live API v35 · Compact Metrics</b><span>Метрики снова в одной компактной строке: Вложить / Потенциал / ROI / Осталось. Колонки поджаты, чтобы ROI не налезал на сроки.</span></div></main><div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
+<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам. Свайпните вниз для live-проверки бирж.</div>'}</section><div class="liveNote"><b>Live API v36 · Compact Cleanup</b><span>Метрики в компактной строке. Депозит / награда / APR теперь одной линией, источник рядом с «Проверено» убран.</span></div></main><div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
 function endLabel(o){const live=leftFromEndAt(o.endAt); return live || o.left || (o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—')}
 function displayLine(o){return `${o.coin} • ${o.type}`}
 function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);return `<article class="offer v19card" data-card="${id}">

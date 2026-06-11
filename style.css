@@ -447,3 +447,47 @@
   .v19card .metricGrid small{font-size:8.4px!important}
   .v19card .metricGrid .green{font-size:9.5px!important}
 }
+
+
+/* v36 Compact Cleanup: verification source removed, reward chips in one clean row */
+.v19card .calcMini{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  overflow-x:auto!important;
+  gap:4px!important;
+  margin-top:7px!important;
+  padding-bottom:1px!important;
+  scrollbar-width:none!important;
+}
+.v19card .calcMini::-webkit-scrollbar{display:none!important}
+.v19card .calcMini span{
+  flex:0 0 auto!important;
+  font-size:8.9px!important;
+  line-height:1!important;
+  padding:3px 6px!important;
+  white-space:nowrap!important;
+}
+.v19card .sourceRow.clean{
+  margin-top:7px!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:6px!important;
+}
+.v19card .sourceRow.clean .verified{
+  height:24px!important;
+  padding:0 10px!important;
+  font-size:9.2px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+}
+.v19card .sourceRow.clean .src{display:none!important}
+.v19card .metricGrid{
+  grid-template-columns:1.00fr 1.16fr .94fr .96fr!important;
+}
+.v19card .metricGrid b{
+  letter-spacing:-.18px!important;
+}
+@media(max-width:390px){
+  .v19card .calcMini span{font-size:8.1px!important;padding:3px 5px!important}
+  .v19card .sourceRow.clean .verified{font-size:8.7px!important;height:23px!important;padding:0 9px!important}
+}
