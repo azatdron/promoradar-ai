@@ -52,8 +52,21 @@ function leftFromEndAt(endAt){
 }
 function mergeLive(payload){
  if(!payload||!payload.offers)return; liveStatus=payload.source||'live';
- offers=offers.map(o=>{const upd=payload.offers.find(x=>x.id===o.id); if(!upd)return o; return {...o,...upd, profit:{...o.profit,...(upd.profit||{})}}});
+ offers=offers.map(o=>{
+   const upd=payload.offers.find(x=>x.id===o.id);
+   if(!upd)return o;
+   const merged={...o,...upd, profit:{...o.profit,...(upd.profit||{})}};
+   if(upd.profitLive){
+     const nums=(upd.profitLive.match(/\d+/g)||[]).map(Number);
+     if(nums.length>=2){
+       const scale=(Number(deposit)||50)/50;
+       merged.profit={...merged.profit, [deposit]:`$${Math.max(1,Math.round(nums[0]*scale))}–$${Math.max(1,Math.round(nums[1]*scale))}`};
+     }
+   }
+   return merged;
+ });
 }
+
 async function loadLive(){
  try{const r=await fetch('/api/live',{cache:'no-store'}); if(!r.ok)throw new Error('no live'); const j=await r.json(); mergeLive(j); save(); render();}
  catch(e){liveStatus='static';}
@@ -75,7 +88,7 @@ function sorted(list){return [...list].sort((a,b)=>{if(sort==='today') return (b
 function logoImg(ex){
  const custom={
   OKX:'<svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#050505"/><rect x="10" y="10" width="10" height="10" fill="#fff"/><rect x="28" y="10" width="10" height="10" fill="#fff"/><rect x="19" y="19" width="10" height="10" fill="#fff"/><rect x="10" y="28" width="10" height="10" fill="#fff"/><rect x="28" y="28" width="10" height="10" fill="#fff"/></svg>',
-  KuCoin:'<svg viewBox="0 0 48 48" aria-label="KuCoin"><defs><linearGradient id="kc" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#05d89e"/><stop offset="1" stop-color="#14b87e"/></linearGradient></defs><rect width="48" height="48" rx="12" fill="url(#kc)"/><path d="M13 12v24" stroke="#fff" stroke-width="5.8" stroke-linecap="round" fill="none"/><path d="M17 24 30 12" stroke="#fff" stroke-width="5.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M17 24 30 36" stroke="#fff" stroke-width="5.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="32" cy="24" r="4.4" fill="#fff"/></svg>',
+  KuCoin:'<svg viewBox="0 0 48 48" aria-label="KuCoin"><defs><linearGradient id="kcapp" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#14d4a4"/><stop offset="1" stop-color="#0bbf82"/></linearGradient></defs><rect width="48" height="48" rx="12" fill="url(#kcapp)"/><path d="M14 12v24" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M18 24 31 12" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 24 31 36" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33" cy="24" r="4.4" fill="#fff"/></svg>',
   Gate:'<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="15" fill="none" stroke="#2962ff" stroke-width="7"/><rect x="24" y="10" width="13" height="13" rx="2" fill="#49d391"/><path d="M31 24a7 7 0 1 1-7-7" stroke="#2962ff" stroke-width="7" fill="none" stroke-linecap="round"/></svg>',
   MEXC:'<svg viewBox="0 0 48 48"><path d="M6 32 16 16c2-3 6-3 8 0l4 7 4-7c2-3 6-3 8 0l8 16H37l-5-9-4 7h-8l-4-7-5 9H6Z" fill="#3f6df6"/><path d="M20 30h8l-4-7-4 7Z" fill="#23d6a2"/></svg>',
   Bitget:'<svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#6be7ee"/><path d="M18 13 9 24l9 11h8L17 24l9-11h-8Z" fill="#08111f"/><path d="M30 13 21 24l9 11h8L29 24l9-11h-8Z" fill="#08111f" opacity=".82"/></svg>',
@@ -96,7 +109,7 @@ function render(){const now=Date.now();const filtered=sorted(offers.filter(o=>ex
 </section>
 <div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} акций · ${sortLabel().toLowerCase()}</span></div><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div>
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
-<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам</div>'}</section><div class="liveNote"><b>Live-данные</b><span>Обновление свайпом вниз. Реальные источники подключаются через /api/live.</span></div></main><div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
+<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам</div>'}</section><div class="liveNote"><b>Live API v25</b><span>Свайп вниз обновляет данные с официальных страниц/API бирж. Если акция завершена или источник недоступен, карточка скрывается или остаётся последняя проверка.</span></div></main><div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
 function endLabel(o){const live=leftFromEndAt(o.endAt); return live || o.left || (o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—')}
 function displayLine(o){return `${o.coin} • ${o.type}`}
 function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);return `<article class="offer v19card" data-card="${id}">
