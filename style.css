@@ -214,3 +214,89 @@
 .detailsPanel div{min-width:0}.detailsPanel small{display:block;color:#7a8798;font-size:9px;font-weight:800;margin-bottom:2px}.detailsPanel b{display:block;color:#0d1627;font-size:10.5px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .liveNote b{font-size:12.5px}.liveNote span{font-size:11px}
 @media(max-width:390px){.sourceRow{font-size:8.8px}.sourceBtn{font-size:8.6px;padding:0 7px}.sourceRow .src{max-width:120px}.detailsPanel b{font-size:9.7px}}
+
+/* v33 UI Polish: readable metrics on iPhone
+   Split metrics into 2x2 so ROI never touches "Осталось". */
+.v19card .metricGrid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:0!important;
+  margin-top:9px!important;
+  padding-top:2px!important;
+}
+.v19card .metricGrid>div{
+  min-width:0!important;
+  padding:6px 10px!important;
+  border-left:0!important;
+  border-top:1px solid #e2ece6!important;
+}
+.v19card .metricGrid>div:nth-child(1),
+.v19card .metricGrid>div:nth-child(2){
+  border-top:0!important;
+  padding-top:0!important;
+}
+.v19card .metricGrid>div:nth-child(even){
+  border-left:1px solid #dfeae4!important;
+}
+.v19card .metricGrid small{
+  font-size:9.8px!important;
+  line-height:1.05!important;
+  color:#748196!important;
+  white-space:nowrap!important;
+}
+.v19card .metricGrid b{
+  font-size:11.2px!important;
+  line-height:1.12!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  letter-spacing:-.08px!important;
+}
+.v19card .metricGrid .green{
+  font-size:11.4px!important;
+  color:#17994c!important;
+}
+.v19card .calcMini{
+  margin-top:7px!important;
+  gap:5px!important;
+}
+.v19card .calcMini span{
+  font-size:9.7px!important;
+  padding:4px 8px!important;
+}
+.v19card .sourceRow{
+  margin-top:7px!important;
+  gap:5px!important;
+}
+.v19card .sourceRow .src,
+.v19card .sourceRow .sourceBtn{
+  font-size:9px!important;
+  height:24px!important;
+  padding:0 8px!important;
+}
+.v19card .actionRow{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  gap:6px!important;
+  padding-bottom:2px!important;
+  scrollbar-width:none!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+.v19card .actionRow::-webkit-scrollbar{display:none!important}
+.v19card .action{
+  flex:0 0 auto!important;
+  height:25px!important;
+  padding:0 10px!important;
+  font-size:10.3px!important;
+}
+.v19card .detailsPanel{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+@media(max-width:390px){
+  .v19card .metricGrid>div{padding:6px 7px!important}
+  .v19card .metricGrid b{font-size:10.5px!important}
+  .v19card .metricGrid small{font-size:9px!important}
+  .v19card .metricGrid .green{font-size:10.7px!important}
+}
