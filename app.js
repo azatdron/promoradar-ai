@@ -215,16 +215,16 @@ ${!isPro?'<section class="proMini"><b>Free режим</b><span>Демо-дост
  <div class="fBlock"><div class="fHead clean"><h2>Биржи</h2></div><div class="chipRow exRow expanded">${exchangeRow()}</div></div>
  <div class="fBlock"><div class="fHead clean"><h2>Тип заработка</h2></div><div class="chipRow typeRow">${typeRow()}</div></div>
 </section>
-<div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} акций · ${favoritesOnly?'избранное':sortLabel().toLowerCase()}</span></div><div class="sectionActions"><button class="favFilter ${favoritesOnly?'active':''}" data-fav-filter>☆</button><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div></div>
+<div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} акций · ${favoritesOnly?'избранное':sortLabel().toLowerCase()}</span></div><div class="sectionActions"><button class="favFilter ${favoritesOnly?'active':''}" data-fav-filter>${favoritesOnly?'★':'☆'}${fav.length?` <span>${fav.length}</span>`:''}</button><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div></div>
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
-<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам. Свайпните вниз для live-проверки бирж.</div>'}</section><div class="liveNote"><b>Live API v39 · Telegram Ready</b><span>Ссылки проверяются перед открытием. Избранное и экран PRO готовы под Telegram Stars.</span></div></main>${proModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
+<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам. Свайпните вниз для live-проверки бирж.</div>'}</section><div class="liveNote"><b>Live API v40 · Favorites UX</b><span>Избранное стало понятнее: белая звезда — не сохранено, тёмно-зелёная — сохранено. Счётчик показывает количество избранных.</span></div></main>${proModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
 function endLabel(o){const live=leftFromEndAt(o.endAt); return live || o.left || (o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—')}
 function displayLine(o){return `${o.coin} • ${o.type}`}
 function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);return `<article class="offer v19card" data-card="${id}">
  <div class="cardTop">
    <div class="brandLogo ${o.ex.toLowerCase()}">${logoImg(o.ex)}</div>
    <div class="cardTitle">
-     <div class="brandLine"><span class="brand" style="color:${brandColor[o.ex]||'#17994c'}">${o.ex}</span><button class="fav ${is?'on':''}" data-fav="${id}" title="В избранное">☆</button></div>
+     <div class="brandLine"><span class="brand" style="color:${brandColor[o.ex]||'#17994c'}">${o.ex}</span><button class="fav ${is?'on':''}" data-fav="${id}" title="${is?'Убрать из избранного':'В избранное'}">${is?'★':'☆'}</button></div>
      <h3>${displayLine(o)}</h3>
    </div>
    <div class="score"><b>${o.score}</b><small>/100</small></div>
