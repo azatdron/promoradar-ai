@@ -284,17 +284,17 @@ function defaultProviderStatus(note='ожидает проверки'){
 }
 function sourceMonitor(){
  const rows=(providerStatus.length?providerStatus:defaultProviderStatus(liveLoading?'проверяется':'нет данных'));
- const checked=lastLiveUpdated?timeAgo(lastLiveUpdated):(liveLoading?'проверяю сейчас':'не проверено');
+ const checked=lastLiveUpdated?timeAgo(lastLiveUpdated):(liveLoading?'проверяю сейчас':'ожидается');
  const activeCount=rows.filter(r=>r.active).length;
  return `<section class="sourcePanel"><div class="sourceHead"><div><h2>Источники</h2><span>Последняя проверка: ${checked}</span></div><b>${activeCount} активных</b></div><div class="sourceGrid">${rows.map(sourceChip).join('')}</div></section>`;
 }
 function sourceChip(r){
  const cls=r.active?'on':(r.ok?'idle':'off');
  const label=r.kind||r.type||r.note||'';
- return `<div class="srcChip ${cls}"><span class="dot"></span><b>${r.ex||'Source'}</b><small>${r.active?'активно':(r.ok?'нет активных':'ошибка')}</small></div>`;
+ return `<div class="srcChip ${cls}"><span class="dot"></span><b>${r.ex||'Source'}</b><small>${r.active?'активно':(r.ok?'нет активных':'ожидание проверки')}</small></div>`;
 }
 function timeAgo(iso){
- const t=new Date(iso).getTime(); if(!t)return 'не проверено';
+ const t=new Date(iso).getTime(); if(!t)return 'ожидается';
  const m=Math.max(0,Math.floor((Date.now()-t)/60000));
  if(m<1)return 'только что'; if(m<60)return `${m} мин назад`;
  const h=Math.floor(m/60); if(h<24)return `${h} ч назад`;
@@ -409,7 +409,7 @@ async function openLink(id,ex,act){
    showToast(`Открываю ${ex} • ${act}`);
    setTimeout(()=>{window.location.href=url},120);
  }else{
-   showToast(`Ссылка неактуальна (${v.status||'ошибка'})`);
+   showToast(`Ссылка неактуальна (${v.status||'ожидание проверки'})`);
  }
 }
 
