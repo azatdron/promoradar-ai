@@ -81,7 +81,7 @@ let offers=[
  {active:false,verified:false,staleReason:'Не подтверждено live-валидацией',id:'mexc-kickstarter',ex:'MEXC',type:'Kickstarter',name:'MX Exclusives',coin:'MX',stake:'MX / Tasks',end:7,left:'7 д. 0 ч.',profit:{50:'$3–$10',100:'$6–$18',500:'$30–$80',1000:'$60–$160'},roi:'7%–20%',score:66,actions:['Kickstarter','Launchpool'],realCalc:{method:'apr_time_prorated',apr:20,source:'MEXC'}}
 ];
 
-// v48 Live Source Monitor: no demo cards are shown until live validation confirms them.
+// v49 Compact Monitor + KuCoin Foundation: no demo cards are shown until live validation confirms them.
 offers=offers.map(o=>({
   ...o,
   active:false,
@@ -310,7 +310,7 @@ ${!isPro?`<section class="proMini"><b>Free режим: доступна ${freeEx
 ${sourceMonitor()}
 <div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} активных проверенных${lockedCount&&!isPro?` · ${lockedCount} в PRO`:''} · ${favoritesOnly?'избранное':sortLabel().toLowerCase()}</span></div><div class="sectionActions"><button class="favFilter ${favoritesOnly?'active':''}" data-fav-filter>${favoritesOnly?'★':'☆'}${fav.length?` <span>${fav.length}</span>`:''}</button><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div></div>
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
-<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Активных проверенных акций сейчас не найдено по выбранным фильтрам. Свайпните вниз, чтобы заново проверить источники бирж.</div>'}</section><div class="liveNote"><b>v48 Live Source Monitor</b><span>Ручная проверка источников, журнал активности и подготовка к реальным Binance/KuCoin источникам.</span></div></main>${proModal()}${alertsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
+<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Активных проверенных акций сейчас не найдено по выбранным фильтрам. Свайпните вниз, чтобы заново проверить источники бирж.</div>'}</section><div class="liveNote"><b>v49 Compact Monitor + KuCoin Foundation</b><span>Ручная проверка источников, журнал активности и подготовка к реальным Binance/KuCoin источникам.</span></div></main>${proModal()}${alertsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
 function endLabel(o){const live=leftFromEndAt(o.endAt); return live || o.left || (o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—')}
 function displayLine(o){return `${o.coin} • ${o.type}`}
 function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);const locked=isLocked(o);return `<article class="offer v19card ${locked?'locked':''}" data-card="${id}">
@@ -536,6 +536,48 @@ const telegramPlans={day:5,month:30,sixMonths:120,year:180};
     let l=localStorage.getItem(lastKey); if(l) last(l);
     if(!logs().length){save([{time:t(),text:'v48 готов: ручная проверка источников подключена'}]);renderLog();}
     document.addEventListener('click',e=>{if(e.target&&e.target.id==='v48CheckBtn')check()});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+
+
+
+(function(){
+  function compactV48Log(){
+    const log = document.getElementById('v48Log');
+    if (!log) return;
+    log.classList.add('v49-compact-log');
+    const title = log.querySelector('b');
+    if (title && !title.dataset.v49) {
+      title.dataset.v49 = '1';
+      title.innerHTML = 'Последняя активность <span class="v49-toggle">показать</span>';
+      title.addEventListener('click', function(){ log.classList.toggle('v49-open'); });
+    }
+    const items = log.querySelector('.v48-items');
+    if (items) {
+      Array.from(items.querySelectorAll('p')).forEach(function(r,i){ r.style.display = i < 4 ? '' : 'none'; });
+    }
+  }
+  function addNote(){
+    if (document.getElementById('v49ConnectorNote')) return;
+    const sourceTitle = Array.from(document.querySelectorAll('h1,h2,h3,strong,div')).find(function(el){
+      return (el.textContent || '').trim().toLowerCase() === 'источники';
+    });
+    const panel = sourceTitle ? sourceTitle.closest('section,.card,.panel,.box,div') : document.querySelector('[class*="source"],[class*="Source"]');
+    if (!panel) return;
+    const note = document.createElement('div');
+    note.id = 'v49ConnectorNote';
+    note.className = 'v49-connector-note';
+    note.innerHTML = '<b>KuCoin connector</b><span>Следующий шаг: серверная проверка GemPool/Spotlight, чтобы находить реальные акции, а не только делать локальную проверку.</span>';
+    panel.appendChild(note);
+  }
+  function labelBtn(){
+    const btn = document.getElementById('v48CheckBtn');
+    if (btn && btn.textContent === 'Проверить сейчас') btn.textContent = 'Проверить источники';
+  }
+  function init(){
+    compactV48Log(); addNote(); labelBtn();
+    new MutationObserver(function(){ compactV48Log(); labelBtn(); }).observe(document.body,{childList:true,subtree:true,characterData:true});
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
