@@ -639,3 +639,14 @@
 .srcChip small{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:8.6px;line-height:1;color:#738196;font-weight:760}
 .liveNote b{color:#168947!important}
 @media(max-width:390px){.sourceGrid{gap:5px}.srcChip{padding:5px 3px;border-radius:12px}.srcChip b{font-size:9.3px}.srcChip small{font-size:7.8px}.sourceHead h2{font-size:13.5px}}
+
+
+
+.v48-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.v48-controls button{border:0;border-radius:20px;background:#159947;color:#fff;font-weight:900;padding:12px 18px;font-size:15px}
+.v48-controls button:disabled{opacity:.65}
+#v48Last{font-weight:800;color:#728094;font-size:14px}
+#v48Log{margin-top:12px;border:1px solid rgba(24,158,83,.22);background:#f7fffa;border-radius:18px;padding:12px 14px}
+#v48Log>b{display:block;color:#101827;font-size:16px;margin-bottom:6px}
+#v48Log p{margin:5px 0;font-weight:800;color:#253044}
+#v48Log span{color:#7d8899;margin-right:8px}

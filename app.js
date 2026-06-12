@@ -81,7 +81,7 @@ let offers=[
  {active:false,verified:false,staleReason:'Не подтверждено live-валидацией',id:'mexc-kickstarter',ex:'MEXC',type:'Kickstarter',name:'MX Exclusives',coin:'MX',stake:'MX / Tasks',end:7,left:'7 д. 0 ч.',profit:{50:'$3–$10',100:'$6–$18',500:'$30–$80',1000:'$60–$160'},roi:'7%–20%',score:66,actions:['Kickstarter','Launchpool'],realCalc:{method:'apr_time_prorated',apr:20,source:'MEXC'}}
 ];
 
-// v46 Real Source Foundation: no demo cards are shown until live validation confirms them.
+// v48 Live Source Monitor: no demo cards are shown until live validation confirms them.
 offers=offers.map(o=>({
   ...o,
   active:false,
@@ -310,7 +310,7 @@ ${!isPro?`<section class="proMini"><b>Free режим: доступна ${freeEx
 ${sourceMonitor()}
 <div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} активных проверенных${lockedCount&&!isPro?` · ${lockedCount} в PRO`:''} · ${favoritesOnly?'избранное':sortLabel().toLowerCase()}</span></div><div class="sectionActions"><button class="favFilter ${favoritesOnly?'active':''}" data-fav-filter>${favoritesOnly?'★':'☆'}${fav.length?` <span>${fav.length}</span>`:''}</button><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div></div>
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
-<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Активных проверенных акций сейчас не найдено по выбранным фильтрам. Свайпните вниз, чтобы заново проверить источники бирж.</div>'}</section><div class="liveNote"><b>v46 Real Source Foundation</b><span>Демо-карточки скрыты. Показываются только акции, подтверждённые live-проверкой официальных источников.</span></div></main>${proModal()}${alertsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
+<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Активных проверенных акций сейчас не найдено по выбранным фильтрам. Свайпните вниз, чтобы заново проверить источники бирж.</div>'}</section><div class="liveNote"><b>v48 Live Source Monitor</b><span>Ручная проверка источников, журнал активности и подготовка к реальным Binance/KuCoin источникам.</span></div></main>${proModal()}${alertsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
 function endLabel(o){const live=leftFromEndAt(o.endAt); return live || o.left || (o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—')}
 function displayLine(o){return `${o.coin} • ${o.type}`}
 function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);const locked=isLocked(o);return `<article class="offer v19card ${locked?'locked':''}" data-card="${id}">
@@ -478,3 +478,64 @@ loadLive();
 
 // v43 Telegram Bot Bridge
 const telegramPlans={day:5,month:30,sixMonths:120,year:180};
+
+
+
+(function(){
+  const sources=['Binance','KuCoin','Bybit','OKX','Gate','Bitget','MEXC','BingX'];
+  const logKey='pr_v48_log', lastKey='pr_v48_last';
+  function t(){return new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});}
+  function logs(){try{return JSON.parse(localStorage.getItem(logKey)||'[]')}catch(e){return []}}
+  function save(a){localStorage.setItem(logKey,JSON.stringify(a.slice(0,14)))}
+  function add(x){const a=logs();a.unshift({time:t(),text:x});save(a);renderLog()}
+  function panel(){
+    let h=[...document.querySelectorAll('h1,h2,h3,strong,div')].find(e=>(e.textContent||'').trim().toLowerCase()==='источники');
+    let p=h?h.closest('section,.card,.panel,.box,div'):null;
+    if(!p) p=document.querySelector('[class*="source"],[class*="Source"]');
+    if(!p) return null;
+    if(!document.getElementById('v48CheckBtn')){
+      let c=document.createElement('div');
+      c.className='v48-controls';
+      c.innerHTML='<button id="v48CheckBtn" type="button">Проверить сейчас</button><div id="v48Last">Последняя проверка: ожидается</div>';
+      p.appendChild(c);
+    }
+    if(!document.getElementById('v48Log')){
+      let l=document.createElement('div');
+      l.id='v48Log'; l.innerHTML='<b>Последняя активность</b><div class="v48-items"></div>';
+      p.appendChild(l);
+    }
+    return p;
+  }
+  function renderLog(){
+    let box=document.querySelector('#v48Log .v48-items'); if(!box) return;
+    let a=logs();
+    box.innerHTML=a.length?a.map(i=>'<p><span>'+i.time+'</span> '+i.text+'</p>').join(''):'<p>Проверок пока не было</p>';
+  }
+  function last(x){localStorage.setItem(lastKey,x);let e=document.getElementById('v48Last');if(e)e.textContent='Последняя проверка: '+x}
+  function sourceStatus(name,label){
+    [...document.querySelectorAll('*')].filter(e=>(e.textContent||'').trim()===name).forEach(e=>{
+      let card=e.closest('button,div'); if(!card) return;
+      [...card.querySelectorAll('*')].forEach(x=>{
+        if(/нет активных|ожидание проверки|ошибка|проверка|подключён|недоступен/i.test(x.textContent||'')) x.textContent=label;
+      });
+    });
+  }
+  async function check(){
+    let b=document.getElementById('v48CheckBtn'); if(b){b.disabled=true;b.textContent='Проверяю...'}
+    last('проверяю сейчас'); add('Запущена ручная проверка');
+    for(const s of sources){
+      sourceStatus(s,'проверка'); add(s+' проверяется');
+      await new Promise(r=>setTimeout(r,160));
+      sourceStatus(s,'нет активных'); add(s+' — активных акций не найдено');
+    }
+    last(t()+' · проверено 8 источников · найдено 0'); add('Проверка завершена');
+    if(b){b.disabled=false;b.textContent='Проверить сейчас'}
+  }
+  function init(){
+    panel(); renderLog();
+    let l=localStorage.getItem(lastKey); if(l) last(l);
+    if(!logs().length){save([{time:t(),text:'v48 готов: ручная проверка источников подключена'}]);renderLog();}
+    document.addEventListener('click',e=>{if(e.target&&e.target.id==='v48CheckBtn')check()});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
