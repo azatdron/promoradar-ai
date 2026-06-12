@@ -81,7 +81,7 @@ let offers=[
  {active:false,verified:false,staleReason:'Не подтверждено live-валидацией',id:'mexc-kickstarter',ex:'MEXC',type:'Kickstarter',name:'MX Exclusives',coin:'MX',stake:'MX / Tasks',end:7,left:'7 д. 0 ч.',profit:{50:'$3–$10',100:'$6–$18',500:'$30–$80',1000:'$60–$160'},roi:'7%–20%',score:66,actions:['Kickstarter','Launchpool'],realCalc:{method:'apr_time_prorated',apr:20,source:'MEXC'}}
 ];
 
-// v49 Compact Monitor + KuCoin Foundation: no demo cards are shown until live validation confirms them.
+// v50 Clean Source Panel: no demo cards are shown until live validation confirms them.
 offers=offers.map(o=>({
   ...o,
   active:false,
@@ -310,7 +310,7 @@ ${!isPro?`<section class="proMini"><b>Free режим: доступна ${freeEx
 ${sourceMonitor()}
 <div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} активных проверенных${lockedCount&&!isPro?` · ${lockedCount} в PRO`:''} · ${favoritesOnly?'избранное':sortLabel().toLowerCase()}</span></div><div class="sectionActions"><button class="favFilter ${favoritesOnly?'active':''}" data-fav-filter>${favoritesOnly?'★':'☆'}${fav.length?` <span>${fav.length}</span>`:''}</button><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div></div>
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
-<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Активных проверенных акций сейчас не найдено по выбранным фильтрам. Свайпните вниз, чтобы заново проверить источники бирж.</div>'}</section><div class="liveNote"><b>v49 Compact Monitor + KuCoin Foundation</b><span>Ручная проверка источников, журнал активности и подготовка к реальным Binance/KuCoin источникам.</span></div></main>${proModal()}${alertsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
+<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Активных проверенных акций сейчас не найдено по выбранным фильтрам. Свайпните вниз, чтобы заново проверить источники бирж.</div>'}</section><div class="liveNote"><b>v50 Clean Source Panel</b><span>Источники очищены от технических блоков. Следующий этап — первый реальный KuCoin источник.</span></div></main>${proModal()}${alertsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
 function endLabel(o){const live=leftFromEndAt(o.endAt); return live || o.left || (o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—')}
 function displayLine(o){return `${o.coin} • ${o.type}`}
 function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);const locked=isLocked(o);return `<article class="offer v19card ${locked?'locked':''}" data-card="${id}">
@@ -580,4 +580,43 @@ const telegramPlans={day:5,month:30,sixMonths:120,year:180};
     new MutationObserver(function(){ compactV48Log(); labelBtn(); }).observe(document.body,{childList:true,subtree:true,characterData:true});
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+
+
+
+(function(){
+  function initV50Clean(){
+    var note = document.getElementById('v49ConnectorNote');
+    if(note) note.style.display = 'none';
+
+    var log = document.getElementById('v48Log');
+    if(log){
+      log.classList.add('v50-clean-history');
+      var title = log.querySelector('b');
+      if(title && !title.dataset.cleanv50){
+        title.dataset.cleanv50='1';
+        title.innerHTML='История проверки <span class="v50-clean-toggle">показать</span>';
+        title.addEventListener('click', function(){
+          log.classList.toggle('v50-clean-open');
+          var s = title.querySelector('.v50-clean-toggle');
+          if(s) s.textContent = log.classList.contains('v50-clean-open') ? 'скрыть' : 'показать';
+        });
+      }
+    }
+
+    var btn = document.getElementById('v48CheckBtn');
+    if(btn) btn.textContent = 'Проверить источники';
+
+    var footerNodes = document.querySelectorAll('*');
+    footerNodes.forEach(function(el){
+      if((el.textContent||'').indexOf('v50 Clean Source Panel') !== -1 && el.children.length === 0){
+        el.textContent = el.textContent.replace('v50 Clean Source Panel','v50 Clean Source Panel');
+      }
+    });
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initV50Clean);
+  } else {
+    initV50Clean();
+  }
 })();
