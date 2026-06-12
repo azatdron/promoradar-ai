@@ -664,12 +664,10 @@
 
 
 
-#v48Log.v50-history-collapsed{max-height:76px!important;overflow:hidden!important;padding:10px 12px!important}
-#v48Log.v50-history-collapsed.v50-open{max-height:420px!important;overflow:auto!important}
-#v48Log.v50-history-collapsed>b{display:flex!important;justify-content:space-between!important;align-items:center!important;cursor:pointer!important;font-size:18px!important}
-#v48Log.v50-history-collapsed .v50-toggle{font-size:13px!important;color:#178b49!important;background:#ecfff3!important;padding:5px 10px!important;border-radius:999px!important}
-#v48Log.v50-history-collapsed p{font-size:12px!important;line-height:1.15!important;margin:3px 0!important}
-.v50-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 12px}
-.v50-summary div{border:1px solid rgba(24,158,83,.22);background:#f7fffa;border-radius:16px;padding:10px 8px;text-align:center}
-.v50-summary b{display:block;color:#0d1728;font-size:13px;line-height:1.1}
-.v50-summary span{display:block;color:#159947;font-weight:900;font-size:14px;margin-top:3px}.v49-connector-note{display:none!important}
+/* v50.1 safe monitor fix */
+#v49ConnectorNote,.v49-connector-note{display:none!important}
+#v48Log.v501-compact-history{max-height:86px!important;overflow:hidden!important}
+#v48Log.v501-compact-history.v501-open{max-height:420px!important;overflow:auto!important}
+#v48Log.v501-compact-history>b{display:flex!important;justify-content:space-between!important;align-items:center!important;cursor:pointer!important}
+.v501-toggle{font-size:13px!important;color:#178b49!important;background:#ecfff3!important;padding:5px 10px!important;border-radius:999px!important}
+#v48Log.v501-compact-history p{font-size:12px!important;line-height:1.15!important;margin:3px 0!important}
