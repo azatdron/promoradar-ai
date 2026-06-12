@@ -80,6 +80,14 @@ let offers=[
  {active:false,verified:false,staleReason:'Не подтверждено live-валидацией',id:'bingx-launchpad',ex:'BingX',type:'Launchpad',name:'Launchpad Hub',coin:'New coins',stake:'USDT / Tasks',end:6,left:'6 д. 0 ч.',profit:{50:'$3–$9',100:'$6–$18',500:'$30–$80',1000:'$60–$150'},roi:'6%–18%',score:68,actions:['Launchpad'],realCalc:{method:'apr_time_prorated',apr:18,source:'BingX'}},
  {active:false,verified:false,staleReason:'Не подтверждено live-валидацией',id:'mexc-kickstarter',ex:'MEXC',type:'Kickstarter',name:'MX Exclusives',coin:'MX',stake:'MX / Tasks',end:7,left:'7 д. 0 ч.',profit:{50:'$3–$10',100:'$6–$18',500:'$30–$80',1000:'$60–$160'},roi:'7%–20%',score:66,actions:['Kickstarter','Launchpool'],realCalc:{method:'apr_time_prorated',apr:20,source:'MEXC'}}
 ];
+
+// v46 Real Source Foundation: no demo cards are shown until live validation confirms them.
+offers=offers.map(o=>({
+  ...o,
+  active:false,
+  verified:false,
+  staleReason:o.staleReason||'Ожидает live-подтверждения'
+}));
 const app=document.getElementById('app');
 const exOrder=['Binance','Bybit','OKX','KuCoin','Gate','MEXC','Bitget','BingX'];
 const sortModes=[['today','Сегодня'],['potential','Потенциал'],['roi','ROI'],['end','Осталось'],['exchange','Биржа']];
@@ -137,6 +145,10 @@ function save(){localStorage.prDeposit=deposit;localStorage.prExchanges=JSON.str
 
 
 let liveStatus='static';
+let providerStatus=[];
+let lastLiveUpdated='';
+let sourceValidationRule='';
+let liveLoading=true;
 function parseMoneyRange(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums.length>=2?nums:[0,0]}
 function fmtMoney(n){
  if(!isFinite(n)||n<=0)return '$0.00';
@@ -149,7 +161,12 @@ function leftFromEndAt(endAt){
  const d=Math.floor(diff/86400000); const h=Math.floor((diff%86400000)/3600000); return `${d} д. ${h} ч.`;
 }
 function mergeLive(payload){
- if(!payload||!payload.offers)return; liveStatus=payload.source||'live';
+ if(!payload||!payload.offers)return; 
+ liveStatus=payload.source||'live';
+ providerStatus=Array.isArray(payload.providerStatus)?payload.providerStatus:[];
+ lastLiveUpdated=payload.updatedAt||new Date().toISOString();
+ sourceValidationRule=payload.validationRule||'';
+ liveLoading=false;
  offers=offers.map(o=>{
    const upd=payload.offers.find(x=>x.id===o.id);
    if(!upd)return o;
@@ -170,7 +187,7 @@ function mergeLive(payload){
 
 async function loadLive(){
  try{const r=await fetch('/api/live',{cache:'no-store'}); if(!r.ok)throw new Error('no live'); const j=await r.json(); mergeLive(j); save(); render();}
- catch(e){liveStatus='static';}
+ catch(e){liveStatus='static';liveLoading=false;providerStatus=defaultProviderStatus('offline');}
 }
 
 function daysLeftValue(o){
@@ -257,6 +274,32 @@ function matchesType(o){if(selectedTypes.includes('Все'))return true;return s
  if(t==='Airdrop')return cat==='Airdrop'||o.type==='Airdrop'||(o.actions||[]).includes('Airdrop')||o.type==='CandyDrop'||(o.actions||[]).includes('CandyDrop');
  return o.type===t||(o.actions||[]).includes(t);
 })}
+
+function defaultProviderStatus(note='ожидает проверки'){
+ const srcs=[
+  ['Binance','Launchpool / Earn'],['KuCoin','GemPool / Spotlight'],['Bybit','Launchpool / Earn'],['OKX','Jumpstart / Earn'],
+  ['Gate','Startup / Earn'],['Bitget','Launchpool / Earn'],['MEXC','Kickstarter / Earn'],['BingX','Launchpad / Wealth']
+ ];
+ return srcs.map(([ex,kind])=>({ex,kind,ok:note!=='offline',active:false,verified:false,note}));
+}
+function sourceMonitor(){
+ const rows=(providerStatus.length?providerStatus:defaultProviderStatus(liveLoading?'проверяется':'нет данных'));
+ const checked=lastLiveUpdated?timeAgo(lastLiveUpdated):(liveLoading?'проверяю сейчас':'не проверено');
+ const activeCount=rows.filter(r=>r.active).length;
+ return `<section class="sourcePanel"><div class="sourceHead"><div><h2>Источники</h2><span>Последняя проверка: ${checked}</span></div><b>${activeCount} активных</b></div><div class="sourceGrid">${rows.map(sourceChip).join('')}</div></section>`;
+}
+function sourceChip(r){
+ const cls=r.active?'on':(r.ok?'idle':'off');
+ const label=r.kind||r.type||r.note||'';
+ return `<div class="srcChip ${cls}"><span class="dot"></span><b>${r.ex||'Source'}</b><small>${r.active?'активно':(r.ok?'нет активных':'ошибка')}</small></div>`;
+}
+function timeAgo(iso){
+ const t=new Date(iso).getTime(); if(!t)return 'не проверено';
+ const m=Math.max(0,Math.floor((Date.now()-t)/60000));
+ if(m<1)return 'только что'; if(m<60)return `${m} мин назад`;
+ const h=Math.floor(m/60); if(h<24)return `${h} ч назад`;
+ return new Date(iso).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+}
 function render(){const now=Date.now();let filtered=visibleOffers(now);const best=filtered.find(o=>!isLocked(o))||filtered[0];const lockedCount=filtered.filter(isLocked).length;app.innerHTML=`<main class="page"><header class="top"><img class="logo" src="icon.svg"><div class="title"><h1>PromoRadar AI</h1><p>Акции топ-бирж в одном месте</p></div><button class="proTop ${isPro?'active':''}" data-pro>${isPro?'PRO':'FREE'}</button></header>
 ${!isPro?`<section class="proMini"><b>Free режим: доступна ${freeExchange}</b><span>Остальные биржи откроются в PRO через Telegram Stars. ${tgBadge()}</span><button data-pro>Открыть PRO</button></section>`:`<section class="proMini proOn"><b>PRO активен</b><span>Все биржи, избранное и уведомления включены. ${tgBadge()}</span><button data-alerts>Уведомления</button></section>`}
 <section class="filters">
@@ -264,9 +307,10 @@ ${!isPro?`<section class="proMini"><b>Free режим: доступна ${freeEx
  <div class="fBlock"><div class="fHead clean"><h2>Биржи</h2></div><div class="chipRow exRow expanded">${exchangeRow()}</div></div>
  <div class="fBlock"><div class="fHead clean"><h2>Тип заработка</h2></div><div class="chipRow typeRow">${typeRow()}</div></div>
 </section>
-<div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} акций${lockedCount&&!isPro?` · ${lockedCount} в PRO`:''} · ${favoritesOnly?'избранное':sortLabel().toLowerCase()}</span></div><div class="sectionActions"><button class="favFilter ${favoritesOnly?'active':''}" data-fav-filter>${favoritesOnly?'★':'☆'}${fav.length?` <span>${fav.length}</span>`:''}</button><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div></div>
+${sourceMonitor()}
+<div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} активных проверенных${lockedCount&&!isPro?` · ${lockedCount} в PRO`:''} · ${favoritesOnly?'избранное':sortLabel().toLowerCase()}</span></div><div class="sectionActions"><button class="favFilter ${favoritesOnly?'active':''}" data-fav-filter>${favoritesOnly?'★':'☆'}${fav.length?` <span>${fav.length}</span>`:''}</button><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div></div>
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
-<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам. Свайпните вниз для live-проверки бирж.</div>'}</section><div class="liveNote"><b>Live API v45 · Compact Alerts</b><span>Компактные настройки уведомлений: биржи 2×4, типы, порог ROI и сохранение.</span></div></main>${proModal()}${alertsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
+<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Активных проверенных акций сейчас не найдено по выбранным фильтрам. Свайпните вниз, чтобы заново проверить источники бирж.</div>'}</section><div class="liveNote"><b>v46 Real Source Foundation</b><span>Демо-карточки скрыты. Показываются только акции, подтверждённые live-проверкой официальных источников.</span></div></main>${proModal()}${alertsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
 function endLabel(o){const live=leftFromEndAt(o.endAt); return live || o.left || (o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—')}
 function displayLine(o){return `${o.coin} • ${o.type}`}
 function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);const locked=isLocked(o);return `<article class="offer v19card ${locked?'locked':''}" data-card="${id}">
