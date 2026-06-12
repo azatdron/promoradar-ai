@@ -568,8 +568,8 @@ const telegramPlans={day:5,month:30,sixMonths:120,year:180};
     const note = document.createElement('div');
     note.id = 'v49ConnectorNote';
     note.className = 'v49-connector-note';
-    note.innerHTML = '<b>KuCoin connector</b><span>Следующий шаг: серверная проверка GemPool/Spotlight, чтобы находить реальные акции, а не только делать локальную проверку.</span>';
-    panel.appendChild(note);
+    note.innerHTML = '';
+    if(note.innerHTML) panel.appendChild(note);
   }
   function labelBtn(){
     const btn = document.getElementById('v48CheckBtn');
