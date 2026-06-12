@@ -585,3 +585,21 @@
 .tgUser{display:inline-block;margin-left:4px;color:#0d7c3b;font-weight:800;font-size:11px}
 .proMini span{display:block;line-height:1.35}
 .bridgeBadge{display:inline-flex;align-items:center;gap:5px;border:1px solid #cfeedd;background:#f2fbf5;color:#107a3f;border-radius:999px;padding:5px 9px;font-weight:850;font-size:11px}
+
+/* v44 Alerts Rules */
+.alertsSheet{max-height:86vh;overflow:auto}
+.alertsSummary{border:1px solid #bcebd0;background:#f3fbf6;border-radius:20px;padding:14px 16px;margin:10px 0 16px;display:flex;flex-direction:column;gap:4px;color:#0d7f3c}
+.alertsSummary span{color:#65758a;font-weight:800}
+.alertSection{margin:16px 0 10px}
+.alertSection h3{margin:0 0 10px;font-size:22px;color:#0d1728}
+.alertGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.alertGrid.types{grid-template-columns:1fr 1fr}
+.alertPill{height:52px;border-radius:18px;border:1px solid #dce9e2;background:#fff;color:#0d1728;font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 5px 14px rgba(13,36,22,.04)}
+.alertPill .miniLogo{width:26px;height:26px}
+.alertPill.on{background:#edf9f2;border-color:#abebc5;color:#168745;box-shadow:inset 0 0 0 1px #bff0d0}
+.alertList.compact{margin-top:12px}
+.alertList.compact label{padding:13px 0}
+.frequency{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.freq{height:48px;border-radius:18px;border:1px solid #dce9e2;background:#fff;color:#0d1728;font-weight:900;font-size:17px}
+.freq.on{background:#109447;color:#fff;border-color:#109447}
+@media(max-width:420px){.alertGrid{grid-template-columns:1fr}.alertGrid.types{grid-template-columns:1fr 1fr}.alertPill{height:48px;font-size:16px}.frequency{grid-template-columns:1fr}}
