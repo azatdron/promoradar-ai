@@ -661,13 +661,3 @@
 .v49-connector-note{margin-top:10px;border:1px solid rgba(24,158,83,.22);background:#f7fffa;border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
 .v49-connector-note b{color:#0d8b42;font-size:15px}
 .v49-connector-note span{color:#68778d;font-weight:700;font-size:13px;line-height:1.25}
-
-
-
-/* v50 Clean Source Panel - safe patch over v49 */
-#v49ConnectorNote,.v49-connector-note{display:none!important}
-#v48Log.v50-clean-history{max-height:88px!important;overflow:hidden!important;padding:10px 12px!important}
-#v48Log.v50-clean-history.v50-clean-open{max-height:420px!important;overflow:auto!important}
-#v48Log.v50-clean-history>b{display:flex!important;justify-content:space-between!important;align-items:center!important;cursor:pointer!important}
-.v50-clean-toggle{font-size:13px!important;color:#178b49!important;background:#ecfff3!important;padding:5px 10px!important;border-radius:999px!important}
-#v48Log.v50-clean-history p{font-size:12px!important;line-height:1.15!important;margin:3px 0!important}
