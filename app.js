@@ -35,16 +35,15 @@ let fav=JSON.parse(localStorage.prFav||'[]');
 let expanded='';
 
 const projects=[
- {name:'LayerZero',type:'Airdrop',coin:'ZRO',stake:'$0',profit:{50:'$100–$500',100:'$100–$500',500:'$100–$500',1000:'$100–$500'},roi:'Высокий',score:91,cat:['best','free','potential','funds'],funds:['a16z','Sequoia','PayPal'],fundsCount:11,time:'10–20 мин',difficulty:'Легко',icon:'L0'},
- {name:'ZetaChain',type:'Testnet',coin:'ZETA',stake:'$0',profit:{50:'$20–$100',100:'$20–$100',500:'$20–$100',1000:'$20–$100'},roi:'Средний',score:92,cat:['best','free','potential','funds'],funds:['Blockchain.com','Jane Street'],fundsCount:6,time:'15–20 мин',difficulty:'Легко',icon:'Z'},
- {name:'Starknet',type:'Airdrop',coin:'STRK',stake:'$0',profit:{50:'$50–$200',100:'$50–$200',500:'$50–$200',1000:'$50–$200'},roi:'Высокий',score:90,cat:['best','free','potential','funds'],funds:['Paradigm','Sequoia','Pantera'],fundsCount:8,time:'20–30 мин',difficulty:'Средняя',icon:'✦'},
- {name:'Kelp DAO',type:'Staking',coin:'KELP',stake:'от $10',profit:{50:'$20–$80',100:'$40–$160',500:'$200–$800',1000:'$400–$1600'},roi:'Средний',score:87,cat:['best','deposit','funds'],funds:['Laser Digital','SCB'],fundsCount:7,time:'5 мин',difficulty:'Легко',icon:'K'},
- {name:'Monad',type:'Testnet',coin:'MON',stake:'$0',profit:{50:'$50–$300',100:'$50–$300',500:'$50–$300',1000:'$50–$300'},roi:'Высокий',score:89,cat:['best','free','potential','funds'],funds:['Paradigm','Electric'],fundsCount:9,time:'20–40 мин',difficulty:'Средняя',icon:'M'},
- {name:'Berachain',type:'Testnet',coin:'BERA',stake:'$0',profit:{50:'$80–$400',100:'$80–$400',500:'$80–$400',1000:'$80–$400'},roi:'Высокий',score:90,cat:['best','free','potential','funds'],funds:['Polychain','Framework'],fundsCount:10,time:'20–30 мин',difficulty:'Средняя',icon:'B'},
- {name:'Manta Network',type:'Airdrop',coin:'MANTA',stake:'$0',profit:{50:'$30–$150',100:'$30–$150',500:'$30–$150',1000:'$30–$150'},roi:'Средний',score:86,cat:['free','potential','funds'],funds:['Binance Labs','Polychain'],fundsCount:6,time:'15–25 мин',difficulty:'Средняя',icon:'M'},
- {name:'Initia',type:'Testnet',coin:'INIT',stake:'$0',profit:{50:'$40–$220',100:'$40–$220',500:'$40–$220',1000:'$40–$220'},roi:'Высокий',score:85,cat:['free','potential','funds'],funds:['Binance Labs','Delphi'],fundsCount:5,time:'10–15 мин',difficulty:'Легко',icon:'I'},
- {name:'MegaETH',type:'Airdrop',coin:'MEGA',stake:'$0',profit:{50:'$60–$250',100:'$60–$250',500:'$60–$250',1000:'$60–$250'},roi:'Высокий',score:88,cat:['best','free','potential','funds'],funds:['Dragonfly','Figment'],fundsCount:8,time:'20 мин',difficulty:'Средняя',icon:'ME'},
- {name:'Movement',type:'Testnet',coin:'MOVE',stake:'$0',profit:{50:'$30–$180',100:'$30–$180',500:'$30–$180',1000:'$30–$180'},roi:'Средний',score:84,cat:['free','potential','funds'],funds:['Polychain','Binance Labs'],fundsCount:7,time:'15 мин',difficulty:'Легко',icon:'MV'}
+ {name:'LayerZero',type:'Airdrop',coin:'ZRO',stake:'$0',profit:{50:'$100–$500',100:'$100–$500',500:'$100–$500',1000:'$100–$500'},roi:'Высокий',score:91,status:'active',statusText:'Active',startDate:'2026-06-01',endDate:'2026-07-15',cat:['best','free','potential','funds'],funds:['a16z','Sequoia','PayPal'],fundsCount:11,time:'10–20 мин',difficulty:'Легко',icon:'L0',logoUrl:'https://www.google.com/s2/favicons?sz=128&domain=layerzero.network'},
+ {name:'Monad',type:'Testnet',coin:'MON',stake:'$0',profit:{50:'$50–$300',100:'$50–$300',500:'$50–$300',1000:'$50–$300'},roi:'Высокий',score:89,status:'active',statusText:'Active',startDate:'2026-06-10',endDate:'2026-07-30',cat:['best','free','potential','funds'],funds:['Paradigm','Electric'],fundsCount:9,time:'20–40 мин',difficulty:'Средняя',icon:'M',logoUrl:'https://www.google.com/s2/favicons?sz=128&domain=monad.xyz'},
+ {name:'Berachain',type:'Testnet',coin:'BERA',stake:'$0',profit:{50:'$80–$400',100:'$80–$400',500:'$80–$400',1000:'$80–$400'},roi:'Высокий',score:90,status:'ending',statusText:'Ending Soon',startDate:'2026-05-28',endDate:'2026-06-28',cat:['best','free','potential','funds'],funds:['Polychain','Framework'],fundsCount:10,time:'20–30 мин',difficulty:'Средняя',icon:'B',logoUrl:'https://www.google.com/s2/favicons?sz=128&domain=berachain.com'},
+ {name:'ZetaChain',type:'Testnet',coin:'ZETA',stake:'$0',profit:{50:'$20–$100',100:'$20–$100',500:'$20–$100',1000:'$20–$100'},roi:'Средний',score:92,status:'active',statusText:'Active',startDate:'2026-06-05',endDate:'2026-07-05',cat:['best','free','potential','funds'],funds:['Blockchain.com','Jane Street'],fundsCount:6,time:'15–20 мин',difficulty:'Легко',icon:'Z',logoUrl:'https://www.google.com/s2/favicons?sz=128&domain=zetachain.com'},
+ {name:'Initia',type:'Testnet',coin:'INIT',stake:'$0',profit:{50:'$40–$220',100:'$40–$220',500:'$40–$220',1000:'$40–$220'},roi:'Высокий',score:85,status:'active',statusText:'Active',startDate:'2026-06-08',endDate:'2026-07-20',cat:['free','potential','funds'],funds:['Binance Labs','Delphi'],fundsCount:5,time:'10–15 мин',difficulty:'Легко',icon:'I',logoUrl:'https://www.google.com/s2/favicons?sz=128&domain=initia.xyz'},
+ {name:'Manta Network',type:'Airdrop',coin:'MANTA',stake:'$0',profit:{50:'$30–$150',100:'$30–$150',500:'$30–$150',1000:'$30–$150'},roi:'Средний',score:86,status:'active',statusText:'Active',startDate:'2026-06-03',endDate:'2026-07-10',cat:['free','potential','funds'],funds:['Binance Labs','Polychain'],fundsCount:6,time:'15–25 мин',difficulty:'Средняя',icon:'M',logoUrl:'https://www.google.com/s2/favicons?sz=128&domain=manta.network'},
+ {name:'Movement',type:'Testnet',coin:'MOVE',stake:'$0',profit:{50:'$30–$180',100:'$30–$180',500:'$30–$180',1000:'$30–$180'},roi:'Средний',score:84,status:'active',statusText:'Active',startDate:'2026-06-12',endDate:'2026-08-01',cat:['free','potential','funds'],funds:['Polychain','Binance Labs'],fundsCount:7,time:'15 мин',difficulty:'Легко',icon:'MV',logoUrl:'https://www.google.com/s2/favicons?sz=128&domain=movementlabs.xyz'},
+ {name:'MegaETH',type:'Airdrop',coin:'MEGA',stake:'$0',profit:{50:'$60–$250',100:'$60–$250',500:'$60–$250',1000:'$60–$250'},roi:'Высокий',score:88,status:'active',statusText:'Active',startDate:'2026-06-15',endDate:'2026-08-15',cat:['best','free','potential','funds'],funds:['Dragonfly','Figment'],fundsCount:8,time:'20 мин',difficulty:'Средняя',icon:'ME',logoUrl:'https://www.google.com/s2/favicons?sz=128&domain=megaeth.com'},
+ {name:'Kelp DAO',type:'Staking',coin:'KELP',stake:'от $10',profit:{50:'$20–$80',100:'$40–$160',500:'$200–$800',1000:'$400–$1600'},roi:'Средний',score:87,status:'active',statusText:'Active',startDate:'2026-06-01',endDate:'2026-09-01',cat:['best','deposit','funds'],funds:['Laser Digital','SCB'],fundsCount:7,time:'5 мин',difficulty:'Легко',icon:'K',logoUrl:'https://www.google.com/s2/favicons?sz=128&domain=kelpdao.xyz'}
 ];
 
 function save(){
@@ -52,6 +51,9 @@ function save(){
   localStorage.prCrCategory=category;
   localStorage.prFav=JSON.stringify(fav);
 }
+function daysLeft(dateStr){const ms=new Date(dateStr+'T23:59:59Z').getTime()-Date.now();return Math.max(0,Math.ceil(ms/86400000))}
+function ruDate(dateStr){const d=new Date(dateStr+'T00:00:00Z');return d.toLocaleDateString('ru-RU',{day:'2-digit',month:'short'}).replace('.','')}
+function activeProjectsOnly(arr){return arr.filter(p=>p.status!=='finished' && daysLeft(p.endDate)>0)}
 function rangeMax(str){
   const nums=(String(str||'').match(/\d+/g)||[]).map(Number);
   return nums[nums.length-1]||0;
@@ -60,7 +62,7 @@ function catLabel(id){
   return (cats.find(c=>c[0]===id)||cats[0])[1];
 }
 function visibleProjects(){
- let arr=projects.slice();
+ let arr=activeProjectsOnly(projects.slice());
  if(category==='fav') arr=arr.filter(p=>fav.includes(p.name));
  else if(category!=='all') arr=arr.filter(p=>p.cat.includes(category));
  if(!arr.length && category!=='fav') arr=projects.slice();
@@ -91,11 +93,11 @@ function card(o){
  const isExp=expanded===id;
  const profit=o.profit[deposit]||o.profit[500];
  return `<article class="offer project ${isExp?'expanded':''}" data-expand="${id}">
- <div class="exLogo projectIcon"><span>${o.icon}</span></div>
+ <div class="exLogo projectIcon"><img src="${o.logoUrl}" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><span>${o.icon}</span></div>
  <div class="meta">
    <div class="exchange">${o.name} • ${o.type}</div>
    <h3>${o.coin}</h3>
-   <span class="coin">${o.difficulty} · ${o.time} · фонды: ${o.fundsCount}</span>
+   <span class="coin"><em class="status ${o.status}">${o.statusText}</em> · ${o.difficulty} · ${o.time} · фонды: ${o.fundsCount}</span><span class="dates">Старт: ${ruDate(o.startDate)} · Осталось: ${daysLeft(o.endDate)} д.</span>
    <div class="cols">
     <div class="col"><span>Вложить</span><b>${o.stake}</b></div>
     <div class="col"><span>Потенциал</span><b class="profit">${profit}</b></div>
