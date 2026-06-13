@@ -1,0 +1,1 @@
+v53.1 CryptoRank Safe UI: исправление белого экрана, безопасный экран CryptoRank Scanner поверх рабочей v50.

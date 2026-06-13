@@ -674,32 +674,18 @@
 
 
 
-/* v53 CryptoRank Scanner UI */
-.pr-hide-old{display:none!important}
-.cr-panel{margin:18px 0;padding:18px;border-radius:26px;background:#fff;border:1px solid rgba(17,150,76,.22);box-shadow:0 14px 32px rgba(12,30,20,.05)}
-.cr-source{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
-.cr-title{font-size:22px;font-weight:900;color:#101827}
-.cr-sub{font-weight:700;color:#738196;margin-top:3px}
-.cr-pill{background:#ecfff3;color:#07833e;border:1px solid rgba(17,150,76,.25);border-radius:999px;padding:10px 14px;font-weight:900;white-space:nowrap}
-.cr-cats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.cr-cat{border:1px solid rgba(20,155,75,.22);background:#fff;border-radius:20px;padding:13px 10px;font-size:16px;font-weight:900;color:#111827}
-.cr-cat.active{background:#16a050;color:#fff}
-.cr-funds{margin-top:12px}
-.cr-fund-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.cr-fund{border:1px solid rgba(20,155,75,.22);background:#f7fffa;color:#0b7f40;border-radius:999px;padding:8px 11px;font-weight:900}
-.cr-scan{width:100%;margin:16px 0 10px;border:0;border-radius:22px;background:#14984b;color:white;padding:16px;font-size:20px;font-weight:900}
-.cr-summary{display:flex;justify-content:space-between;gap:10px;color:#738196;font-weight:800;margin:8px 0 14px}
-.cr-summary b{color:#0b7f40}
-.cr-cards{display:flex;flex-direction:column;gap:12px}
-.cr-card{border:1px solid rgba(17,150,76,.18);border-radius:22px;background:#fbfffd;padding:14px}
-.cr-card-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
-.cr-card h3{font-size:25px;margin:0;color:#101827}
-.cr-card p{margin:4px 0 0;color:#738196;font-weight:800}
-.cr-score{width:64px;height:64px;border-radius:50%;border:8px solid #bff4d2;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#14984b;font-size:23px;font-weight:900;line-height:.9}
-.cr-score small{font-size:12px;color:#536071}
-.cr-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
-.cr-metrics div{border-left:2px solid rgba(20,155,75,.15);padding-left:8px}
-.cr-metrics span{display:block;color:#738196;font-weight:900;font-size:12px}
-.cr-metrics b{display:block;color:#101827;font-size:14px;margin-top:2px}
-.cr-card-funds{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.cr-card-funds span{background:#eafff2;color:#0b7f40;border:1px solid rgba(20,155,75,.18);border-radius:999px;padding:7px 10px;font-weight:900}
+/* v53.1 CryptoRank Safe UI */
+.v53-cr-box{margin:18px 0;padding:18px;border-radius:26px;background:#fff;border:1px solid rgba(17,150,76,.22)}
+.v53-cr-source{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.v53-cr-source b{font-size:22px;color:#101827}
+.v53-cr-source p{margin:3px 0 0;color:#738196;font-weight:800}
+.v53-cr-pill{background:#ecfff3;color:#07833e;border:1px solid rgba(17,150,76,.25);border-radius:999px;padding:10px 14px;font-weight:900}
+.v53-cr-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.v53-cr-grid button{border:1px solid rgba(20,155,75,.22);background:#fff;border-radius:20px;padding:13px 8px;font-size:15px;font-weight:900;color:#111827}
+.v53-cr-grid button:first-child{background:#16a050;color:#fff}
+.v53-cr-scan{width:100%;margin:16px 0 10px;border:0;border-radius:22px;background:#14984b;color:white;padding:16px;font-size:20px;font-weight:900}
+.v53-cr-card{border:1px solid rgba(17,150,76,.18);border-radius:22px;background:#fbfffd;padding:14px;margin-top:12px}
+.v53-cr-card h3{font-size:24px;margin:0;color:#101827}
+.v53-cr-card p{margin:4px 0;color:#738196;font-weight:800}
+.v53-cr-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.v53-cr-tags span{background:#eafff2;color:#0b7f40;border:1px solid rgba(20,155,75,.18);border-radius:999px;padding:7px 10px;font-weight:900}
