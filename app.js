@@ -81,7 +81,7 @@ let offers=[
  {active:false,verified:false,staleReason:'Не подтверждено live-валидацией',id:'mexc-kickstarter',ex:'MEXC',type:'Kickstarter',name:'MX Exclusives',coin:'MX',stake:'MX / Tasks',end:7,left:'7 д. 0 ч.',profit:{50:'$3–$10',100:'$6–$18',500:'$30–$80',1000:'$60–$160'},roi:'7%–20%',score:66,actions:['Kickstarter','Launchpool'],realCalc:{method:'apr_time_prorated',apr:20,source:'MEXC'}}
 ];
 
-// v50 Clean Source Panel: no demo cards are shown until live validation confirms them.
+// v53 CryptoRank Scanner UI: no demo cards are shown until live validation confirms them.
 offers=offers.map(o=>({
   ...o,
   active:false,
@@ -300,7 +300,7 @@ function timeAgo(iso){
  const h=Math.floor(m/60); if(h<24)return `${h} ч назад`;
  return new Date(iso).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
 }
-function render(){const now=Date.now();let filtered=visibleOffers(now);const best=filtered.find(o=>!isLocked(o))||filtered[0];const lockedCount=filtered.filter(isLocked).length;app.innerHTML=`<main class="page"><header class="top"><img class="logo" src="icon.svg"><div class="title"><h1>PromoRadar AI</h1><p>Акции топ-бирж в одном месте</p></div><button class="proTop ${isPro?'active':''}" data-pro>${isPro?'PRO':'FREE'}</button></header>
+function render(){const now=Date.now();let filtered=visibleOffers(now);const best=filtered.find(o=>!isLocked(o))||filtered[0];const lockedCount=filtered.filter(isLocked).length;app.innerHTML=`<main class="page"><header class="top"><img class="logo" src="icon.svg"><div class="title"><h1>PromoRadar AI</h1><p>Лучшие крипто-возможности без мусора</p></div><button class="proTop ${isPro?'active':''}" data-pro>${isPro?'PRO':'FREE'}</button></header>
 ${!isPro?`<section class="proMini"><b>Free режим: доступна ${freeExchange}</b><span>Остальные биржи откроются в PRO через Telegram Stars. ${tgBadge()}</span><button data-pro>Открыть PRO</button></section>`:`<section class="proMini proOn"><b>PRO активен</b><span>Все биржи, избранное и уведомления включены. ${tgBadge()}</span><button data-alerts>Уведомления</button></section>`}
 <section class="filters">
  <div class="fBlock"><div class="fHead"><h2>Мой депозит</h2><b>${deposit} USDT⌄</b></div><div class="depositRow custom">${['50','100','500','1000'].map(d=>`<button class="dep ${d===deposit?'active':''}" data-deposit="${d}"><b>${d}</b><small>USDT</small></button>`).join('')}<button class="dep customBtn ${!['50','100','500','1000'].includes(String(deposit))?'active':''}" data-custom><b>Своя</b><small>сумма</small></button></div></div>
@@ -310,7 +310,7 @@ ${!isPro?`<section class="proMini"><b>Free режим: доступна ${freeEx
 ${sourceMonitor()}
 <div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} активных проверенных${lockedCount&&!isPro?` · ${lockedCount} в PRO`:''} · ${favoritesOnly?'избранное':sortLabel().toLowerCase()}</span></div><div class="sectionActions"><button class="favFilter ${favoritesOnly?'active':''}" data-fav-filter>${favoritesOnly?'★':'☆'}${fav.length?` <span>${fav.length}</span>`:''}</button><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div></div>
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
-<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Активных проверенных акций сейчас не найдено по выбранным фильтрам. Свайпните вниз, чтобы заново проверить источники бирж.</div>'}</section><div class="liveNote"><b>v50 Clean Source Panel</b><span>Источники очищены от технических блоков. Следующий этап — первый реальный KuCoin источник.</span></div></main>${proModal()}${alertsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
+<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Активных проверенных акций сейчас не найдено по выбранным фильтрам. Свайпните вниз, чтобы заново проверить источники бирж.</div>'}</section><div class="liveNote"><b>v53 CryptoRank Scanner UI</b><span>Источники очищены от технических блоков. Следующий этап — первый реальный KuCoin источник.</span></div></main>${proModal()}${alertsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
 function endLabel(o){const live=leftFromEndAt(o.endAt); return live || o.left || (o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—')}
 function displayLine(o){return `${o.coin} • ${o.type}`}
 function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);const locked=isLocked(o);return `<article class="offer v19card ${locked?'locked':''}" data-card="${id}">
@@ -609,8 +609,8 @@ const telegramPlans={day:5,month:30,sixMonths:120,year:180};
 
     var footerNodes = document.querySelectorAll('*');
     footerNodes.forEach(function(el){
-      if((el.textContent||'').indexOf('v50 Clean Source Panel') !== -1 && el.children.length === 0){
-        el.textContent = el.textContent.replace('v50 Clean Source Panel','v50 Clean Source Panel');
+      if((el.textContent||'').indexOf('v53 CryptoRank Scanner UI') !== -1 && el.children.length === 0){
+        el.textContent = el.textContent.replace('v53 CryptoRank Scanner UI','v53 CryptoRank Scanner UI');
       }
     });
   }
@@ -619,4 +619,122 @@ const telegramPlans={day:5,month:30,sixMonths:120,year:180};
   } else {
     initV50Clean();
   }
+})();
+
+
+
+(function(){
+  const categories = [
+    {id:'best', label:'🔥 Лучшие сегодня'},
+    {id:'free', label:'🎁 Бесплатно'},
+    {id:'deposit', label:'💰 Нужен депозит'},
+    {id:'potential', label:'🚀 Высокий потенциал'},
+    {id:'funds', label:'🏦 Фонды участвуют'},
+    {id:'fav', label:'⭐ Избранное'}
+  ];
+  const funds = ['a16z','Paradigm','Pantera','Polychain','Jump','YZi Labs'];
+  const demo = [
+    {name:'LayerZero', type:'Airdrop', score:91, invest:'$0', time:'10–20 мин', funds:['a16z','Sequoia'], tag:'Бесплатно'},
+    {name:'EigenLayer', type:'Restaking / Points', score:88, invest:'депозит', time:'15 мин', funds:['a16z','Polychain'], tag:'Высокий потенциал'},
+    {name:'Monad', type:'Testnet', score:84, invest:'$0', time:'20 мин', funds:['Paradigm'], tag:'Бесплатно'}
+  ];
+
+  function byText(txt){
+    return Array.from(document.querySelectorAll('h1,h2,h3,strong,div,label')).find(e => (e.textContent||'').trim() === txt);
+  }
+
+  function hideOldBlocks(){
+    const labels = ['Биржи','Тип заработка','Источники'];
+    labels.forEach(label=>{
+      const el = byText(label);
+      const card = el && el.closest('.card,.panel,section,div');
+      if(card) card.classList.add('pr-hide-old');
+    });
+    const footers = Array.from(document.querySelectorAll('*')).filter(e => (e.textContent||'').includes('v53 CryptoRank Scanner UI') || (e.textContent||'').includes('v49 Compact'));
+    footers.forEach(e=>{
+      const c=e.closest('.card,.panel,section,div');
+      if(c) c.classList.add('pr-hide-old');
+    });
+  }
+
+  function mount(){
+    hideOldBlocks();
+    if(document.getElementById('cryptorankScanner')) return;
+    const depositCard = byText('Мой депозит');
+    const anchor = depositCard ? depositCard.closest('.card,.panel,section,div') : document.querySelector('main') || document.body;
+    const root = document.createElement('section');
+    root.id = 'cryptorankScanner';
+    root.className = 'cr-panel';
+    root.innerHTML = `
+      <div class="cr-source">
+        <div>
+          <div class="cr-title">Источник</div>
+          <div class="cr-sub">Сканер возможностей вместо 8 бирж</div>
+        </div>
+        <div class="cr-pill">🟢 CryptoRank</div>
+      </div>
+
+      <div class="cr-cats">
+        ${categories.map((c,i)=>`<button class="cr-cat ${i===0?'active':''}" data-cat="${c.id}">${c.label}</button>`).join('')}
+      </div>
+
+      <div class="cr-funds">
+        <div class="cr-title">Крупные фонды</div>
+        <div class="cr-fund-grid">${funds.map(f=>`<button class="cr-fund">${f}</button>`).join('')}</div>
+      </div>
+
+      <button id="crScanBtn" class="cr-scan">Сканировать возможности</button>
+
+      <div class="cr-summary">
+        <b>Найдено: <span id="crFound">3</span></b>
+        <span>Источник: CryptoRank</span>
+      </div>
+
+      <div id="crCards" class="cr-cards"></div>
+    `;
+    anchor.insertAdjacentElement('afterend', root);
+    renderCards(demo);
+    root.querySelector('#crScanBtn').addEventListener('click', ()=>{
+      const btn=root.querySelector('#crScanBtn');
+      btn.textContent='Сканирую CryptoRank...';
+      setTimeout(()=>{
+        btn.textContent='Сканировать возможности';
+        renderCards(demo);
+      }, 700);
+    });
+    root.querySelectorAll('.cr-cat').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        root.querySelectorAll('.cr-cat').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  }
+
+  function renderCards(items){
+    const box=document.getElementById('crCards');
+    if(!box) return;
+    box.innerHTML = items.map(x=>`
+      <div class="cr-card">
+        <div class="cr-card-top">
+          <div>
+            <h3>${x.name}</h3>
+            <p>${x.type} · ${x.tag}</p>
+          </div>
+          <div class="cr-score">${x.score}<small>/100</small></div>
+        </div>
+        <div class="cr-metrics">
+          <div><span>Вложения</span><b>${x.invest}</b></div>
+          <div><span>Время</span><b>${x.time}</b></div>
+          <div><span>Решение</span><b>Стоит смотреть</b></div>
+        </div>
+        <div class="cr-card-funds">${x.funds.map(f=>`<span>${f}</span>`).join('')}</div>
+      </div>
+    `).join('');
+  }
+
+  function init(){
+    mount();
+    new MutationObserver(()=>hideOldBlocks()).observe(document.body,{childList:true,subtree:true});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
