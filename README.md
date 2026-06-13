@@ -1,23 +1,11 @@
-# PromoRadar AI v43 — Telegram Bot Bridge
+PromoRadar AI v54 CryptoRank Opportunity Cards
 
-База: v42 Alerts Prep.
+Сделано:
+- новый интерфейс как в рендере;
+- вместо 8 бирж один источник CryptoRank Scanner;
+- карточки проектов в стиле старых карточек бирж;
+- фильтры: Лучшие сегодня, Бесплатно, Нужен депозит, Высокий потенциал, Фонды участвуют, Избранное;
+- карточки: вложения, потенциал, сложность, время, фонды, рейтинг;
+- сохранены Telegram Mini App, manifest и icon.
 
-Добавлено:
-- Telegram WebApp SDK в index.html.
-- Telegram Bridge в app.js: определение запуска внутри Telegram, user ID, sync-заготовка.
-- API-заготовки для Vercel:
-  - /api/telegram-user
-  - /api/subscription
-  - /api/alerts
-  - /api/stars-webhook
-- Кнопки тарифов Stars обращаются к mock endpoint, готовому к подключению Bot API.
-
-Следующий этап: подключить реального Telegram-бота, базу подписок и оплату Stars через Bot API.
-
-## v44 Alerts Rules
-- Добавлен расширенный экран уведомлений.
-- Настройки по биржам: Binance, Bybit, KuCoin, OKX, Gate, MEXC, Bitget, BingX.
-- Настройки по типам заработка: Launch, Staking, Earn, Airdrop.
-- Важность: новые акции, 24ч, 6ч, ROI выше порога, только избранные, только лучшие.
-- Частота: сразу или сводка раз в день.
-- Тестовое уведомление и подготовка к Telegram bot bridge сохранены.
+Следующий этап: подключение CryptoRank API/Sandbox вместо demo-проектов.
