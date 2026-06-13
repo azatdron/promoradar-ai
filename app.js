@@ -81,7 +81,7 @@ let offers=[
  {active:false,verified:false,staleReason:'Не подтверждено live-валидацией',id:'mexc-kickstarter',ex:'MEXC',type:'Kickstarter',name:'MX Exclusives',coin:'MX',stake:'MX / Tasks',end:7,left:'7 д. 0 ч.',profit:{50:'$3–$10',100:'$6–$18',500:'$30–$80',1000:'$60–$160'},roi:'7%–20%',score:66,actions:['Kickstarter','Launchpool'],realCalc:{method:'apr_time_prorated',apr:20,source:'MEXC'}}
 ];
 
-// v53.1 CryptoRank Safe UI: no demo cards are shown until live validation confirms them.
+// v50 Clean Source Panel: no demo cards are shown until live validation confirms them.
 offers=offers.map(o=>({
   ...o,
   active:false,
@@ -300,7 +300,7 @@ function timeAgo(iso){
  const h=Math.floor(m/60); if(h<24)return `${h} ч назад`;
  return new Date(iso).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
 }
-function render(){const now=Date.now();let filtered=visibleOffers(now);const best=filtered.find(o=>!isLocked(o))||filtered[0];const lockedCount=filtered.filter(isLocked).length;app.innerHTML=`<main class="page"><header class="top"><img class="logo" src="icon.svg"><div class="title"><h1>PromoRadar AI</h1><p>Лучшие крипто-возможности без мусора</p></div><button class="proTop ${isPro?'active':''}" data-pro>${isPro?'PRO':'FREE'}</button></header>
+function render(){const now=Date.now();let filtered=visibleOffers(now);const best=filtered.find(o=>!isLocked(o))||filtered[0];const lockedCount=filtered.filter(isLocked).length;app.innerHTML=`<main class="page"><header class="top"><img class="logo" src="icon.svg"><div class="title"><h1>PromoRadar AI</h1><p>Акции топ-бирж в одном месте</p></div><button class="proTop ${isPro?'active':''}" data-pro>${isPro?'PRO':'FREE'}</button></header>
 ${!isPro?`<section class="proMini"><b>Free режим: доступна ${freeExchange}</b><span>Остальные биржи откроются в PRO через Telegram Stars. ${tgBadge()}</span><button data-pro>Открыть PRO</button></section>`:`<section class="proMini proOn"><b>PRO активен</b><span>Все биржи, избранное и уведомления включены. ${tgBadge()}</span><button data-alerts>Уведомления</button></section>`}
 <section class="filters">
  <div class="fBlock"><div class="fHead"><h2>Мой депозит</h2><b>${deposit} USDT⌄</b></div><div class="depositRow custom">${['50','100','500','1000'].map(d=>`<button class="dep ${d===deposit?'active':''}" data-deposit="${d}"><b>${d}</b><small>USDT</small></button>`).join('')}<button class="dep customBtn ${!['50','100','500','1000'].includes(String(deposit))?'active':''}" data-custom><b>Своя</b><small>сумма</small></button></div></div>
@@ -310,7 +310,7 @@ ${!isPro?`<section class="proMini"><b>Free режим: доступна ${freeEx
 ${sourceMonitor()}
 <div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} активных проверенных${lockedCount&&!isPro?` · ${lockedCount} в PRO`:''} · ${favoritesOnly?'избранное':sortLabel().toLowerCase()}</span></div><div class="sectionActions"><button class="favFilter ${favoritesOnly?'active':''}" data-fav-filter>${favoritesOnly?'★':'☆'}${fav.length?` <span>${fav.length}</span>`:''}</button><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div></div>
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
-<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Активных проверенных акций сейчас не найдено по выбранным фильтрам. Свайпните вниз, чтобы заново проверить источники бирж.</div>'}</section><div class="liveNote"><b>v53.1 CryptoRank Safe UI</b><span>Источники очищены от технических блоков. Следующий этап — первый реальный KuCoin источник.</span></div></main>${proModal()}${alertsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
+<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Активных проверенных акций сейчас не найдено по выбранным фильтрам. Свайпните вниз, чтобы заново проверить источники бирж.</div>'}</section><div class="liveNote"><b>v50 Clean Source Panel</b><span>Источники очищены от технических блоков. Следующий этап — первый реальный KuCoin источник.</span></div></main>${proModal()}${alertsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
 function endLabel(o){const live=leftFromEndAt(o.endAt); return live || o.left || (o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—')}
 function displayLine(o){return `${o.coin} • ${o.type}`}
 function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);const locked=isLocked(o);return `<article class="offer v19card ${locked?'locked':''}" data-card="${id}">
@@ -609,8 +609,8 @@ const telegramPlans={day:5,month:30,sixMonths:120,year:180};
 
     var footerNodes = document.querySelectorAll('*');
     footerNodes.forEach(function(el){
-      if((el.textContent||'').indexOf('v53.1 CryptoRank Safe UI') !== -1 && el.children.length === 0){
-        el.textContent = el.textContent.replace('v53.1 CryptoRank Safe UI','v53.1 CryptoRank Safe UI');
+      if((el.textContent||'').indexOf('v50 Clean Source Panel') !== -1 && el.children.length === 0){
+        el.textContent = el.textContent.replace('v50 Clean Source Panel','v50 Clean Source Panel');
       }
     });
   }
@@ -619,35 +619,4 @@ const telegramPlans={day:5,month:30,sixMonths:120,year:180};
   } else {
     initV50Clean();
   }
-})();
-
-
-
-(function(){
-  function initCryptoRankSafe(){
-    if(document.getElementById('v53CryptoRankSafe')) return;
-    var all = Array.prototype.slice.call(document.querySelectorAll('h1,h2,h3,strong,div'));
-    for(var i=0;i<all.length;i++){
-      var t=(all[i].textContent||'').trim();
-      if(t==='Биржи' || t==='Источники'){
-        var c=all[i].closest('section,.card,.panel,.box,div');
-        if(c) c.style.display='none';
-      }
-    }
-    var anchor=null;
-    for(var j=0;j<all.length;j++){
-      if((all[j].textContent||'').trim()==='Мой депозит'){
-        anchor=all[j].closest('section,.card,.panel,.box,div');
-        break;
-      }
-    }
-    if(!anchor) anchor=document.querySelector('main')||document.body;
-    var box=document.createElement('section');
-    box.id='v53CryptoRankSafe';
-    box.className='v53-cr-box';
-    box.innerHTML='<div class="v53-cr-source"><div><b>Источник</b><p>CryptoRank Scanner вместо 8 бирж</p></div><div class="v53-cr-pill">CryptoRank</div></div><div class="v53-cr-grid"><button>Лучшие сегодня</button><button>Бесплатно</button><button>Нужен депозит</button><button>Высокий потенциал</button><button>Фонды участвуют</button><button>Избранное</button></div><button class="v53-cr-scan">Сканировать возможности</button><div class="v53-cr-card"><h3>LayerZero</h3><p>Airdrop · Бесплатно · Оценка 91/100</p><div class="v53-cr-tags"><span>a16z</span><span>Sequoia</span><span>$0</span><span>10–20 мин</span></div></div><div class="v53-cr-card"><h3>EigenLayer</h3><p>Points / Restaking · Высокий потенциал · Оценка 88/100</p><div class="v53-cr-tags"><span>a16z</span><span>Polychain</span><span>депозит</span></div></div>';
-    anchor.insertAdjacentElement('afterend', box);
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', initCryptoRankSafe);
-  else initCryptoRankSafe();
 })();

@@ -671,21 +671,3 @@
 #v48Log.v50-clean-history>b{display:flex!important;justify-content:space-between!important;align-items:center!important;cursor:pointer!important}
 .v50-clean-toggle{font-size:13px!important;color:#178b49!important;background:#ecfff3!important;padding:5px 10px!important;border-radius:999px!important}
 #v48Log.v50-clean-history p{font-size:12px!important;line-height:1.15!important;margin:3px 0!important}
-
-
-
-/* v53.1 CryptoRank Safe UI */
-.v53-cr-box{margin:18px 0;padding:18px;border-radius:26px;background:#fff;border:1px solid rgba(17,150,76,.22)}
-.v53-cr-source{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
-.v53-cr-source b{font-size:22px;color:#101827}
-.v53-cr-source p{margin:3px 0 0;color:#738196;font-weight:800}
-.v53-cr-pill{background:#ecfff3;color:#07833e;border:1px solid rgba(17,150,76,.25);border-radius:999px;padding:10px 14px;font-weight:900}
-.v53-cr-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.v53-cr-grid button{border:1px solid rgba(20,155,75,.22);background:#fff;border-radius:20px;padding:13px 8px;font-size:15px;font-weight:900;color:#111827}
-.v53-cr-grid button:first-child{background:#16a050;color:#fff}
-.v53-cr-scan{width:100%;margin:16px 0 10px;border:0;border-radius:22px;background:#14984b;color:white;padding:16px;font-size:20px;font-weight:900}
-.v53-cr-card{border:1px solid rgba(17,150,76,.18);border-radius:22px;background:#fbfffd;padding:14px;margin-top:12px}
-.v53-cr-card h3{font-size:24px;margin:0;color:#101827}
-.v53-cr-card p{margin:4px 0;color:#738196;font-weight:800}
-.v53-cr-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.v53-cr-tags span{background:#eafff2;color:#0b7f40;border:1px solid rgba(20,155,75,.18);border-radius:999px;padding:7px 10px;font-weight:900}
