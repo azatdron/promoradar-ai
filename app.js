@@ -80,14 +80,6 @@ let offers=[
  {active:false,verified:false,staleReason:'Не подтверждено live-валидацией',id:'bingx-launchpad',ex:'BingX',type:'Launchpad',name:'Launchpad Hub',coin:'New coins',stake:'USDT / Tasks',end:6,left:'6 д. 0 ч.',profit:{50:'$3–$9',100:'$6–$18',500:'$30–$80',1000:'$60–$150'},roi:'6%–18%',score:68,actions:['Launchpad'],realCalc:{method:'apr_time_prorated',apr:18,source:'BingX'}},
  {active:false,verified:false,staleReason:'Не подтверждено live-валидацией',id:'mexc-kickstarter',ex:'MEXC',type:'Kickstarter',name:'MX Exclusives',coin:'MX',stake:'MX / Tasks',end:7,left:'7 д. 0 ч.',profit:{50:'$3–$10',100:'$6–$18',500:'$30–$80',1000:'$60–$160'},roi:'7%–20%',score:66,actions:['Kickstarter','Launchpool'],realCalc:{method:'apr_time_prorated',apr:20,source:'MEXC'}}
 ];
-
-// v49 Compact Monitor + KuCoin Foundation: no demo cards are shown until live validation confirms them.
-offers=offers.map(o=>({
-  ...o,
-  active:false,
-  verified:false,
-  staleReason:o.staleReason||'Ожидает live-подтверждения'
-}));
 const app=document.getElementById('app');
 const exOrder=['Binance','Bybit','OKX','KuCoin','Gate','MEXC','Bitget','BingX'];
 const sortModes=[['today','Сегодня'],['potential','Потенциал'],['roi','ROI'],['end','Осталось'],['exchange','Биржа']];
@@ -145,10 +137,6 @@ function save(){localStorage.prDeposit=deposit;localStorage.prExchanges=JSON.str
 
 
 let liveStatus='static';
-let providerStatus=[];
-let lastLiveUpdated='';
-let sourceValidationRule='';
-let liveLoading=true;
 function parseMoneyRange(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums.length>=2?nums:[0,0]}
 function fmtMoney(n){
  if(!isFinite(n)||n<=0)return '$0.00';
@@ -161,12 +149,7 @@ function leftFromEndAt(endAt){
  const d=Math.floor(diff/86400000); const h=Math.floor((diff%86400000)/3600000); return `${d} д. ${h} ч.`;
 }
 function mergeLive(payload){
- if(!payload||!payload.offers)return; 
- liveStatus=payload.source||'live';
- providerStatus=Array.isArray(payload.providerStatus)?payload.providerStatus:[];
- lastLiveUpdated=payload.updatedAt||new Date().toISOString();
- sourceValidationRule=payload.validationRule||'';
- liveLoading=false;
+ if(!payload||!payload.offers)return; liveStatus=payload.source||'live';
  offers=offers.map(o=>{
    const upd=payload.offers.find(x=>x.id===o.id);
    if(!upd)return o;
@@ -187,7 +170,7 @@ function mergeLive(payload){
 
 async function loadLive(){
  try{const r=await fetch('/api/live',{cache:'no-store'}); if(!r.ok)throw new Error('no live'); const j=await r.json(); mergeLive(j); save(); render();}
- catch(e){liveStatus='static';liveLoading=false;providerStatus=defaultProviderStatus('offline');}
+ catch(e){liveStatus='static';}
 }
 
 function daysLeftValue(o){
@@ -274,32 +257,6 @@ function matchesType(o){if(selectedTypes.includes('Все'))return true;return s
  if(t==='Airdrop')return cat==='Airdrop'||o.type==='Airdrop'||(o.actions||[]).includes('Airdrop')||o.type==='CandyDrop'||(o.actions||[]).includes('CandyDrop');
  return o.type===t||(o.actions||[]).includes(t);
 })}
-
-function defaultProviderStatus(note='ожидает проверки'){
- const srcs=[
-  ['Binance','Launchpool / Earn'],['KuCoin','GemPool / Spotlight'],['Bybit','Launchpool / Earn'],['OKX','Jumpstart / Earn'],
-  ['Gate','Startup / Earn'],['Bitget','Launchpool / Earn'],['MEXC','Kickstarter / Earn'],['BingX','Launchpad / Wealth']
- ];
- return srcs.map(([ex,kind])=>({ex,kind,ok:note!=='offline',active:false,verified:false,note}));
-}
-function sourceMonitor(){
- const rows=(providerStatus.length?providerStatus:defaultProviderStatus(liveLoading?'проверяется':'нет данных'));
- const checked=lastLiveUpdated?timeAgo(lastLiveUpdated):(liveLoading?'проверяю сейчас':'ожидается');
- const activeCount=rows.filter(r=>r.active).length;
- return `<section class="sourcePanel"><div class="sourceHead"><div><h2>Источники</h2><span>Последняя проверка: ${checked}</span></div><b>${activeCount} активных</b></div><div class="sourceGrid">${rows.map(sourceChip).join('')}</div></section>`;
-}
-function sourceChip(r){
- const cls=r.active?'on':(r.ok?'idle':'off');
- const label=r.kind||r.type||r.note||'';
- return `<div class="srcChip ${cls}"><span class="dot"></span><b>${r.ex||'Source'}</b><small>${r.active?'активно':(r.ok?'нет активных':'ожидание проверки')}</small></div>`;
-}
-function timeAgo(iso){
- const t=new Date(iso).getTime(); if(!t)return 'ожидается';
- const m=Math.max(0,Math.floor((Date.now()-t)/60000));
- if(m<1)return 'только что'; if(m<60)return `${m} мин назад`;
- const h=Math.floor(m/60); if(h<24)return `${h} ч назад`;
- return new Date(iso).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-}
 function render(){const now=Date.now();let filtered=visibleOffers(now);const best=filtered.find(o=>!isLocked(o))||filtered[0];const lockedCount=filtered.filter(isLocked).length;app.innerHTML=`<main class="page"><header class="top"><img class="logo" src="icon.svg"><div class="title"><h1>PromoRadar AI</h1><p>Акции топ-бирж в одном месте</p></div><button class="proTop ${isPro?'active':''}" data-pro>${isPro?'PRO':'FREE'}</button></header>
 ${!isPro?`<section class="proMini"><b>Free режим: доступна ${freeExchange}</b><span>Остальные биржи откроются в PRO через Telegram Stars. ${tgBadge()}</span><button data-pro>Открыть PRO</button></section>`:`<section class="proMini proOn"><b>PRO активен</b><span>Все биржи, избранное и уведомления включены. ${tgBadge()}</span><button data-alerts>Уведомления</button></section>`}
 <section class="filters">
@@ -307,10 +264,9 @@ ${!isPro?`<section class="proMini"><b>Free режим: доступна ${freeEx
  <div class="fBlock"><div class="fHead clean"><h2>Биржи</h2></div><div class="chipRow exRow expanded">${exchangeRow()}</div></div>
  <div class="fBlock"><div class="fHead clean"><h2>Тип заработка</h2></div><div class="chipRow typeRow">${typeRow()}</div></div>
 </section>
-${sourceMonitor()}
-<div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} активных проверенных${lockedCount&&!isPro?` · ${lockedCount} в PRO`:''} · ${favoritesOnly?'избранное':sortLabel().toLowerCase()}</span></div><div class="sectionActions"><button class="favFilter ${favoritesOnly?'active':''}" data-fav-filter>${favoritesOnly?'★':'☆'}${fav.length?` <span>${fav.length}</span>`:''}</button><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div></div>
+<div class="section"><div><h2>Лучшие акции сейчас</h2><span>${filtered.length} акций${lockedCount&&!isPro?` · ${lockedCount} в PRO`:''} · ${favoritesOnly?'избранное':sortLabel().toLowerCase()}</span></div><div class="sectionActions"><button class="favFilter ${favoritesOnly?'active':''}" data-fav-filter>${favoritesOnly?'★':'☆'}${fav.length?` <span>${fav.length}</span>`:''}</button><button class="sort" data-sort>↗ ${sortLabel()}⌄</button></div></div>
 ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.ex} • ${best.name}</b></div><strong>${profitFor(best)}</strong></div>`:''}
-<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Активных проверенных акций сейчас не найдено по выбранным фильтрам. Свайпните вниз, чтобы заново проверить источники бирж.</div>'}</section><div class="liveNote"><b>v49 Compact Monitor + KuCoin Foundation</b><span>Ручная проверка источников, журнал активности и подготовка к реальным Binance/KuCoin источникам.</span></div></main>${proModal()}${alertsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
+<section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет активных проверенных акций по выбранным фильтрам. Свайпните вниз для live-проверки бирж.</div>'}</section><div class="liveNote"><b>Live API v44 · Alerts Rules</b><span>Экран уведомлений: биржи, типы заработка, важность, частота и тестовое уведомление.</span></div></main>${proModal()}${alertsModal()}<div id="pullRefresh" class="pullRefresh">↻ Обновить</div><div id="toast" class="toast"></div>`;bind();initPullRefresh()}
 function endLabel(o){const live=leftFromEndAt(o.endAt); return live || o.left || (o.end ? `${o.end} д. ${o.end===1?'6':'12'} ч.` : '—')}
 function displayLine(o){return `${o.coin} • ${o.type}`}
 function card(o){const id=o.ex+'-'+o.name;const is=fav.includes(id);const locked=isLocked(o);return `<article class="offer v19card ${locked?'locked':''}" data-card="${id}">
@@ -364,10 +320,9 @@ function alertsSummary(){
  const mode=alerts.frequency==='daily'?'Сводка раз в день':'Сразу';
  return `<div class="alertsSummary"><b>Уведомления активны</b><span>Биржи: ${ex} · Типы: ${ty} · ${mode}</span></div>`
 }
-function alertsModal(){return `<div class="modal" id="alertsModal"><div class="sheet alertsSheet"><div class="sheetHead"><h2>Уведомления</h2><button data-alerts-close class="close">×</button></div><p class="proLead alertLead">Выберите биржи и типы заработка. Нажмите «Сохранить настройки», чтобы закрыть окно.</p>${alertsSummary()}
-<div class="alertQuick"><button data-alert-all-ex>Все биржи</button><button data-alert-clear-ex>Снять все</button></div>
-<div class="alertSection compactSec"><h3>Биржи</h3><div class="alertGrid compactGrid">${alertExchangePills()}</div></div>
-<div class="alertSection compactSec"><h3>Тип заработка</h3><div class="alertGrid types compactGrid typeGrid">${alertTypePills()}</div></div>
+function alertsModal(){return `<div class="modal" id="alertsModal"><div class="sheet alertsSheet"><div class="sheetHead"><h2>Уведомления</h2><button data-alerts-close class="close">×</button></div><p class="proLead">Выберите биржи и типы заработка. Сейчас настройки сохраняются на телефоне, следующий этап — отправка сообщений ботом в Telegram.</p>${alertsSummary()}
+<div class="alertSection"><h3>Биржи</h3><div class="alertGrid">${alertExchangePills()}</div></div>
+<div class="alertSection"><h3>Тип заработка</h3><div class="alertGrid types">${alertTypePills()}</div></div>
 <div class="alertList compact">
  <label><span><b>Новые акции</b><small>Когда появилась новая подтверждённая акция</small></span><input type="checkbox" data-alert-key="newOffers" ${alerts.newOffers?'checked':''}></label>
  <label><span><b>Осталось 24 часа</b><small>Напомнить заранее</small></span><input type="checkbox" data-alert-key="ending24" ${alerts.ending24?'checked':''}></label>
@@ -378,11 +333,11 @@ function alertsModal(){return `<div class="modal" id="alertsModal"><div class="s
 </div>
 <div class="threshold"><span>Порог ROI</span><input type="number" data-roi-threshold value="${alerts.roiThreshold}" min="1" max="500"><b>%</b></div>
 <div class="frequency"><button class="freq ${alerts.frequency==='instant'?'on':''}" data-alert-frequency="instant">Сразу</button><button class="freq ${alerts.frequency==='daily'?'on':''}" data-alert-frequency="daily">Сводка раз в день</button></div>
-<button class="tgHint" data-test-alert>Показать тестовое уведомление</button><button class="saveAlerts" data-alerts-save>Сохранить настройки</button><div class="proFoot">Настройки сохраняются на этом телефоне. Следующий этап — отправка сообщений ботом в Telegram.</div></div></div>`}
+<button class="tgHint" data-test-alert>Показать тестовое уведомление</button><div class="proFoot">В Telegram эти правила будут привязаны к Telegram ID и серверу уведомлений.</div></div></div>`}
 
 function proModal(){return `<div class="modal" id="proModal"><div class="sheet proSheet"><div class="sheetHead"><h2>PromoRadar PRO</h2><button data-pro-close class="close">×</button></div><p class="proLead">Free показывает одну биржу. PRO открывает все биржи, все типы заработка, избранное и будущие уведомления.</p><div class="plans"><button class="plan" data-plan="day"><b>1 день</b><span>5 ⭐</span><small>быстрая проверка</small></button><button class="plan bestPlan" data-plan="month"><b>1 месяц</b><span>30 ⭐</span><small>лучший старт</small></button><button class="plan" data-plan="half"><b>6 месяцев</b><span>120 ⭐</span><small>экономия 33%</small></button><button class="plan" data-plan="year"><b>1 год</b><span>180 ⭐</span><small>самый выгодный</small></button></div><button class="tgHint" data-demo-pro>Включить PRO демо</button><div class="proFoot">В Telegram Mini App кнопки будут вызывать invoice Stars через бота. Сейчас это безопасный демо-экран.</div></div></div>`}
 function gearIcon(){return `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06A2 2 0 1 1 7.03 3.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15.4 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.2.36.5.68.9.9.34.2.72.3 1.1.3H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51.8Z"/></svg>`}
-function bind(){document.querySelectorAll('[data-alerts]').forEach(b=>b.onclick=openAlerts);document.querySelectorAll('[data-alerts-close]').forEach(b=>b.onclick=closeAlerts);document.querySelectorAll('[data-alerts-save]').forEach(b=>b.onclick=()=>{save();closeAlerts();showToast('Настройки уведомлений сохранены')});document.querySelectorAll('[data-alert-all-ex]').forEach(b=>b.onclick=()=>{alerts.exchanges=exOrder.filter(ex=>ex!=='Coinbase');save();render();setTimeout(openAlerts,0)});document.querySelectorAll('[data-alert-clear-ex]').forEach(b=>b.onclick=()=>{alerts.exchanges=[];save();render();setTimeout(openAlerts,0)});document.querySelectorAll('[data-alert-key]').forEach(i=>i.onchange=()=>{alerts[i.dataset.alertKey]=i.checked;save();render();setTimeout(openAlerts,0);runAlertScan(false)});document.querySelectorAll('[data-alert-ex]').forEach(b=>b.onclick=()=>{const ex=b.dataset.alertEx;alerts.exchanges=alerts.exchanges.includes(ex)?alerts.exchanges.filter(x=>x!==ex):[...alerts.exchanges,ex];if(!alerts.exchanges.length)alerts.exchanges=[ex];save();render();setTimeout(openAlerts,0)});document.querySelectorAll('[data-alert-type]').forEach(b=>b.onclick=()=>{const t=b.dataset.alertType;alerts.types=alerts.types.includes(t)?alerts.types.filter(x=>x!==t):[...alerts.types,t];if(!alerts.types.length)alerts.types=[t];save();render();setTimeout(openAlerts,0)});document.querySelectorAll('[data-alert-frequency]').forEach(b=>b.onclick=()=>{alerts.frequency=b.dataset.alertFrequency;save();render();setTimeout(openAlerts,0)});document.querySelectorAll('[data-roi-threshold]').forEach(i=>i.oninput=()=>{alerts.roiThreshold=Math.max(1,Number(i.value)||15);save()});document.querySelectorAll('[data-test-alert]').forEach(b=>b.onclick=()=>sendAlert('PromoRadar: тестовое уведомление','Уведомления готовы. В Telegram их будет отправлять бот.'));document.querySelectorAll('[data-pro]').forEach(b=>b.onclick=openPro);document.querySelectorAll('[data-pro-close]').forEach(b=>b.onclick=closePro);document.querySelectorAll('[data-demo-pro]').forEach(b=>b.onclick=()=>{isPro=true;save();closePro();render();showToast('PRO демо включён')});document.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>{const plan=b.dataset.plan; if(tg){try{tg.HapticFeedback?.impactOccurred('medium')}catch(e){}} requestStarsPlan(plan)});document.querySelectorAll('[data-fav-filter]').forEach(b=>b.onclick=()=>{favoritesOnly=!favoritesOnly;save();render()});document.querySelectorAll('[data-deposit]').forEach(b=>b.onclick=()=>{deposit=b.dataset.deposit;save();render()});document.querySelectorAll('[data-custom]').forEach(b=>b.onclick=()=>{const v=prompt('Введите свою сумму в USDT', deposit); if(v===null)return; const n=Math.max(1, Math.round(Number(String(v).replace(',','.'))||0)); if(n){deposit=String(n);save();render()}});document.querySelectorAll('[data-toggle-ex]').forEach(b=>b.onclick=e=>{e.stopPropagation();const ex=b.dataset.toggleEx;exchanges=exchanges.includes(ex)?exchanges.filter(x=>x!==ex):[...exchanges,ex];if(!exchanges.length)exchanges=[ex];save();render();
+function bind(){document.querySelectorAll('[data-alerts]').forEach(b=>b.onclick=openAlerts);document.querySelectorAll('[data-alerts-close]').forEach(b=>b.onclick=closeAlerts);document.querySelectorAll('[data-alert-key]').forEach(i=>i.onchange=()=>{alerts[i.dataset.alertKey]=i.checked;save();render();setTimeout(openAlerts,0);runAlertScan(false)});document.querySelectorAll('[data-alert-ex]').forEach(b=>b.onclick=()=>{const ex=b.dataset.alertEx;alerts.exchanges=alerts.exchanges.includes(ex)?alerts.exchanges.filter(x=>x!==ex):[...alerts.exchanges,ex];if(!alerts.exchanges.length)alerts.exchanges=[ex];save();render();setTimeout(openAlerts,0)});document.querySelectorAll('[data-alert-type]').forEach(b=>b.onclick=()=>{const t=b.dataset.alertType;alerts.types=alerts.types.includes(t)?alerts.types.filter(x=>x!==t):[...alerts.types,t];if(!alerts.types.length)alerts.types=[t];save();render();setTimeout(openAlerts,0)});document.querySelectorAll('[data-alert-frequency]').forEach(b=>b.onclick=()=>{alerts.frequency=b.dataset.alertFrequency;save();render();setTimeout(openAlerts,0)});document.querySelectorAll('[data-roi-threshold]').forEach(i=>i.oninput=()=>{alerts.roiThreshold=Math.max(1,Number(i.value)||15);save()});document.querySelectorAll('[data-test-alert]').forEach(b=>b.onclick=()=>sendAlert('PromoRadar: тестовое уведомление','Уведомления готовы. В Telegram их будет отправлять бот.'));document.querySelectorAll('[data-pro]').forEach(b=>b.onclick=openPro);document.querySelectorAll('[data-pro-close]').forEach(b=>b.onclick=closePro);document.querySelectorAll('[data-demo-pro]').forEach(b=>b.onclick=()=>{isPro=true;save();closePro();render();showToast('PRO демо включён')});document.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>{const plan=b.dataset.plan; if(tg){try{tg.HapticFeedback?.impactOccurred('medium')}catch(e){}} requestStarsPlan(plan)});document.querySelectorAll('[data-fav-filter]').forEach(b=>b.onclick=()=>{favoritesOnly=!favoritesOnly;save();render()});document.querySelectorAll('[data-deposit]').forEach(b=>b.onclick=()=>{deposit=b.dataset.deposit;save();render()});document.querySelectorAll('[data-custom]').forEach(b=>b.onclick=()=>{const v=prompt('Введите свою сумму в USDT', deposit); if(v===null)return; const n=Math.max(1, Math.round(Number(String(v).replace(',','.'))||0)); if(n){deposit=String(n);save();render()}});document.querySelectorAll('[data-toggle-ex]').forEach(b=>b.onclick=e=>{e.stopPropagation();const ex=b.dataset.toggleEx;exchanges=exchanges.includes(ex)?exchanges.filter(x=>x!==ex):[...exchanges,ex];if(!exchanges.length)exchanges=[ex];save();render();
 loadLive().then(()=>runAlertScan(true));
 if(tgBridge.isTelegram) syncTelegramBridge();if(document.getElementById('settings')?.classList.contains('show'))setTimeout(openSettings,0)});document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{const t=b.dataset.type;if(t==='Все'){selectedTypes=['Все']}else{selectedTypes=selectedTypes.filter(x=>x!=='Все');selectedTypes=selectedTypes.includes(t)?selectedTypes.filter(x=>x!==t):[...selectedTypes,t];if(!selectedTypes.length)selectedTypes=['Все']}save();render()});document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{let i=sortModes.findIndex(x=>x[0]===sort);sort=sortModes[(i+1)%sortModes.length][0];save();render()});document.querySelectorAll('[data-card]').forEach(el=>el.onclick=e=>{if(e.target.closest('[data-fav],[data-open]'))return;expanded=expanded===el.dataset.card?'':el.dataset.card;save();render()});document.querySelectorAll('[data-fav]').forEach(b=>b.onclick=e=>{e.stopPropagation();const id=b.dataset.fav;fav=fav.includes(id)?fav.filter(x=>x!==id):[...fav,id];save();render()});document.querySelectorAll('[data-open]').forEach(b=>b.onclick=e=>{e.stopPropagation(); if(b.dataset.locked==='1'){openPro();return;} const [id,ex,act]=b.dataset.open.split('|');openLink(id,ex,act)});document.querySelectorAll('[data-source]').forEach(b=>b.onclick=e=>{e.stopPropagation();window.location.href=b.dataset.source});document.querySelectorAll('[data-settings]').forEach(b=>b.onclick=openSettings);document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSettings);const st=document.getElementById('settings');if(st)st.onclick=e=>{if(e.target.id==='settings')closeSettings()};const pm=document.getElementById('proModal');if(pm)pm.onclick=e=>{if(e.target.id==='proModal')closePro()};const am=document.getElementById('alertsModal');if(am)am.onclick=e=>{if(e.target.id==='alertsModal')closeAlerts()}}
 function openSettings(){document.getElementById('settings')?.classList.add('show')}
@@ -409,7 +364,7 @@ async function openLink(id,ex,act){
    showToast(`Открываю ${ex} • ${act}`);
    setTimeout(()=>{window.location.href=url},120);
  }else{
-   showToast(`Ссылка неактуальна (${v.status||'ожидание проверки'})`);
+   showToast(`Ссылка неактуальна (${v.status||'ошибка'})`);
  }
 }
 
@@ -478,106 +433,3 @@ loadLive();
 
 // v43 Telegram Bot Bridge
 const telegramPlans={day:5,month:30,sixMonths:120,year:180};
-
-
-
-(function(){
-  const sources=['Binance','KuCoin','Bybit','OKX','Gate','Bitget','MEXC','BingX'];
-  const logKey='pr_v48_log', lastKey='pr_v48_last';
-  function t(){return new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});}
-  function logs(){try{return JSON.parse(localStorage.getItem(logKey)||'[]')}catch(e){return []}}
-  function save(a){localStorage.setItem(logKey,JSON.stringify(a.slice(0,14)))}
-  function add(x){const a=logs();a.unshift({time:t(),text:x});save(a);renderLog()}
-  function panel(){
-    let h=[...document.querySelectorAll('h1,h2,h3,strong,div')].find(e=>(e.textContent||'').trim().toLowerCase()==='источники');
-    let p=h?h.closest('section,.card,.panel,.box,div'):null;
-    if(!p) p=document.querySelector('[class*="source"],[class*="Source"]');
-    if(!p) return null;
-    if(!document.getElementById('v48CheckBtn')){
-      let c=document.createElement('div');
-      c.className='v48-controls';
-      c.innerHTML='<button id="v48CheckBtn" type="button">Проверить сейчас</button><div id="v48Last">Последняя проверка: ожидается</div>';
-      p.appendChild(c);
-    }
-    if(!document.getElementById('v48Log')){
-      let l=document.createElement('div');
-      l.id='v48Log'; l.innerHTML='<b>Последняя активность</b><div class="v48-items"></div>';
-      p.appendChild(l);
-    }
-    return p;
-  }
-  function renderLog(){
-    let box=document.querySelector('#v48Log .v48-items'); if(!box) return;
-    let a=logs();
-    box.innerHTML=a.length?a.map(i=>'<p><span>'+i.time+'</span> '+i.text+'</p>').join(''):'<p>Проверок пока не было</p>';
-  }
-  function last(x){localStorage.setItem(lastKey,x);let e=document.getElementById('v48Last');if(e)e.textContent='Последняя проверка: '+x}
-  function sourceStatus(name,label){
-    [...document.querySelectorAll('*')].filter(e=>(e.textContent||'').trim()===name).forEach(e=>{
-      let card=e.closest('button,div'); if(!card) return;
-      [...card.querySelectorAll('*')].forEach(x=>{
-        if(/нет активных|ожидание проверки|ошибка|проверка|подключён|недоступен/i.test(x.textContent||'')) x.textContent=label;
-      });
-    });
-  }
-  async function check(){
-    let b=document.getElementById('v48CheckBtn'); if(b){b.disabled=true;b.textContent='Проверяю...'}
-    last('проверяю сейчас'); add('Запущена ручная проверка');
-    for(const s of sources){
-      sourceStatus(s,'проверка'); add(s+' проверяется');
-      await new Promise(r=>setTimeout(r,160));
-      sourceStatus(s,'нет активных'); add(s+' — активных акций не найдено');
-    }
-    last(t()+' · проверено 8 источников · найдено 0'); add('Проверка завершена');
-    if(b){b.disabled=false;b.textContent='Проверить сейчас'}
-  }
-  function init(){
-    panel(); renderLog();
-    let l=localStorage.getItem(lastKey); if(l) last(l);
-    if(!logs().length){save([{time:t(),text:'v48 готов: ручная проверка источников подключена'}]);renderLog();}
-    document.addEventListener('click',e=>{if(e.target&&e.target.id==='v48CheckBtn')check()});
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
-})();
-
-
-
-(function(){
-  function compactV48Log(){
-    const log = document.getElementById('v48Log');
-    if (!log) return;
-    log.classList.add('v49-compact-log');
-    const title = log.querySelector('b');
-    if (title && !title.dataset.v49) {
-      title.dataset.v49 = '1';
-      title.innerHTML = 'Последняя активность <span class="v49-toggle">показать</span>';
-      title.addEventListener('click', function(){ log.classList.toggle('v49-open'); });
-    }
-    const items = log.querySelector('.v48-items');
-    if (items) {
-      Array.from(items.querySelectorAll('p')).forEach(function(r,i){ r.style.display = i < 4 ? '' : 'none'; });
-    }
-  }
-  function addNote(){
-    if (document.getElementById('v49ConnectorNote')) return;
-    const sourceTitle = Array.from(document.querySelectorAll('h1,h2,h3,strong,div')).find(function(el){
-      return (el.textContent || '').trim().toLowerCase() === 'источники';
-    });
-    const panel = sourceTitle ? sourceTitle.closest('section,.card,.panel,.box,div') : document.querySelector('[class*="source"],[class*="Source"]');
-    if (!panel) return;
-    const note = document.createElement('div');
-    note.id = 'v49ConnectorNote';
-    note.className = 'v49-connector-note';
-    note.innerHTML = '<b>KuCoin connector</b><span>Следующий шаг: серверная проверка GemPool/Spotlight, чтобы находить реальные акции, а не только делать локальную проверку.</span>';
-    panel.appendChild(note);
-  }
-  function labelBtn(){
-    const btn = document.getElementById('v48CheckBtn');
-    if (btn && btn.textContent === 'Проверить сейчас') btn.textContent = 'Проверить источники';
-  }
-  function init(){
-    compactV48Log(); addNote(); labelBtn();
-    new MutationObserver(function(){ compactV48Log(); labelBtn(); }).observe(document.body,{childList:true,subtree:true,characterData:true});
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
-})();
