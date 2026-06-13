@@ -25,3 +25,28 @@
 .offer.project .ring small{font-size:8px}
 .offer.project .actions{margin-top:8px}
 .offer.project .actions button{padding:8px 12px}
+
+
+/* v60 PromoRadar AI Opportunity Radar */
+.sourceMini{display:none!important}
+.filters.compact{padding:10px 12px;margin-bottom:12px}
+.depLine{border-top:0!important;margin-top:0!important;padding-top:0!important}
+.checkWide{width:100%;margin-top:10px;background:var(--green);color:white;border-radius:15px;padding:11px 14px;font-size:14px;font-weight:850}
+.projectIcon{background:#07110d;color:#20d783}
+.projectIcon span{font-size:15px;font-weight:900}
+.fundTags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.fundTags em{font-style:normal;background:#eafff2;color:#087b3a;border:1px solid #bff2d0;border-radius:999px;padding:4px 7px;font-size:10px;font-weight:850}
+.offer.project{min-height:112px}
+.offer.project .meta h3{font-size:17px;margin-top:1px}
+.offer.project .exchange{font-size:11px}
+.offer.project .coin{font-size:11px}
+.offer.project .cols{margin-top:7px}
+.offer.project .col span{font-size:9px}
+.offer.project .col b{font-size:11px}
+.offer.project .ring{width:48px;height:48px;font-size:15px}
+.offer.project .ring small{font-size:8px}
+.offer.project .actions{margin-top:8px}
+.offer.project .actions button{padding:8px 12px}
+.filters .typeRow{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.filters .typeRow::-webkit-scrollbar{display:none}
+.filters .typeRow .chip{white-space:nowrap;flex:0 0 auto}
