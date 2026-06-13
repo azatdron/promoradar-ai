@@ -1,151 +1,92 @@
 
-const app=document.getElementById('app');
-
-const state={
-  deposit:Number(localStorage.prDeposit||500),
-  category:localStorage.prCrCategory||'best',
-  sort:localStorage.prCrSort||'potential',
-  favorites:JSON.parse(localStorage.prCrFav||'[]'),
-  pro:localStorage.prPro==='1'
+const logos={
+  CryptoRank:'https://cryptorank.io/favicon.ico'
+};
+const projectLinks={
+  LayerZero:'https://cryptorank.io/price/layerzero',
+  ZetaChain:'https://cryptorank.io/price/zetachain',
+  Starknet:'https://cryptorank.io/price/starknet',
+  'Kelp DAO':'https://cryptorank.io/price/kelp-dao',
+  Monad:'https://cryptorank.io/price/monad',
+  Berachain:'https://cryptorank.io/price/berachain',
+  'Manta Network':'https://cryptorank.io/price/manta-network',
+  Initia:'https://cryptorank.io/price/initia',
+  MegaETH:'https://cryptorank.io/price/megaeth',
+  Movement:'https://cryptorank.io/price/movement'
 };
 
-const categories=[
-  ['best','Лучшие'],
-  ['free','Бесплатно'],
-  ['deposit','С депозитом'],
-  ['potential','Потенциал'],
-  ['funds','Фонды'],
-  ['fav','Избранное']
-];
+let deposit=localStorage.prDeposit||'500';
+let category=localStorage.prCrCategory||'Лучшие';
+let fav=JSON.parse(localStorage.prFav||'[]');
+let expanded='';
+const app=document.getElementById('app');
+
+const cats=['Лучшие','Бесплатно','С депозитом','Потенциал','Фонды','Избранное'];
 
 const projects=[
-  {id:'layerzero',name:'LayerZero',type:'Airdrop',desc:'Омничейн протокол',minDeposit:0,potential:[100,500],difficulty:'Легко',time:'10–20 мин',funds:['a16z','Sequoia','PayPal'],fundsCount:11,score:91,cats:['best','free','potential','funds'],logo:'L0'},
-  {id:'zetachain',name:'ZetaChain',type:'Testnet',desc:'Кросс-чейн инфраструктура',minDeposit:0,potential:[20,100],difficulty:'Легко',time:'15–20 мин',funds:['Blockchain.com','Jane Street'],fundsCount:6,score:92,cats:['best','free','potential','funds'],logo:'Z'},
-  {id:'starknet',name:'Starknet',type:'Airdrop',desc:'Layer 2 решение на Ethereum',minDeposit:0,potential:[50,200],difficulty:'Средняя',time:'20–30 мин',funds:['Paradigm','Sequoia','Pantera'],fundsCount:8,score:90,cats:['best','free','potential','funds'],logo:'✦'},
-  {id:'kelpdao',name:'Kelp DAO',type:'Staking',desc:'Liquid Restaking на Ethereum',minDeposit:10,potential:[20,80],difficulty:'Легко',time:'5 мин',funds:['Laser Digital','SCB'],fundsCount:7,score:87,cats:['best','deposit','funds'],logo:'K'},
-  {id:'monad',name:'Monad',type:'Testnet',desc:'Высокопроизводительный L1',minDeposit:0,potential:[50,300],difficulty:'Средняя',time:'20–40 мин',funds:['Paradigm','Electric'],fundsCount:9,score:89,cats:['best','free','potential','funds'],logo:'M'},
-  {id:'berachain',name:'Berachain',type:'Testnet',desc:'EVM L1 с Proof-of-Liquidity',minDeposit:0,potential:[80,400],difficulty:'Средняя',time:'20–30 мин',funds:['Polychain','Framework'],fundsCount:10,score:90,cats:['best','free','potential','funds'],logo:'B'},
-  {id:'manta',name:'Manta Network',type:'Airdrop',desc:'Модульный L2 для dApps',minDeposit:0,potential:[30,150],difficulty:'Средняя',time:'15–25 мин',funds:['Binance Labs','Polychain'],fundsCount:6,score:86,cats:['free','potential','funds'],logo:'M'},
-  {id:'initia',name:'Initia',type:'Testnet',desc:'Сеть interwoven rollups',minDeposit:0,potential:[40,220],difficulty:'Легко',time:'10–15 мин',funds:['Binance Labs','Delphi'],fundsCount:5,score:85,cats:['free','potential','funds'],logo:'I'},
-  {id:'megaeth',name:'MegaETH',type:'Airdrop',desc:'Real-time blockchain',minDeposit:0,potential:[60,250],difficulty:'Средняя',time:'20 мин',funds:['Dragonfly','Figment'],fundsCount:8,score:88,cats:['best','free','potential','funds'],logo:'ME'},
-  {id:'movement',name:'Movement',type:'Testnet',desc:'MoveVM L2 экосистема',minDeposit:0,potential:[30,180],difficulty:'Легко',time:'15 мин',funds:['Polychain','Binance Labs'],fundsCount:7,score:84,cats:['free','potential','funds'],logo:'MV'}
+ {name:'LayerZero',type:'Airdrop',coin:'ZRO',stake:'$0',profit:{50:'$100–$500',100:'$100–$500',500:'$100–$500',1000:'$100–$500'},roi:'Высокий',score:91,cat:['Лучшие','Бесплатно','Потенциал','Фонды'],funds:['a16z','Sequoia','PayPal'],fundsCount:11,time:'10–20 мин',difficulty:'Легко',icon:'L0'},
+ {name:'ZetaChain',type:'Testnet',coin:'ZETA',stake:'$0',profit:{50:'$20–$100',100:'$20–$100',500:'$20–$100',1000:'$20–$100'},roi:'Средний',score:92,cat:['Лучшие','Бесплатно','Потенциал','Фонды'],funds:['Blockchain.com','Jane Street'],fundsCount:6,time:'15–20 мин',difficulty:'Легко',icon:'Z'},
+ {name:'Starknet',type:'Airdrop',coin:'STRK',stake:'$0',profit:{50:'$50–$200',100:'$50–$200',500:'$50–$200',1000:'$50–$200'},roi:'Высокий',score:90,cat:['Лучшие','Бесплатно','Потенциал','Фонды'],funds:['Paradigm','Sequoia','Pantera'],fundsCount:8,time:'20–30 мин',difficulty:'Средняя',icon:'✦'},
+ {name:'Kelp DAO',type:'Staking',coin:'KELP',stake:'от $10',profit:{50:'$20–$80',100:'$40–$160',500:'$200–$800',1000:'$400–$1600'},roi:'Средний',score:87,cat:['Лучшие','С депозитом','Фонды'],funds:['Laser Digital','SCB'],fundsCount:7,time:'5 мин',difficulty:'Легко',icon:'K'},
+ {name:'Monad',type:'Testnet',coin:'MON',stake:'$0',profit:{50:'$50–$300',100:'$50–$300',500:'$50–$300',1000:'$50–$300'},roi:'Высокий',score:89,cat:['Лучшие','Бесплатно','Потенциал','Фонды'],funds:['Paradigm','Electric'],fundsCount:9,time:'20–40 мин',difficulty:'Средняя',icon:'M'},
+ {name:'Berachain',type:'Testnet',coin:'BERA',stake:'$0',profit:{50:'$80–$400',100:'$80–$400',500:'$80–$400',1000:'$80–$400'},roi:'Высокий',score:90,cat:['Лучшие','Бесплатно','Потенциал','Фонды'],funds:['Polychain','Framework'],fundsCount:10,time:'20–30 мин',difficulty:'Средняя',icon:'B'},
+ {name:'Manta Network',type:'Airdrop',coin:'MANTA',stake:'$0',profit:{50:'$30–$150',100:'$30–$150',500:'$30–$150',1000:'$30–$150'},roi:'Средний',score:86,cat:['Бесплатно','Потенциал','Фонды'],funds:['Binance Labs','Polychain'],fundsCount:6,time:'15–25 мин',difficulty:'Средняя',icon:'M'},
+ {name:'Initia',type:'Testnet',coin:'INIT',stake:'$0',profit:{50:'$40–$220',100:'$40–$220',500:'$40–$220',1000:'$40–$220'},roi:'Высокий',score:85,cat:['Бесплатно','Потенциал','Фонды'],funds:['Binance Labs','Delphi'],fundsCount:5,time:'10–15 мин',difficulty:'Легко',icon:'I'},
+ {name:'MegaETH',type:'Airdrop',coin:'MEGA',stake:'$0',profit:{50:'$60–$250',100:'$60–$250',500:'$60–$250',1000:'$60–$250'},roi:'Высокий',score:88,cat:['Лучшие','Бесплатно','Потенциал','Фонды'],funds:['Dragonfly','Figment'],fundsCount:8,time:'20 мин',difficulty:'Средняя',icon:'ME'},
+ {name:'Movement',type:'Testnet',coin:'MOVE',stake:'$0',profit:{50:'$30–$180',100:'$30–$180',500:'$30–$180',1000:'$30–$180'},roi:'Средний',score:84,cat:['Бесплатно','Потенциал','Фонды'],funds:['Polychain','Binance Labs'],fundsCount:7,time:'15 мин',difficulty:'Легко',icon:'MV'}
 ];
 
-function save(){
-  localStorage.prDeposit=state.deposit;
-  localStorage.prCrCategory=state.category;
-  localStorage.prCrSort=state.sort;
-  localStorage.prCrFav=JSON.stringify(state.favorites);
-  localStorage.prPro=state.pro?'1':'0';
+function save(){localStorage.prDeposit=deposit;localStorage.prCrCategory=category;localStorage.prFav=JSON.stringify(fav)}
+function rangeMax(str){const nums=(str.match(/\d+/g)||[]).map(Number);return nums[nums.length-1]||0}
+function visibleProjects(){
+ let arr=projects.filter(p=>category==='Избранное'?fav.includes(p.name):category==='Лучшие'?p.cat.includes('Лучшие'):p.cat.includes(category));
+ return arr.sort((a,b)=>rangeMax(b.profit[deposit])-rangeMax(a.profit[deposit]));
 }
-function money(n){return '$'+Number(n).toLocaleString('en-US')}
-function scaledPotential(p){
-  if(p.minDeposit>0){
-    const k=Math.max(1,state.deposit/p.minDeposit);
-    return [Math.round(p.potential[0]*k),Math.round(p.potential[1]*k)];
-  }
-  return p.potential;
-}
-function filtered(){
-  let arr=projects.slice();
-  if(state.category==='fav') arr=arr.filter(p=>state.favorites.includes(p.id));
-  else if(state.category!=='best') arr=arr.filter(p=>p.cats.includes(state.category));
-  else arr=arr.filter(p=>p.cats.includes('best'));
-  if(state.sort==='score') arr.sort((a,b)=>b.score-a.score);
-  else arr.sort((a,b)=>scaledPotential(b)[1]-scaledPotential(a)[1]);
-  return arr;
-}
-function logoClass(p){
-  const map={ZetaChain:'zeta',Starknet:'stark',LayerZero:'layerzero','Kelp DAO':'kelp','Manta Network':'manta',Monad:'monad',Initia:'initia',Berachain:'bera',MegaETH:'mega',Movement:'move'};
-  return map[p.name]||'generic';
-}
-function diffClass(x){return x==='Легко'?'easy':x==='Средняя'?'mid':'hard'}
-function typeClass(t){return t.toLowerCase().replace(/[^a-z]/g,'')||'tag'}
-function card(p){
-  const fav=state.favorites.includes(p.id);
-  const pot=scaledPotential(p);
-  const free=p.minDeposit===0;
-  return `<article class="op-card">
-    <div class="op-head">
-      <div class="op-logo ${logoClass(p)}">${p.logo}</div>
-      <div class="op-title">
-        <div class="name-line"><h3>${p.name}</h3><span class="type ${typeClass(p.type)}">${p.type}</span></div>
-        <p>${p.desc}</p>
-      </div>
-      <button class="star ${fav?'on':''}" data-fav="${p.id}">${fav?'★':'☆'}</button>
-    </div>
-    <div class="op-row">
-      <div class="op-metrics">
-        <div><small>Вложения</small><b>${free?'$0':'от '+money(p.minDeposit)}</b></div>
-        <div><small>Потенциал</small><b class="green">${money(pot[0])}–${money(pot[1])}</b></div>
-        <div><small>Сложность</small><b class="${diffClass(p.difficulty)}">${p.difficulty}</b></div>
-      </div>
-      <div class="score"><b>${p.score}</b><small>/100</small></div>
-    </div>
-    <div class="chips">
-      <span>${free?'Бесплатно':'с депозитом'}</span>
-      <span>${p.time}</span>
-      <span>Фонды: ${p.fundsCount}</span>
-    </div>
-    <div class="funds">${p.funds.slice(0,3).map(f=>`<span>${f}</span>`).join('')}</div>
-    <div class="actions"><button>Подробнее</button><button>Открыть</button></div>
-  </article>`;
-}
+function catChips(){return cats.map(c=>`<button class="chip type ${c===category?'active':''}" data-cat="${c}">${c}</button>`).join('')}
 function render(){
-  const list=filtered();
-  const best=list[0];
-  app.innerHTML=`<main class="page">
-    <header class="top">
-      <img class="logo" src="icon.svg">
-      <div class="title"><h1>PromoRadar AI</h1><p>Крипто-возможности без мусора</p></div>
-      <button class="proTop ${state.pro?'active':''}" data-pro>${state.pro?'PRO':'FREE'}</button>
-    </header>
+ const filtered=visibleProjects();
+ const best=filtered[0];
+ app.innerHTML=`<main class="page"><header class="top"><img class="logo" src="icon.svg"><div class="title"><h1>PromoRadar AI</h1><p>CryptoRank Scanner · возможности без мусора</p></div><button class="gear" data-scan>↻</button></header>
 
-    <section class="source-card">
-      <div class="cr-logo">C</div>
-      <div class="source-info">
-        <h2>CryptoRank Scanner</h2>
-        <p><i></i>Источник активен</p>
-      </div>
-      <button class="check" data-scan>Проверить</button>
-    </section>
+ <section class="sourceMini">
+   <div class="crMark"><img src="${logos.CryptoRank}" onerror="this.replaceWith(document.createTextNode('C'))"></div>
+   <div><h2>CryptoRank</h2><span>Источник активен</span></div>
+   <button data-scan>Проверить</button>
+ </section>
 
-    <section class="quick">
-      <button class="mini-dep" data-deposit-open>Депозит: <b>${state.deposit} USDT</b>⌄</button>
-      <button class="sort" data-sort>↗ ${state.sort==='score'?'Рейтинг':'Потенциал'}⌄</button>
-    </section>
+ <section class="filters compact">
+   <div class="filterBlock depLine"><div class="rowHead"><h2>Мой депозит</h2><b data-custom>${deposit} USDT⌄</b></div></div>
+   <div class="filterBlock"><div class="rowHead"><h2>Фильтры</h2><b>${category}⌄</b></div><div class="chips typeRow">${catChips()}</div></div>
+ </section>
 
-    <div class="section">
-      <div><h2>Найденные возможности</h2><span>${list.length} проектов · ${categories.find(c=>c[0]===state.category)?.[1]||'Все'}</span></div>
-      <button class="favFilter ${state.category==='fav'?'active':''}" data-cat="fav">☆ ${state.favorites.length}</button>
-    </div>
-
-    ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.name} • ${best.type}</b></div><strong>${money(scaledPotential(best)[0])}–${money(scaledPotential(best)[1])}</strong></div>`:''}
-
-    <div class="catScroll">${categories.map(c=>`<button class="cat ${state.category===c[0]?'active':''}" data-cat="${c[0]}">${c[1]}</button>`).join('')}</div>
-
-    <section class="list">${list.length?list.map(card).join(''):'<div class="empty">Нет проектов по выбранному фильтру.</div>'}</section>
-
-    <nav class="bottom-nav">
-      <button class="active">Главная</button>
-      <button data-cat="fav">Избранное</button>
-      <button data-alerts>Уведомления</button>
-      <button data-pro>Профиль</button>
-    </nav>
-  </main><div id="toast" class="toast"></div>`;
-  bind();
+ <div class="section"><div><h2>Найденные возможности</h2><span>${filtered.length} проектов · ${category.toLowerCase()}</span></div><button class="sort">↗ Потенциал⌄</button></div>
+ ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.name} • ${best.type}</b></div><div class="money">${best.profit[deposit]}</div></div>`:''}
+ <section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет проектов по выбранному фильтру</div>'}</section></main><div class="toast" id="toast"></div>`;
+ bind();
 }
-function toast(text){const t=document.getElementById('toast'); if(!t)return; t.textContent=text;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1200)}
+function card(o){const id=o.name;const is=fav.includes(id);const isExp=expanded===id;return `<article class="offer project ${isExp?'expanded':''}" data-expand="${id}">
+ <div class="exLogo projectIcon"><span>${o.icon}</span></div>
+ <div class="meta">
+   <div class="exchange">${o.name} • ${o.type}</div>
+   <h3>${o.coin}</h3>
+   <span class="coin">${o.difficulty} · ${o.time} · фонды: ${o.fundsCount}</span>
+   <div class="cols">
+    <div class="col"><span>Вложить</span><b>${o.stake}</b></div>
+    <div class="col"><span>Потенциал</span><b class="profit">${o.profit[deposit]}</b></div>
+    <div class="col"><span>ROI</span><b>${o.roi}</b></div>
+   </div>
+   <div class="fundTags">${o.funds.slice(0,3).map(f=>`<em>${f}</em>`).join('')}</div>
+   ${isExp?`<div class="actions"><button class="star ${is?'on':''}" data-fav="${id}">${is?'★':'☆'}</button><button class="open" data-url="${encodeURIComponent(projectLinks[o.name]||'https://cryptorank.io/drophunting')}">Открыть</button></div>`:''}
+ </div>
+ <div class="score"><div class="ring">${o.score}<small>/100</small></div></div>
+ </article>`}
 function bind(){
-  document.querySelector('[data-deposit-open]')?.addEventListener('click',()=>{
-    const v=prompt('Введите сумму USDT',state.deposit);
-    if(v&&Number(v)>0){state.deposit=Number(v);save();render()}
-  });
-  document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{state.category=b.dataset.cat;save();render()});
-  document.querySelectorAll('[data-fav]').forEach(b=>b.onclick=e=>{e.stopPropagation();const id=b.dataset.fav;state.favorites=state.favorites.includes(id)?state.favorites.filter(x=>x!==id):state.favorites.concat(id);save();render()});
-  document.querySelector('[data-sort]')?.addEventListener('click',()=>{state.sort=state.sort==='potential'?'score':'potential';save();render()});
-  document.querySelectorAll('[data-pro]').forEach(b=>b.onclick=()=>{state.pro=!state.pro;save();render()});
-  document.querySelector('[data-scan]')?.addEventListener('click',e=>{e.target.textContent='...';setTimeout(()=>{toast('CryptoRank Scanner обновлён');render()},650)});
-  document.querySelectorAll('[data-alerts]').forEach(b=>b.onclick=()=>toast('Уведомления — следующий этап'));
+ document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{category=b.dataset.cat;save();render()});
+ document.querySelectorAll('[data-custom]').forEach(b=>b.onclick=()=>{const v=prompt('Введите сумму USDT',deposit);if(v&&Number(v)>0){deposit=String(Number(v));save();render()}});
+ document.querySelectorAll('[data-scan]').forEach(b=>b.onclick=()=>{toast('CryptoRank Scanner обновлён')});
+ document.querySelectorAll('[data-expand]').forEach(card=>card.onclick=e=>{if(e.target.closest('[data-fav],[data-url]'))return;expanded=expanded===card.dataset.expand?'':card.dataset.expand;render()});
+ document.querySelectorAll('[data-fav]').forEach(b=>b.onclick=e=>{e.stopPropagation();const id=b.dataset.fav;fav=fav.includes(id)?fav.filter(x=>x!==id):[...fav,id];save();render()});
+ document.querySelectorAll('[data-url]').forEach(b=>b.onclick=e=>{e.stopPropagation();window.location.href=decodeURIComponent(b.dataset.url)})
 }
+function toast(t){let el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1500)}
 render();
