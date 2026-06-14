@@ -81,3 +81,12 @@
 .offer.project .actions{display:flex;gap:7px;flex-wrap:wrap}
 .offer.project .actions .open,.offer.project .actions .star{font-size:12px;padding:7px 10px;border-radius:999px}
 .offer.project .actions .star{background:#ecfff3;color:#0b7f40;border:1px solid #bff2d0}
+
+/* v65 Activity Guide */
+.aiHint{background:#f2fbf6;border:1px solid var(--line);border-radius:16px;padding:11px 12px;margin:12px 0}
+.aiHint b{display:block;font-size:15px;margin-bottom:4px}
+.aiHint span{display:block;color:#647184;font-size:13px;line-height:1.35;font-weight:750}
+.guideSteps li{line-height:1.35}
+.countTags{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 12px}
+.countTags span{background:#f1f5f4;border:1px solid var(--line);border-radius:999px;padding:6px 9px;color:#465469;font-size:12px;font-weight:850}
+.chance{background:#fff8e6;border:1px solid #ffe1a1;border-radius:14px;padding:10px 12px;margin:8px 0 12px;color:#7a5200;font-size:13px;line-height:1.35;font-weight:800}
