@@ -1,3 +1,3 @@
-PromoRadar AI v61 Active Dates Logos
+PromoRadar AI v62 Real Actions
 
-Добавлены логотипы, Active/Ending Soon, даты старта и осталось дней. Finished скрываются.
+Добавлены кнопки Подробнее/Открыть и инструкция по действиям для каждого проекта.
