@@ -12,6 +12,23 @@ const projectLinks={
   Movement:'https://cryptorank.io/price/movement'
 };
 
+
+const HARD_LINKS={
+  'LayerZero':{site:'https://layerzero.network/',action:'https://stargate.finance/'},
+  'Monad':{site:'https://monad.xyz/',action:'https://testnet.monad.xyz/'},
+  'Berachain':{site:'https://www.berachain.com/',action:'https://www.berachain.com/'},
+  'ZetaChain':{site:'https://www.zetachain.com/',action:'https://hub.zetachain.com/'},
+  'Initia':{site:'https://initia.xyz/',action:'https://app.testnet.initia.xyz/'},
+  'Manta Network':{site:'https://manta.network/',action:'https://manta.network/'},
+  'Movement':{site:'https://movementlabs.xyz/',action:'https://movementlabs.xyz/'},
+  'MegaETH':{site:'https://megaeth.com/',action:'https://megaeth.com/'},
+  'Kelp DAO':{site:'https://kelpdao.xyz/',action:'https://app.kelpdao.xyz/'}
+};
+function safeLinkFor(name,kind){
+  const h=HARD_LINKS[name]||{};
+  return kind==='site' ? (h.site||h.action||'https://promoradar-ai.vercel.app') : (h.action||h.site||'https://promoradar-ai.vercel.app');
+}
+
 const app=document.getElementById('app');
 
 const cats=[
@@ -104,7 +121,7 @@ function card(o){
     <div class="col"><span>ROI</span><b>${o.roi}</b></div>
    </div>
    <div class="fundTags">${o.funds.slice(0,3).map(f=>`<em>${f}</em>`).join('')}</div>
-   <div class="actions"><button class="star ${is?'on':''}" data-fav="${id}">${is?'★':'☆'}</button><button class="open ghost" data-details="${id}">Подробнее</button><button class="open" data-url="${encodeURIComponent(o.actionUrl||projectLinks[o.name]||o.siteUrl||'#')}">Открыть</button></div>
+   <div class="actions"><button class="star ${is?'on':''}" data-fav="${id}">${is?'★':'☆'}</button><button class="open ghost" data-details="${id}">Подробнее</button><button class="open" data-url="${encodeURIComponent(safeLinkFor(o.name,'action'))}">Открыть</button></div>
  </div>
  <div class="score"><div class="ring">${o.score}<small>/100</small></div></div>
  </article>`;
@@ -129,8 +146,8 @@ function detailsModal(){
   <h3>Фонды</h3>
   <div class="fundTags big">${o.funds.map(f=>`<em>${f}</em>`).join('')}</div>
   <div class="detailActions">
-    <button class="open bigOpen" data-url="${encodeURIComponent(o.actionUrl||o.siteUrl)}">🚀 Открыть активность</button>
-    <button class="open ghost" data-url="${encodeURIComponent(o.siteUrl||o.actionUrl)}">Сайт проекта</button>
+    <button class="open bigOpen" data-url="${encodeURIComponent(safeLinkFor(o.name,'action'))}">🚀 Открыть активность</button>
+    <button class="open ghost" data-url="${encodeURIComponent(safeLinkFor(o.name,'site'))}">Сайт проекта</button>
   </div>
   <p class="risk">Не финансовый совет. Проверяйте ссылки, используйте отдельный кошелёк и не отправляйте seed-фразу.</p>
  </div></div>`;
@@ -148,10 +165,11 @@ function bind(){
 
 }
 
+
 function openExternal(raw){
  let url='';
  try{url=decodeURIComponent(raw||'')}catch(e){url=raw||''}
- if(!/^https?:\/\//i.test(url)){toast('Ссылка временно недоступна');return}
+ if(!/^https?:\/\//i.test(url)){url='https://promoradar-ai.vercel.app'}
  try{
   if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.openLink){
     Telegram.WebApp.openLink(url);
@@ -162,6 +180,7 @@ function openExternal(raw){
   window.open(url,'_blank','noopener,noreferrer');
  }
 }
+
 function toast(t){
  let el=document.getElementById('toast');
  if(!el)return;
