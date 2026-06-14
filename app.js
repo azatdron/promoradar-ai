@@ -37,7 +37,7 @@ let expanded='';
 const projects=[
  {name:'LayerZero',type:'Airdrop',coin:'ZRO',stake:'$0',profit:{50:'$100–$500',100:'$100–$500',500:'$100–$500',1000:'$100–$500',siteUrl:'https://layerzero.network/',actionUrl:'https://stargate.finance/',steps:['Подключить кошелёк', 'Сделать bridge между сетями', 'Использовать LayerZero dApps', 'Повторить активность несколько раз'],cost:'$0–20 на комиссии'},roi:'Высокий',score:91,status:'active',statusText:'Active',startDate:'2026-06-01',endDate:'2026-07-15',cat:['best','free','potential','funds'],funds:['a16z','Sequoia','PayPal'],fundsCount:11,time:'10–20 мин',difficulty:'Легко',icon:'L0',logoUrl:'https://www.google.com/s2/favicons?sz=128&domain=layerzero.network'},
  {name:'Monad',type:'Testnet',coin:'MON',stake:'$0',profit:{50:'$50–$300',100:'$50–$300',500:'$50–$300',1000:'$50–$300',siteUrl:'https://monad.xyz/',actionUrl:'https://testnet.monad.xyz/',steps:['Открыть тестнет Monad', 'Подключить кошелёк', 'Выполнить задания экосистемы', 'Сохранить активность кошелька'],cost:'$0'},roi:'Высокий',score:89,status:'active',statusText:'Active',startDate:'2026-06-10',endDate:'2026-07-30',cat:['best','free','potential','funds'],funds:['Paradigm','Electric'],fundsCount:9,time:'20–40 мин',difficulty:'Средняя',icon:'M',logoUrl:'https://www.google.com/s2/favicons?sz=128&domain=monad.xyz'},
- {name:'Berachain',type:'Testnet',coin:'BERA',stake:'$0',profit:{50:'$80–$400',100:'$80–$400',500:'$80–$400',1000:'$80–$400',siteUrl:'https://berachain.com/',actionUrl:'https://bartio.faucet.berachain.com/',steps:['Открыть тестнет Berachain', 'Получить тестовые токены', 'Сделать swap / stake / liquidity', 'Повторить действия в dApps'],cost:'$0'},roi:'Высокий',score:90,status:'ending',statusText:'Ending Soon',startDate:'2026-05-28',endDate:'2026-06-28',cat:['best','free','potential','funds'],funds:['Polychain','Framework'],fundsCount:10,time:'20–30 мин',difficulty:'Средняя',icon:'B',logoUrl:'https://www.google.com/s2/favicons?sz=128&domain=berachain.com'},
+ {name:'Berachain',type:'Testnet',coin:'BERA',stake:'$0',profit:{50:'$80–$400',100:'$80–$400',500:'$80–$400',1000:'$80–$400',siteUrl:'https://www.berachain.com/',actionUrl:'https://bepolia.faucet.berachain.com/',steps:['Открыть тестнет Berachain', 'Получить тестовые токены', 'Сделать swap / stake / liquidity', 'Повторить действия в dApps'],cost:'$0'},roi:'Высокий',score:90,status:'ending',statusText:'Ending Soon',startDate:'2026-05-28',endDate:'2026-06-28',cat:['best','free','potential','funds'],funds:['Polychain','Framework'],fundsCount:10,time:'20–30 мин',difficulty:'Средняя',icon:'B',logoUrl:'https://www.google.com/s2/favicons?sz=128&domain=berachain.com'},
  {name:'ZetaChain',type:'Testnet',coin:'ZETA',stake:'$0',profit:{50:'$20–$100',100:'$20–$100',500:'$20–$100',1000:'$20–$100',siteUrl:'https://www.zetachain.com/',actionUrl:'https://hub.zetachain.com/',steps:['Открыть ZetaHub', 'Подключить кошелёк', 'Сделать кросс-чейн действия', 'Проверить задания'],cost:'$0–10'},roi:'Средний',score:92,status:'active',statusText:'Active',startDate:'2026-06-05',endDate:'2026-07-05',cat:['best','free','potential','funds'],funds:['Blockchain.com','Jane Street'],fundsCount:6,time:'15–20 мин',difficulty:'Легко',icon:'Z',logoUrl:'https://www.google.com/s2/favicons?sz=128&domain=zetachain.com'},
  {name:'Initia',type:'Testnet',coin:'INIT',stake:'$0',profit:{50:'$40–$220',100:'$40–$220',500:'$40–$220',1000:'$40–$220',siteUrl:'https://initia.xyz/',actionUrl:'https://app.testnet.initia.xyz/',steps:['Открыть Initia testnet', 'Подключить кошелёк', 'Выполнить задания', 'Проверить прогресс'],cost:'$0'},roi:'Высокий',score:85,status:'active',statusText:'Active',startDate:'2026-06-08',endDate:'2026-07-20',cat:['free','potential','funds'],funds:['Binance Labs','Delphi'],fundsCount:5,time:'10–15 мин',difficulty:'Легко',icon:'I',logoUrl:'https://www.google.com/s2/favicons?sz=128&domain=initia.xyz'},
  {name:'Manta Network',type:'Airdrop',coin:'MANTA',stake:'$0',profit:{50:'$30–$150',100:'$30–$150',500:'$30–$150',1000:'$30–$150',siteUrl:'https://manta.network/',actionUrl:'https://newparadigm.manta.network/',steps:['Открыть портал Manta', 'Подключить кошелёк', 'Проверить кампании', 'Выполнить задания'],cost:'$0–20'},roi:'Средний',score:86,status:'active',statusText:'Active',startDate:'2026-06-03',endDate:'2026-07-10',cat:['free','potential','funds'],funds:['Binance Labs','Polychain'],fundsCount:6,time:'15–25 мин',difficulty:'Средняя',icon:'M',logoUrl:'https://www.google.com/s2/favicons?sz=128&domain=manta.network'},
@@ -141,11 +141,26 @@ function bind(){
  document.querySelectorAll('[data-scan]').forEach(b=>b.onclick=()=>{toast('Возможности обновлены')});
  document.querySelectorAll('[data-expand]').forEach(card=>card.onclick=e=>{if(e.target.closest('[data-fav],[data-url]'))return;expanded=expanded===card.dataset.expand?'':card.dataset.expand;render()});
  document.querySelectorAll('[data-fav]').forEach(b=>b.onclick=e=>{e.stopPropagation();const id=b.dataset.fav;fav=fav.includes(id)?fav.filter(x=>x!==id):[...fav,id];save();render()});
- document.querySelectorAll('[data-url]').forEach(b=>b.onclick=e=>{e.stopPropagation();window.location.href=decodeURIComponent(b.dataset.url)})
+ document.querySelectorAll('[data-url]').forEach(b=>b.onclick=e=>{e.stopPropagation();openExternal(b.dataset.url)})
  document.querySelectorAll('[data-details]').forEach(b=>b.onclick=e=>{e.stopPropagation();expanded=b.dataset.details;render()});
  document.querySelectorAll('[data-close-details]').forEach(b=>b.onclick=()=>{expanded='';render()});
  const dm=document.getElementById('details'); if(dm) dm.onclick=e=>{if(e.target.id==='details'){expanded='';render()}};
 
+}
+
+function openExternal(raw){
+ let url='';
+ try{url=decodeURIComponent(raw||'')}catch(e){url=raw||''}
+ if(!/^https?:\/\//i.test(url)){toast('Ссылка временно недоступна');return}
+ try{
+  if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.openLink){
+    Telegram.WebApp.openLink(url);
+  }else{
+    window.open(url,'_blank','noopener,noreferrer');
+  }
+ }catch(e){
+  window.open(url,'_blank','noopener,noreferrer');
+ }
 }
 function toast(t){
  let el=document.getElementById('toast');

@@ -1,3 +1,3 @@
-PromoRadar AI v62 Real Actions
+PromoRadar AI v63 Fixed External Links
 
-Добавлены кнопки Подробнее/Открыть и инструкция по действиям для каждого проекта.
+Кнопки Открыть/Открыть активность теперь открывают внешние сайты через Telegram.WebApp.openLink или новую вкладку, чтобы не было Vercel 404.
