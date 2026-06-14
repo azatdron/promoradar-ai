@@ -90,3 +90,5 @@
 .countTags{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 12px}
 .countTags span{background:#f1f5f4;border:1px solid var(--line);border-radius:999px;padding:6px 9px;color:#465469;font-size:12px;font-weight:850}
 .chance{background:#fff8e6;border:1px solid #ffe1a1;border-radius:14px;padding:10px 12px;margin:8px 0 12px;color:#7a5200;font-size:13px;line-height:1.35;font-weight:800}
+
+.checklist{display:grid;gap:8px;margin:12px 0}.checklist label{font-size:14px;font-weight:700}
