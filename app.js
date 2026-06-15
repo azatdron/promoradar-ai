@@ -115,9 +115,6 @@ let category = aliases[localStorage.prCrCategory] || 'best';
 let fav = JSON.parse(localStorage.prFav || '[]');
 let expanded = '';
 let pendingStep = null;
-let liveProjects=[];
-let liveStatus=localStorage.prLiveStatus||'fallback';
-let liveUpdated=localStorage.prLiveUpdated||'';
 
 const projects = [
   {
@@ -264,51 +261,6 @@ function linkStatusFor(o){
  if(s==='offline') return '<span class="linkBadge offline">Offline · сайт недоступен</span>';
  return '<span class="linkBadge active">Сайт работает</span>';
 }
-
-function normalizeLiveProject(x){
- const name=x.name||'Unknown';
- const domain=x.domain||((x.siteUrl||x.site||'').replace(/^https?:\/\//,'').split('/')[0])||'example.com';
- const p={
-  name:name,type:x.type||'Airdrop',coin:x.coin||x.symbol||name.slice(0,4).toUpperCase(),stake:x.stake||'$0',
-  profit:x.profit||{50:x.potential||'$0–$0',100:x.potential||'$0–$0',500:x.potential||'$0–$0',1000:x.potential||'$0–$0'},
-  roi:x.roi||'Средний',score:Number(x.score||75),status:x.status||'active',statusText:x.statusText||'Active',
-  startDate:x.startDate||new Date().toISOString().slice(0,10),endDate:x.endDate||new Date(Date.now()+30*86400000).toISOString().slice(0,10),
-  cat:x.cat||['best','free','potential'],funds:x.funds||[],fundsCount:Number(x.fundsCount||(x.funds||[]).length),
-  time:x.time||'10–20 мин',difficulty:x.difficulty||'Легко',icon:x.icon||name.slice(0,2).toUpperCase(),
-  logoUrl:x.logoUrl||('https://www.google.com/s2/favicons?sz=128&domain='+domain),
-  cost:x.cost||x.stake||'$0',guideSteps:x.guideSteps||x.steps||['Открыть сайт проекта','Подключить кошелёк','Проверить активные задания','Выполнить действия','Сохранить прогресс'],
-  counts:x.counts||['Quest','Testnet activity','Wallet activity'],chance:x.chance||'Шанс зависит от регулярности активности и условий проекта.',
-  beginner:x.beginner||'Проверь условия проекта и выполняй шаги аккуратно.',linkStatus:x.linkStatus||'active',linkNote:x.linkNote||'',source:'live'
- };
- HARD_LINKS[name]={site:x.siteUrl||x.site||'#',action:x.actionUrl||x.activityUrl||x.siteUrl||x.site||'#',x:x.x||x.twitter||'',docs:x.docs||''};
- BACKUP_LINKS[name]={x:x.x||x.twitter||'',docs:x.docs||''};
- return p;
-}
-async function loadLiveOpportunities(){
- liveStatus='checking'; render();
- try{
-  const res=await fetch('data/opportunities.json',{cache:'no-store'});
-  if(!res.ok) throw new Error('HTTP '+res.status);
-  const data=await res.json();
-  const list=Array.isArray(data)?data:(data.projects||data.opportunities||[]);
-  liveProjects=list.map(normalizeLiveProject).filter(p=>p.status!=='finished');
-  liveStatus=liveProjects.length?'live':'empty';
-  liveUpdated=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
-  localStorage.prLiveStatus=liveStatus; localStorage.prLiveUpdated=liveUpdated;
-  toast(liveProjects.length?'Найдено live: '+liveProjects.length:'Новых проектов нет');
- }catch(e){
-  liveProjects=[]; liveStatus='fallback'; liveUpdated='';
-  localStorage.prLiveStatus='fallback'; localStorage.prLiveUpdated='';
-  toast('Live-источник недоступен, показываю стабильную базу');
- }
- render();
-}
-function liveSourceBadge(){
- if(liveStatus==='live') return `<div class="liveBox ok">🟢 Live Scanner · обновлено ${liveUpdated}</div>`;
- if(liveStatus==='checking') return `<div class="liveBox wait">🔎 Проверяю новые активности...</div>`;
- if(liveStatus==='empty') return `<div class="liveBox wait">🟡 Новых проектов нет · стабильная база активна</div>`;
- return `<div class="liveBox fallback">⚪ Стабильная база · нажми «Проверить возможности»</div>`;
-}
 function save(){localStorage.prDeposit=deposit;localStorage.prCrCategory=category;localStorage.prFav=JSON.stringify(fav);}
 function safeLinkFor(name,kind){
  const h=HARD_LINKS[name]||{};
@@ -324,7 +276,7 @@ function ruDate(dateStr){const d=new Date(dateStr+'T00:00:00Z'); return d.toLoca
 function activeProjectsOnly(arr){return arr.filter(p=>p.status!=='finished' && daysLeft(p.endDate)>0);}
 function catLabel(id){return (cats.find(c=>c[0]===id)||cats[0])[1];}
 function visibleProjects(){
- let arr=activeProjectsOnly(projects.concat(liveProjects));
+ let arr=activeProjectsOnly(projects.slice());
  if(category==='fav') arr=arr.filter(p=>fav.includes(p.name));
  else if(category!=='all') arr=arr.filter(p=>p.cat.includes(category));
  if(!arr.length && category!=='fav') arr=activeProjectsOnly(projects.slice());
@@ -342,9 +294,8 @@ function render(){
  <section class="filters compact">
    <div class="filterBlock depLine"><div class="rowHead"><h2>Мой депозит</h2><b data-custom>${deposit} USDT⌄</b></div></div>
    <div class="filterBlock"><div class="rowHead"><h2>Фильтры</h2><b>${catLabel(category)}⌄</b></div><div class="chips typeRow">${catChips()}</div></div>
-   <button class="checkWide" data-scan>Проверить возможности</button>
+   <button class="checkWide" data-scan>Проверить возможности</button><button class="scannerSettings" data-scanner-settings>Scanner API</button>
  </section>
- ${liveSourceBadge()}
 
  <div class="section"><div><h2>Найденные возможности</h2><span>${filtered.length} проектов · ${catLabel(category).toLowerCase()}</span></div><button class="sort">↗ Потенциал⌄</button></div>
  ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.name} • ${best.type}</b></div><div class="money">${best.profit[deposit]||best.profit[500]}</div></div>`:''}
@@ -456,7 +407,7 @@ function applyPendingStep(){
 function bind(){
  document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{category=b.dataset.cat;save();render();});
  document.querySelectorAll('[data-custom]').forEach(b=>b.onclick=()=>{const v=prompt('Введите сумму USDT',deposit); if(v&&Number(v)>0){deposit=String(Number(v));save();render();}});
- document.querySelectorAll('[data-scan]').forEach(b=>b.onclick=()=>loadLiveOpportunities());
+ document.querySelectorAll('[data-scan]').forEach(b=>b.onclick=()=>toast('Возможности обновлены'));
  document.querySelectorAll('[data-expand]').forEach(card=>card.onclick=e=>{if(e.target.closest('[data-fav],[data-url],[data-details]'))return; expanded=card.dataset.expand; render();});
  document.querySelectorAll('[data-details]').forEach(b=>b.onclick=e=>{e.stopPropagation(); expanded=b.dataset.details; render();});
  document.querySelectorAll('[data-close-details]').forEach(b=>b.onclick=()=>{expanded=''; pendingStep=null; render();});
