@@ -26,6 +26,73 @@ const BACKUP_LINKS={
   'Kelp DAO':{x:'https://x.com/KelpDAO',docs:'https://docs.kelpdao.xyz/'}
 };
 
+
+const ACTIVITY_LINKS={
+  'LayerZero':{
+    galxe:'https://app.galxe.com/search?keyword=LayerZero',
+    layer3:'https://layer3.xyz/search?query=LayerZero',
+    zealy:'https://zealy.io/cw/search?query=LayerZero',
+    intract:'https://www.intract.io/search?query=LayerZero'
+  },
+  'Monad':{
+    galxe:'https://app.galxe.com/search?keyword=Monad',
+    layer3:'https://layer3.xyz/search?query=Monad',
+    zealy:'https://zealy.io/cw/search?query=Monad',
+    intract:'https://www.intract.io/search?query=Monad'
+  },
+  'Berachain':{
+    galxe:'https://app.galxe.com/search?keyword=Berachain',
+    layer3:'https://layer3.xyz/search?query=Berachain',
+    zealy:'https://zealy.io/cw/search?query=Berachain',
+    intract:'https://www.intract.io/search?query=Berachain'
+  },
+  'ZetaChain':{
+    galxe:'https://app.galxe.com/search?keyword=ZetaChain',
+    layer3:'https://layer3.xyz/search?query=ZetaChain',
+    zealy:'https://zealy.io/cw/search?query=ZetaChain',
+    intract:'https://www.intract.io/search?query=ZetaChain'
+  },
+  'Initia':{
+    galxe:'https://app.galxe.com/search?keyword=Initia',
+    layer3:'https://layer3.xyz/search?query=Initia',
+    zealy:'https://zealy.io/cw/search?query=Initia',
+    intract:'https://www.intract.io/search?query=Initia'
+  },
+  'Manta Network':{
+    galxe:'https://app.galxe.com/search?keyword=Manta',
+    layer3:'https://layer3.xyz/search?query=Manta',
+    zealy:'https://zealy.io/cw/search?query=Manta',
+    intract:'https://www.intract.io/search?query=Manta'
+  },
+  'Movement':{
+    galxe:'https://app.galxe.com/search?keyword=Movement',
+    layer3:'https://layer3.xyz/search?query=Movement',
+    zealy:'https://zealy.io/cw/search?query=Movement',
+    intract:'https://www.intract.io/search?query=Movement'
+  },
+  'MegaETH':{
+    galxe:'https://app.galxe.com/search?keyword=MegaETH',
+    layer3:'https://layer3.xyz/search?query=MegaETH',
+    zealy:'https://zealy.io/cw/search?query=MegaETH',
+    intract:'https://www.intract.io/search?query=MegaETH'
+  },
+  'Kelp DAO':{
+    galxe:'https://app.galxe.com/search?keyword=Kelp%20DAO',
+    layer3:'https://layer3.xyz/search?query=Kelp%20DAO',
+    zealy:'https://zealy.io/cw/search?query=Kelp%20DAO',
+    intract:'https://www.intract.io/search?query=Kelp%20DAO'
+  }
+};
+function activityLinkFor(name,kind){
+ const a=ACTIVITY_LINKS[name]||{};
+ return a[kind] || safeLinkFor(name,'action');
+}
+function activityStatusFor(o){
+ if(o.linkStatus==='offline') return '<span class="activityBadge offline">Активность недоступна</span>';
+ if(o.linkStatus==='partial') return '<span class="activityBadge partial">Проверить через Quest-площадки</span>';
+ return '<span class="activityBadge active">Активность: поиск доступен</span>';
+}
+
 const cats = [
   ['all','Все'],
   ['best','Лучшие'],
@@ -244,7 +311,7 @@ function card(o){
  <div class="meta">
    <div class="exchange">${o.name} • ${o.type}</div>
    <h3>${o.coin}</h3>
-   <span class="coin"><em class="status ${o.status}">${o.statusText}</em> · ${o.difficulty} · ${o.time} · фонды: ${o.fundsCount}</span><span class="dates">Старт: ${ruDate(o.startDate)} · Осталось: ${daysLeft(o.endDate)} д.</span>${o.linkStatus?linkStatusFor(o):""}
+   <span class="coin"><em class="status ${o.status}">${o.statusText}</em> · ${o.difficulty} · ${o.time} · фонды: ${o.fundsCount}</span><span class="dates">Старт: ${ruDate(o.startDate)} · Осталось: ${daysLeft(o.endDate)} д.</span>${o.linkStatus?linkStatusFor(o):""}${activityStatusFor(o)}
    <div class="progressMini"><b>${statusTxt}</b><span>${p.done}/${p.total}</span></div>${lastStepTime(id)?`<div class="lastStep">Последний шаг: ${lastStepTime(id)}</div>`:''}
    <div class="cols">
     <div class="col"><span>Вложить</span><b>${o.stake}</b></div>
@@ -252,7 +319,7 @@ function card(o){
     <div class="col"><span>ROI</span><b>${o.roi}</b></div>
    </div>
    <div class="fundTags">${o.funds.slice(0,3).map(f=>`<em>${f}</em>`).join('')}</div>
-   <div class="actions"><button class="star ${is?'on':''}" data-fav="${id}">${is?'★':'☆'}</button><button class="open ghost" data-details="${id}">Пошаговая инструкция</button><button class="open" data-url="${encodeURIComponent(safeLinkFor(o.name,'action'))}">Открыть</button></div>
+   <div class="actions"><button class="star ${is?'on':''}" data-fav="${id}">${is?'★':'☆'}</button><button class="open ghost" data-details="${id}">Пошаговая инструкция</button><button class="open" data-url="${encodeURIComponent(activityLinkFor(o.name,'galxe'))}">Найти задания</button></div>
  </div>
  <div class="score"><div class="ring">${o.score}<small>/100</small></div></div>
  </article>`;
@@ -276,7 +343,7 @@ function detailsModal(){
     <div><small>Время</small><b>${o.time}</b></div>
     <div><small>Осталось</small><b>${daysLeft(o.endDate)} д.</b></div>
   </div>
-  <div class="aiHint"><b>🤖 Пошаговая инструкция</b><span>${o.beginner}</span></div>${o.linkStatus==="partial"?`<div class="linkWarn">⚠️ ${o.linkNote||"Основная ссылка может быть временно недоступна. Используй запасные ссылки ниже."}</div>`:""}
+  <div class="aiHint"><b>🤖 Пошаговая инструкция</b><span>${o.beginner}</span></div><div class="questHint">🔎 Если официальный сайт не ведёт сразу к заданиям, проверь Galxe / Layer3 / Zealy / Intract ниже.</div>${o.linkStatus==="partial"?`<div class="linkWarn">⚠️ ${o.linkNote||"Основная ссылка может быть временно недоступна. Используй запасные ссылки ниже."}</div>`:""}
   <div class="progressBox"><b>${statusTxt}</b><span>${prog.done}/${prog.total} выполнено</span></div>
   <h3>Что делать</h3>
   <div class="checkList">${steps.map((s,i)=>`<label><input type="checkbox" data-step="${i}" ${prog.saved[i]?'checked':''}><span>${s}${prog.saved[i]?`<small>Выполнено: ${stepTime(o.name,i)}</small>`:''}</span></label>`).join('')}</div>
@@ -287,7 +354,7 @@ function detailsModal(){
   <h3>Фонды</h3>
   <div class="fundTags big">${o.funds.map(f=>`<em>${f}</em>`).join('')}</div>
   <div class="detailActions">
-    <button class="open bigOpen" data-url="${encodeURIComponent(safeLinkFor(o.name,'action'))}">🚀 Открыть активность</button>
+    <button class="open bigOpen" data-url="${encodeURIComponent(safeLinkFor(o.name,'action'))}">🚀 Открыть сайт активности</button><button class="open quest" data-url="${encodeURIComponent(activityLinkFor(o.name,'galxe'))}">Galxe</button><button class="open quest" data-url="${encodeURIComponent(activityLinkFor(o.name,'layer3'))}">Layer3</button><button class="open quest" data-url="${encodeURIComponent(activityLinkFor(o.name,'zealy'))}">Zealy</button><button class="open quest" data-url="${encodeURIComponent(activityLinkFor(o.name,'intract'))}">Intract</button>
     <button class="open ghost" data-url="${encodeURIComponent(safeLinkFor(o.name,'site'))}">Сайт проекта</button><button class="open ghost" data-url="${encodeURIComponent(safeLinkFor(o.name,'x'))}">X / Twitter</button><button class="open ghost" data-url="${encodeURIComponent(safeLinkFor(o.name,'docs'))}">Docs</button>
   </div>
   <p class="risk">Не финансовый совет. Проверяй ссылки, используй отдельный кошелёк и не отправляй seed-фразу.</p>

@@ -1,3 +1,3 @@
-PromoRadar AI v68 Link Status Fallbacks
+PromoRadar AI v69 Real Activity Links
 
-Kelp DAO: заменена нерабочая app.kelpdao.xyz на kelpdao.xyz/restake. Добавлены статусы ссылок Partial/Active и запасные кнопки X/Twitter + Docs.
+Добавлены кнопки поиска активностей на Galxe / Layer3 / Zealy / Intract. Кнопка на карточке теперь ищет задания, а не просто открывает главную страницу проекта.
