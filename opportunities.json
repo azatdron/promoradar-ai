@@ -1,0 +1,49 @@
+{
+  "projects": [
+    {
+      "name": "Nexus",
+      "type": "Testnet",
+      "coin": "NEX",
+      "stake": "$0",
+      "potential": "$30–$200",
+      "score": 82,
+      "status": "active",
+      "statusText": "Active",
+      "startDate": "2026-06-15",
+      "endDate": "2026-08-01",
+      "cat": [
+        "best",
+        "free",
+        "potential",
+        "funds"
+      ],
+      "funds": [
+        "Pantera",
+        "Dragonfly"
+      ],
+      "fundsCount": 2,
+      "time": "10–15 мин",
+      "difficulty": "Легко",
+      "icon": "NX",
+      "domain": "nexus.xyz",
+      "siteUrl": "https://nexus.xyz/",
+      "actionUrl": "https://nexus.xyz/",
+      "x": "https://x.com/NexusLabs",
+      "docs": "https://docs.nexus.xyz/",
+      "guideSteps": [
+        "Открыть сайт проекта",
+        "Подключить кошелёк",
+        "Проверить testnet/quest",
+        "Выполнить доступные задания",
+        "Отметить прогресс"
+      ],
+      "counts": [
+        "Testnet",
+        "Quest",
+        "Wallet activity"
+      ],
+      "chance": "Средний шанс за раннюю активность.",
+      "beginner": "Подходит новичку, если задания открыты."
+    }
+  ]
+}

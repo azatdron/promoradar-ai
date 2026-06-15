@@ -1,3 +1,3 @@
-PromoRadar AI v70 Modal Scroll + Kelp Fix
+PromoRadar AI v71 Live Source Foundation
 
-Исправлено: в модальном окне скроллится само окно, а не фон. Для Kelp DAO убраны Galxe/Zealy/Layer3/Intract, оставлены официальный проект, Docs и X.
+Добавлена основа Live Scanner: кнопка Проверить возможности загружает data/opportunities.json и добавляет новые проекты к стабильной базе. Следующий этап — backend, который обновляет JSON из CryptoRank/Galxe/Layer3.

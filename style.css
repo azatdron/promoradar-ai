@@ -163,3 +163,6 @@
 body.modal-open{overflow:hidden!important;position:fixed;width:100%;left:0;right:0}
 .modal.show,.detailsModal,.confirmModal{position:fixed!important;inset:0!important;overflow:hidden!important;overscroll-behavior:contain!important;touch-action:none}
 .detailsSheet,.confirmSheet{overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;touch-action:pan-y;max-height:82vh!important}
+
+/* v71 Live Source Foundation */
+.liveBox{margin:10px 0 12px;border-radius:16px;padding:10px 12px;font-size:13px;font-weight:900}.liveBox.ok{background:#eafff2;color:#087b3a;border:1px solid #bff2d0}.liveBox.wait{background:#fff7df;color:#a56300;border:1px solid #ffe0a0}.liveBox.fallback{background:#f1f5f4;color:#647184;border:1px solid var(--line)}
