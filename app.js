@@ -13,6 +13,19 @@ const HARD_LINKS = {
   'Kelp DAO': {site:'https://kelpdao.xyz/', action:'https://app.kelpdao.xyz/'}
 };
 
+
+const BACKUP_LINKS={
+  'LayerZero':{x:'https://x.com/LayerZero_Core',docs:'https://docs.layerzero.network/'},
+  'Monad':{x:'https://x.com/monad_xyz',docs:'https://docs.monad.xyz/'},
+  'Berachain':{x:'https://x.com/berachain',docs:'https://docs.berachain.com/'},
+  'ZetaChain':{x:'https://x.com/zetablockchain',docs:'https://www.zetachain.com/docs/'},
+  'Initia':{x:'https://x.com/initiaFDN',docs:'https://docs.initia.xyz/'},
+  'Manta Network':{x:'https://x.com/MantaNetwork',docs:'https://docs.manta.network/'},
+  'Movement':{x:'https://x.com/movementlabsxyz',docs:'https://docs.movementnetwork.xyz/'},
+  'MegaETH':{x:'https://x.com/megaeth_labs',docs:'https://docs.megaeth.com/'},
+  'Kelp DAO':{x:'https://x.com/KelpDAO',docs:'https://docs.kelpdao.xyz/'}
+};
+
 const cats = [
   ['all','Все'],
   ['best','Лучшие'],
@@ -168,12 +181,26 @@ const projects = [
     guideSteps:['Открыть Kelp DAO app','Подключить кошелёк','Выбрать restaking','Проверить риски и комиссии','Сделать депозит только если понимаешь риск'],
     counts:['Restaking','Deposit','Points activity'],
     chance:'Средний шанс, но нужен депозит',
-    beginner:'Не для новичка без понимания DeFi-рисков.'
+    beginner:'Не для новичка без понимания DeFi-рисков.', linkStatus:'partial', linkNote:'Основной app-домен может быть недоступен. Используй сайт проекта или docs.'
   }
 ];
 
+
+function linkStatusFor(o){
+ const s=o.linkStatus||'active';
+ if(s==='partial') return '<span class="linkBadge partial">Partial · запасные ссылки</span>';
+ if(s==='offline') return '<span class="linkBadge offline">Offline · сайт недоступен</span>';
+ return '<span class="linkBadge active">Сайт работает</span>';
+}
 function save(){localStorage.prDeposit=deposit;localStorage.prCrCategory=category;localStorage.prFav=JSON.stringify(fav);}
-function safeLinkFor(name,kind){const h=HARD_LINKS[name]||{}; return kind==='site' ? (h.site||h.action||'#') : (h.action||h.site||'#');}
+function safeLinkFor(name,kind){
+ const h=HARD_LINKS[name]||{};
+ const b=BACKUP_LINKS[name]||{};
+ if(kind==='site') return h.site||h.action||b.x||'#';
+ if(kind==='x') return h.x||b.x||h.site||'#';
+ if(kind==='docs') return h.docs||b.docs||h.site||'#';
+ return h.action||h.site||b.x||'#';
+}
 function rangeMax(str){const nums=(String(str||'').match(/\d+/g)||[]).map(Number); return nums[nums.length-1]||0;}
 function daysLeft(dateStr){const ms=new Date(dateStr+'T23:59:59Z').getTime()-Date.now(); return Math.max(0,Math.ceil(ms/86400000));}
 function ruDate(dateStr){const d=new Date(dateStr+'T00:00:00Z'); return d.toLocaleDateString('ru-RU',{day:'2-digit',month:'short'}).replace('.','');}
@@ -217,7 +244,7 @@ function card(o){
  <div class="meta">
    <div class="exchange">${o.name} • ${o.type}</div>
    <h3>${o.coin}</h3>
-   <span class="coin"><em class="status ${o.status}">${o.statusText}</em> · ${o.difficulty} · ${o.time} · фонды: ${o.fundsCount}</span><span class="dates">Старт: ${ruDate(o.startDate)} · Осталось: ${daysLeft(o.endDate)} д.</span>
+   <span class="coin"><em class="status ${o.status}">${o.statusText}</em> · ${o.difficulty} · ${o.time} · фонды: ${o.fundsCount}</span><span class="dates">Старт: ${ruDate(o.startDate)} · Осталось: ${daysLeft(o.endDate)} д.</span>${o.linkStatus?linkStatusFor(o):""}
    <div class="progressMini"><b>${statusTxt}</b><span>${p.done}/${p.total}</span></div>${lastStepTime(id)?`<div class="lastStep">Последний шаг: ${lastStepTime(id)}</div>`:''}
    <div class="cols">
     <div class="col"><span>Вложить</span><b>${o.stake}</b></div>
@@ -249,7 +276,7 @@ function detailsModal(){
     <div><small>Время</small><b>${o.time}</b></div>
     <div><small>Осталось</small><b>${daysLeft(o.endDate)} д.</b></div>
   </div>
-  <div class="aiHint"><b>🤖 Пошаговая инструкция</b><span>${o.beginner}</span></div>
+  <div class="aiHint"><b>🤖 Пошаговая инструкция</b><span>${o.beginner}</span></div>${o.linkStatus==="partial"?`<div class="linkWarn">⚠️ ${o.linkNote||"Основная ссылка может быть временно недоступна. Используй запасные ссылки ниже."}</div>`:""}
   <div class="progressBox"><b>${statusTxt}</b><span>${prog.done}/${prog.total} выполнено</span></div>
   <h3>Что делать</h3>
   <div class="checkList">${steps.map((s,i)=>`<label><input type="checkbox" data-step="${i}" ${prog.saved[i]?'checked':''}><span>${s}${prog.saved[i]?`<small>Выполнено: ${stepTime(o.name,i)}</small>`:''}</span></label>`).join('')}</div>
@@ -261,7 +288,7 @@ function detailsModal(){
   <div class="fundTags big">${o.funds.map(f=>`<em>${f}</em>`).join('')}</div>
   <div class="detailActions">
     <button class="open bigOpen" data-url="${encodeURIComponent(safeLinkFor(o.name,'action'))}">🚀 Открыть активность</button>
-    <button class="open ghost" data-url="${encodeURIComponent(safeLinkFor(o.name,'site'))}">Сайт проекта</button>
+    <button class="open ghost" data-url="${encodeURIComponent(safeLinkFor(o.name,'site'))}">Сайт проекта</button><button class="open ghost" data-url="${encodeURIComponent(safeLinkFor(o.name,'x'))}">X / Twitter</button><button class="open ghost" data-url="${encodeURIComponent(safeLinkFor(o.name,'docs'))}">Docs</button>
   </div>
   <p class="risk">Не финансовый совет. Проверяй ссылки, используй отдельный кошелёк и не отправляй seed-фразу.</p>
  </div></div>`;
@@ -326,7 +353,7 @@ function bind(){
 function openExternal(raw){
  let url='';
  try{url=decodeURIComponent(raw||'')}catch(e){url=raw||''}
- if(!/^https?:\/\//i.test(url)){toast('Ссылка недоступна'); return;}
+ if(!/^https?:\/\//i.test(url)){toast('Открываю сайт проекта'); url='https://promoradar-ai.vercel.app';}
  try{
   if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.openLink){Telegram.WebApp.openLink(url);}
   else{window.open(url,'_blank','noopener,noreferrer');}
