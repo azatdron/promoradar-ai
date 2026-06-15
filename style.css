@@ -158,3 +158,8 @@
 .activityBadge.offline{background:#fff0f0;color:#b3261e;border:1px solid #ffc9c9}
 .questHint{background:#eef7ff;border:1px solid #cfe6ff;border-radius:14px;padding:10px 12px;margin:10px 0;color:#315a86;font-size:13px;line-height:1.35;font-weight:850}
 .detailActions .quest{background:#f7fbf8!important;color:#172033!important;border:1px solid var(--line)!important}
+
+/* v70 Modal Scroll + Kelp Links Fix */
+body.modal-open{overflow:hidden!important;position:fixed;width:100%;left:0;right:0}
+.modal.show,.detailsModal,.confirmModal{position:fixed!important;inset:0!important;overflow:hidden!important;overscroll-behavior:contain!important;touch-action:none}
+.detailsSheet,.confirmSheet{overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;touch-action:pan-y;max-height:82vh!important}

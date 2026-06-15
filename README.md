@@ -1,3 +1,3 @@
-PromoRadar AI v69 Real Activity Links
+PromoRadar AI v70 Modal Scroll + Kelp Fix
 
-Добавлены кнопки поиска активностей на Galxe / Layer3 / Zealy / Intract. Кнопка на карточке теперь ищет задания, а не просто открывает главную страницу проекта.
+Исправлено: в модальном окне скроллится само окно, а не фон. Для Kelp DAO убраны Galxe/Zealy/Layer3/Intract, оставлены официальный проект, Docs и X.

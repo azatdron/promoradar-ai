@@ -84,11 +84,13 @@ const ACTIVITY_LINKS={
   }
 };
 function activityLinkFor(name,kind){
+ if(name==='Kelp DAO') return safeLinkFor(name, kind==='galxe'?'site':kind);
  const a=ACTIVITY_LINKS[name]||{};
  return a[kind] || safeLinkFor(name,'action');
 }
 function activityStatusFor(o){
  if(o.linkStatus==='offline') return '<span class="activityBadge offline">Активность недоступна</span>';
+ if(o.name==='Kelp DAO') return '<span class="activityBadge partial">Открыть проект / Docs</span>';
  if(o.linkStatus==='partial') return '<span class="activityBadge partial">Проверить через Quest-площадки</span>';
  return '<span class="activityBadge active">Активность: поиск доступен</span>';
 }
@@ -248,7 +250,7 @@ const projects = [
     guideSteps:['Открыть Kelp DAO app','Подключить кошелёк','Выбрать restaking','Проверить риски и комиссии','Сделать депозит только если понимаешь риск'],
     counts:['Restaking','Deposit','Points activity'],
     chance:'Средний шанс, но нужен депозит',
-    beginner:'Не для новичка без понимания DeFi-рисков.', linkStatus:'partial', linkNote:'Основной app-домен может быть недоступен. Используй сайт проекта или docs.'
+    beginner:'Не для новичка без понимания DeFi-рисков.', linkStatus:'partial', linkNote:'Quest-площадки для Kelp не используем. Открывай официальный сайт, Docs или X.'
   }
 ];
 
@@ -286,6 +288,7 @@ function progressFor(name){const saved=JSON.parse(localStorage.getItem('prProgre
 function render(){
  const filtered=visibleProjects();
  const best=filtered[0];
+ document.body.classList.toggle('modal-open', !!expanded || !!pendingStep);
  app.innerHTML=`<main class="page"><header class="top"><img class="logo" src="icon.svg"><div class="title"><h1>PromoRadar AI</h1><p>Лучшие крипто-возможности в одном месте</p></div><button class="gear" data-scan>↻</button></header>
 
  <section class="filters compact">
@@ -319,7 +322,7 @@ function card(o){
     <div class="col"><span>ROI</span><b>${o.roi}</b></div>
    </div>
    <div class="fundTags">${o.funds.slice(0,3).map(f=>`<em>${f}</em>`).join('')}</div>
-   <div class="actions"><button class="star ${is?'on':''}" data-fav="${id}">${is?'★':'☆'}</button><button class="open ghost" data-details="${id}">Пошаговая инструкция</button><button class="open" data-url="${encodeURIComponent(activityLinkFor(o.name,'galxe'))}">Найти задания</button></div>
+   <div class="actions"><button class="star ${is?'on':''}" data-fav="${id}">${is?'★':'☆'}</button><button class="open ghost" data-details="${id}">Пошаговая инструкция</button><button class="open" data-url="${encodeURIComponent(activityLinkFor(o.name,'galxe'))}">${o.name==="Kelp DAO"?"Открыть проект":"Найти задания"}</button></div>
  </div>
  <div class="score"><div class="ring">${o.score}<small>/100</small></div></div>
  </article>`;
@@ -354,7 +357,7 @@ function detailsModal(){
   <h3>Фонды</h3>
   <div class="fundTags big">${o.funds.map(f=>`<em>${f}</em>`).join('')}</div>
   <div class="detailActions">
-    <button class="open bigOpen" data-url="${encodeURIComponent(safeLinkFor(o.name,'action'))}">🚀 Открыть сайт активности</button><button class="open quest" data-url="${encodeURIComponent(activityLinkFor(o.name,'galxe'))}">Galxe</button><button class="open quest" data-url="${encodeURIComponent(activityLinkFor(o.name,'layer3'))}">Layer3</button><button class="open quest" data-url="${encodeURIComponent(activityLinkFor(o.name,'zealy'))}">Zealy</button><button class="open quest" data-url="${encodeURIComponent(activityLinkFor(o.name,'intract'))}">Intract</button>
+    <button class="open bigOpen" data-url="${encodeURIComponent(safeLinkFor(o.name,'action'))}">🚀 Открыть сайт активности</button>${o.name==='Kelp DAO'?'':`<button class="open quest" data-url="${encodeURIComponent(activityLinkFor(o.name,'galxe'))}">Galxe</button><button class="open quest" data-url="${encodeURIComponent(activityLinkFor(o.name,'layer3'))}">Layer3</button><button class="open quest" data-url="${encodeURIComponent(activityLinkFor(o.name,'zealy'))}">Zealy</button><button class="open quest" data-url="${encodeURIComponent(activityLinkFor(o.name,'intract'))}">Intract</button>`}
     <button class="open ghost" data-url="${encodeURIComponent(safeLinkFor(o.name,'site'))}">Сайт проекта</button><button class="open ghost" data-url="${encodeURIComponent(safeLinkFor(o.name,'x'))}">X / Twitter</button><button class="open ghost" data-url="${encodeURIComponent(safeLinkFor(o.name,'docs'))}">Docs</button>
   </div>
   <p class="risk">Не финансовый совет. Проверяй ссылки, используй отдельный кошелёк и не отправляй seed-фразу.</p>
