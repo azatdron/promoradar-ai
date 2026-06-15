@@ -32,6 +32,7 @@ let deposit = localStorage.prDeposit || '500';
 let category = aliases[localStorage.prCrCategory] || 'best';
 let fav = JSON.parse(localStorage.prFav || '[]');
 let expanded = '';
+let pendingStep = null;
 
 const projects = [
   {
@@ -201,7 +202,7 @@ function render(){
 
  <div class="section"><div><h2>Найденные возможности</h2><span>${filtered.length} проектов · ${catLabel(category).toLowerCase()}</span></div><button class="sort">↗ Потенциал⌄</button></div>
  ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.name} • ${best.type}</b></div><div class="money">${best.profit[deposit]||best.profit[500]}</div></div>`:''}
- <section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет проектов по выбранному фильтру</div>'}</section></main>${detailsModal()}<div class="toast" id="toast"></div>`;
+ <section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет проектов по выбранному фильтру</div>'}</section></main>${detailsModal()}${confirmStepModal()}<div class="toast" id="toast"></div>`;
  bind();
 }
 
@@ -217,7 +218,7 @@ function card(o){
    <div class="exchange">${o.name} • ${o.type}</div>
    <h3>${o.coin}</h3>
    <span class="coin"><em class="status ${o.status}">${o.statusText}</em> · ${o.difficulty} · ${o.time} · фонды: ${o.fundsCount}</span><span class="dates">Старт: ${ruDate(o.startDate)} · Осталось: ${daysLeft(o.endDate)} д.</span>
-   <div class="progressMini"><b>${statusTxt}</b><span>${p.done}/${p.total}</span></div>
+   <div class="progressMini"><b>${statusTxt}</b><span>${p.done}/${p.total}</span></div>${lastStepTime(id)?`<div class="lastStep">Последний шаг: ${lastStepTime(id)}</div>`:''}
    <div class="cols">
     <div class="col"><span>Вложить</span><b>${o.stake}</b></div>
     <div class="col"><span>Потенциал</span><b class="profit">${profit}</b></div>
@@ -251,7 +252,7 @@ function detailsModal(){
   <div class="aiHint"><b>🤖 Пошаговая инструкция</b><span>${o.beginner}</span></div>
   <div class="progressBox"><b>${statusTxt}</b><span>${prog.done}/${prog.total} выполнено</span></div>
   <h3>Что делать</h3>
-  <div class="checkList">${steps.map((s,i)=>`<label><input type="checkbox" data-step="${i}" ${prog.saved[i]?'checked':''}><span>${s}</span></label>`).join('')}</div>
+  <div class="checkList">${steps.map((s,i)=>`<label><input type="checkbox" data-step="${i}" ${prog.saved[i]?'checked':''}><span>${s}${prog.saved[i]?`<small>Выполнено: ${stepTime(o.name,i)}</small>`:''}</span></label>`).join('')}</div>
   <h3>Какие действия засчитываются</h3>
   <div class="countTags">${counts.map(s=>`<span>${s}</span>`).join('')}</div>
   <h3>Шанс награды</h3>
@@ -266,17 +267,61 @@ function detailsModal(){
  </div></div>`;
 }
 
+
+function stepTime(project,index){
+ const times=JSON.parse(localStorage.getItem('prProgressTime_'+project)||'{}');
+ return times[index] || '';
+}
+function lastStepTime(name){
+ const times=JSON.parse(localStorage.getItem('prProgressTime_'+name)||'{}');
+ const vals=Object.values(times).filter(Boolean);
+ return vals.length ? vals[vals.length-1] : '';
+}
+function formatNow(){
+ const d=new Date();
+ return d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'2-digit'})+' '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+}
+function confirmStepModal(){
+ if(!pendingStep) return '';
+ const title=pendingStep.next?'Подтвердить выполнение шага?':'Снять выполнение шага?';
+ const main=pendingStep.next?'Да, выполнил':'Снять отметку';
+ const note=pendingStep.next?'Этот шаг будет засчитан в прогресс проекта.':'Этот шаг перестанет учитываться в прогрессе.';
+ return `<div class="modal show confirmModal" id="confirmStep"><div class="sheet confirmSheet">
+   <div class="sheetHead"><h2>${title}</h2><button class="close" data-cancel-step>×</button></div>
+   <div class="confirmStepText">${pendingStep.text}</div>
+   <p class="confirmNote">${note}</p>
+   <div class="confirmActions">
+     <button class="open ghost" data-cancel-step>${pendingStep.next?'Отмена':'Оставить'}</button>
+     <button class="open" data-apply-step>${main}</button>
+   </div>
+ </div></div>`;
+}
+function applyPendingStep(){
+ if(!pendingStep) return;
+ const current=progressFor(pendingStep.project).saved;
+ const times=JSON.parse(localStorage.getItem('prProgressTime_'+pendingStep.project)||'{}');
+ current[pendingStep.index]=pendingStep.next;
+ if(pendingStep.next){times[pendingStep.index]=formatNow();}else{delete times[pendingStep.index];}
+ localStorage.setItem('prProgress_'+pendingStep.project,JSON.stringify(current));
+ localStorage.setItem('prProgressTime_'+pendingStep.project,JSON.stringify(times));
+ pendingStep=null;
+ render();
+}
 function bind(){
  document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{category=b.dataset.cat;save();render();});
  document.querySelectorAll('[data-custom]').forEach(b=>b.onclick=()=>{const v=prompt('Введите сумму USDT',deposit); if(v&&Number(v)>0){deposit=String(Number(v));save();render();}});
  document.querySelectorAll('[data-scan]').forEach(b=>b.onclick=()=>toast('Возможности обновлены'));
  document.querySelectorAll('[data-expand]').forEach(card=>card.onclick=e=>{if(e.target.closest('[data-fav],[data-url],[data-details]'))return; expanded=card.dataset.expand; render();});
  document.querySelectorAll('[data-details]').forEach(b=>b.onclick=e=>{e.stopPropagation(); expanded=b.dataset.details; render();});
- document.querySelectorAll('[data-close-details]').forEach(b=>b.onclick=()=>{expanded=''; render();});
- const dm=document.getElementById('details'); if(dm) dm.onclick=e=>{if(e.target.id==='details'){expanded=''; render();}};
+ document.querySelectorAll('[data-close-details]').forEach(b=>b.onclick=()=>{expanded=''; pendingStep=null; render();});
+ const dm=document.getElementById('details'); if(dm) dm.onclick=e=>{if(e.target.id==='details'){expanded=''; pendingStep=null; render();}};
  document.querySelectorAll('[data-fav]').forEach(b=>b.onclick=e=>{e.stopPropagation(); const id=b.dataset.fav; fav=fav.includes(id)?fav.filter(x=>x!==id):[...fav,id]; save(); render();});
  document.querySelectorAll('[data-url]').forEach(b=>b.onclick=e=>{e.stopPropagation(); openExternal(b.dataset.url);});
- document.querySelectorAll('[data-step]').forEach(ch=>ch.onchange=()=>{const p=projects.find(x=>x.name===expanded); if(!p)return; const current=progressFor(p.name).saved; current[Number(ch.dataset.step)]=ch.checked; localStorage.setItem('prProgress_'+p.name,JSON.stringify(current)); render();});
+ document.querySelectorAll('[data-step]').forEach(ch=>ch.onchange=e=>{e.preventDefault(); const p=projects.find(x=>x.name===expanded); if(!p)return; const i=Number(ch.dataset.step); const current=progressFor(p.name).saved; pendingStep={project:p.name,index:i,next:!current[i],text:p.guideSteps[i]}; render();});
+ document.querySelectorAll('[data-cancel-step]').forEach(b=>b.onclick=()=>{pendingStep=null;render();});
+ document.querySelectorAll('[data-apply-step]').forEach(b=>b.onclick=()=>applyPendingStep());
+ const cm=document.getElementById('confirmStep'); if(cm) cm.onclick=e=>{if(e.target.id==='confirmStep'){pendingStep=null;render()}};
+
 }
 function openExternal(raw){
  let url='';
