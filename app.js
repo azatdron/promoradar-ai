@@ -408,26 +408,20 @@ function applyPendingStep(){
 function scannerSetupModal(){
  if(!setupOpen) return '';
  return `<div class="modal show detailsModal" id="scannerSetup"><div class="sheet detailsSheet">
-   <div class="sheetHead"><h2>Scanner API</h2><button class="close" data-close-setup>×</button></div>
-   <div class="aiHint"><b>Что нужно для живого поиска</b><span>Чтобы PromoRadar сам находил новые проекты, нужно подключить backend /api/scanner к реальному источнику CryptoRank или другому API.</span></div>
-   <div class="setupList">
-     <div><b>1. CryptoRank API key</b><span>Ключ хранится только в Vercel Environment Variables.</span></div>
-     <div><b>2. CryptoRank API URL</b><span>Endpoint должен отдавать Airdrop / Drop Hunting / Testnet / Activities JSON.</span></div>
-     <div><b>3. Redeploy</b><span>После добавления env переменных нажать Redeploy в Vercel.</span></div>
-   </div>
-   <h3>Переменные в Vercel</h3>
-   <div class="codeBox">CRYPTORANK_API_KEY=твой_ключ<br>CRYPTORANK_API_URL=endpoint_cryptorank</div>
-   <h3>Endpoint приложения</h3>
-   <div class="endpointRow"><input id="scannerEndpointInput" value="${scannerEndpoint}"><button class="open" data-save-endpoint>Сохранить</button></div>
-   <div class="detailActions">
+  <div class="sheetHead"><h2>Scanner API</h2><button class="close" data-close-setup>×</button></div>
+  <div class="aiHint"><b>Что нужно для живого поиска</b><span>Добавь в Vercel переменные CRYPTORANK_API_KEY и CRYPTORANK_API_URL, потом нажми Redeploy.</span></div>
+  <h3>Vercel env</h3>
+  <div class="codeBox">CRYPTORANK_API_KEY=твой_ключ<br>CRYPTORANK_API_URL=endpoint_cryptorank</div>
+  <h3>Endpoint приложения</h3>
+  <div class="endpointRow"><input id="scannerEndpointInput" value="${scannerEndpoint}"><button class="open" data-save-endpoint>Сохранить</button></div>
+  <div class="detailActions">
     <button class="open bigOpen" data-test-scanner>🔎 Проверить Scanner</button>
     <button class="open ghost" data-url="${encodeURIComponent('https://cryptorank.io/public-api')}">CryptoRank API</button>
     <button class="open ghost" data-url="${encodeURIComponent('https://vercel.com/dashboard')}">Vercel</button>
-   </div>
-   <p class="risk">Без API key приложение будет показывать стабильную базу или demo/fallback. Это нормально до подключения реального источника.</p>
+  </div>
+  <p class="risk">Если API не настроен, приложение показывает стабильную базу.</p>
  </div></div>`;
 }
-
 function bind(){
  document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{category=b.dataset.cat;save();render();});
  document.querySelectorAll('[data-custom]').forEach(b=>b.onclick=()=>{const v=prompt('Введите сумму USDT',deposit); if(v&&Number(v)>0){deposit=String(Number(v));save();render();}});
