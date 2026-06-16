@@ -1,9 +1,12 @@
-PromoRadar AI v73 CryptoRank API Scanner
+PromoRadar AI v74 Scanner Setup Wizard
 
 Сделано:
-- api/scanner.js подключает CryptoRank API через CRYPTORANK_API_KEY и CRYPTORANK_API_URL;
-- ключ не попадает в frontend;
-- добавлен нормализатор данных CryptoRank → PromoRadar cards;
-- фильтруются finished/ended активности;
-- fallback остаётся, чтобы не было белого экрана;
-- добавлен .env.example и SCANNER_SETUP.md.
+- добавлено окно Scanner API внутри приложения;
+- можно проверить scanner прямо из интерфейса;
+- добавлена инструкция, какие env переменные нужны в Vercel;
+- добавлен VERCEL_ENV_SETUP.md;
+- backend api/scanner.js оставлен безопасным: ключ только в Vercel env;
+- если API не настроен, приложение не ломается.
+
+Следующий шаг:
+получить точный CryptoRank endpoint для Drop Hunting / Airdrops и вставить его в CRYPTORANK_API_URL.

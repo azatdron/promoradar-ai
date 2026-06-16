@@ -288,7 +288,7 @@ function progressFor(name){const saved=JSON.parse(localStorage.getItem('prProgre
 function render(){
  const filtered=visibleProjects();
  const best=filtered[0];
- document.body.classList.toggle('modal-open', !!expanded || !!pendingStep);
+ document.body.classList.toggle('modal-open', !!expanded || !!pendingStep || setupOpen);
  app.innerHTML=`<main class="page"><header class="top"><img class="logo" src="icon.svg"><div class="title"><h1>PromoRadar AI</h1><p>Лучшие крипто-возможности в одном месте</p></div><button class="gear" data-scan>↻</button></header>
 
  <section class="filters compact">
@@ -299,7 +299,7 @@ function render(){
 
  <div class="section"><div><h2>Найденные возможности</h2><span>${filtered.length} проектов · ${catLabel(category).toLowerCase()}</span></div><button class="sort">↗ Потенциал⌄</button></div>
  ${best?`<div class="best"><div><small>Лучший вариант</small><b>${best.name} • ${best.type}</b></div><div class="money">${best.profit[deposit]||best.profit[500]}</div></div>`:''}
- <section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет проектов по выбранному фильтру</div>'}</section></main>${detailsModal()}${confirmStepModal()}<div class="toast" id="toast"></div>`;
+ <section class="list">${filtered.length?filtered.map(card).join(''):'<div class="empty">Нет проектов по выбранному фильтру</div>'}</section></main>${detailsModal()}${confirmStepModal()}${scannerSetupModal()}<div class="toast" id="toast"></div>`;
  bind();
 }
 
@@ -404,6 +404,30 @@ function applyPendingStep(){
  pendingStep=null;
  render();
 }
+
+function scannerSetupModal(){
+ if(!setupOpen) return '';
+ return `<div class="modal show detailsModal" id="scannerSetup"><div class="sheet detailsSheet">
+   <div class="sheetHead"><h2>Scanner API</h2><button class="close" data-close-setup>×</button></div>
+   <div class="aiHint"><b>Что нужно для живого поиска</b><span>Чтобы PromoRadar сам находил новые проекты, нужно подключить backend /api/scanner к реальному источнику CryptoRank или другому API.</span></div>
+   <div class="setupList">
+     <div><b>1. CryptoRank API key</b><span>Ключ хранится только в Vercel Environment Variables.</span></div>
+     <div><b>2. CryptoRank API URL</b><span>Endpoint должен отдавать Airdrop / Drop Hunting / Testnet / Activities JSON.</span></div>
+     <div><b>3. Redeploy</b><span>После добавления env переменных нажать Redeploy в Vercel.</span></div>
+   </div>
+   <h3>Переменные в Vercel</h3>
+   <div class="codeBox">CRYPTORANK_API_KEY=твой_ключ<br>CRYPTORANK_API_URL=endpoint_cryptorank</div>
+   <h3>Endpoint приложения</h3>
+   <div class="endpointRow"><input id="scannerEndpointInput" value="${scannerEndpoint}"><button class="open" data-save-endpoint>Сохранить</button></div>
+   <div class="detailActions">
+    <button class="open bigOpen" data-test-scanner>🔎 Проверить Scanner</button>
+    <button class="open ghost" data-url="${encodeURIComponent('https://cryptorank.io/public-api')}">CryptoRank API</button>
+    <button class="open ghost" data-url="${encodeURIComponent('https://vercel.com/dashboard')}">Vercel</button>
+   </div>
+   <p class="risk">Без API key приложение будет показывать стабильную базу или demo/fallback. Это нормально до подключения реального источника.</p>
+ </div></div>`;
+}
+
 function bind(){
  document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{category=b.dataset.cat;save();render();});
  document.querySelectorAll('[data-custom]').forEach(b=>b.onclick=()=>{const v=prompt('Введите сумму USDT',deposit); if(v&&Number(v)>0){deposit=String(Number(v));save();render();}});
